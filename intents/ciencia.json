@@ -1,0 +1,15 @@
+{
+  "category": "ciencia",
+  "intents": [
+    {
+      "tag": "o_que_e_ciencia",
+      "patterns": ["o que é ciência", "defina ciência"],
+      "responses": ["Ciência é o estudo sistemático da natureza por meio de observação, experimentação e análise."]
+    },
+    {
+      "tag": "metodo_cientifico",
+      "patterns": ["o que é método científico", "como funciona o método científico"],
+      "responses": ["O método científico envolve observação, hipótese, experimento, análise e conclusão."]
+    }
+  ]
+}

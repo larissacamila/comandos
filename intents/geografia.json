@@ -1,0 +1,15 @@
+{
+  "category": "geografia",
+  "intents": [
+    {
+      "tag": "o_que_e_geografia",
+      "patterns": ["o que é geografia", "defina geografia"],
+      "responses": ["Geografia é a ciência que estuda a relação entre o ser humano e o espaço geográfico."]
+    },
+    {
+      "tag": "continentes",
+      "patterns": ["quantos continentes existem", "continentes do mundo"],
+      "responses": ["Existem seis continentes: África, América, Antártida, Ásia, Europa e Oceania."]
+    }
+  ]
+}

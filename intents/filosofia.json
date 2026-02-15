@@ -1,0 +1,15 @@
+{
+  "category": "filosofia",
+  "intents": [
+    {
+      "tag": "quem_foi_socrates",
+      "patterns": ["quem é Sócrates", "quem foi Sócrates"],
+      "responses": ["Sócrates foi um filósofo grego conhecido por ensinar por meio de perguntas e diálogos."]
+    },
+    {
+      "tag": "o_que_e_filosofia",
+      "patterns": ["o que é filosofia", "defina filosofia"],
+      "responses": ["Filosofia é o estudo das questões fundamentais da existência, do conhecimento, da ética e da razão."]
+    }
+  ]
+}
