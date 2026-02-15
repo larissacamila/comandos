@@ -1,57 +1,49 @@
 from flask import Flask, request, jsonify
-import requests
+from flask_cors import CORS
+import json
+import random
+import os
+
+# Configuração da chave de API
+API_KEY = "156478"  # <--- coloque sua chave aqui
 
 app = Flask(__name__)
+CORS(app)
 
-# IP do seu ESP32 na rede local
-ESP32_IP = "192.168.15.80"
+# Carrega intents dinamicamente
+INTENTS_FILE = os.path.join(os.path.dirname(__file__), "intents.json")
 
-# Chave da API
-API_KEY = "156478"  # Coloque aqui sua chave secreta
+def carregar_intents():
+    with open(INTENTS_FILE, "r", encoding="utf-8") as file:
+        return json.load(file)
 
-# Função para enviar comando para o ESP32
-def enviar_comando_esp(comando):
-    try:
-        url = f"http://{ESP32_IP}/{comando}"  # ESP deve ter endpoints tipo /ligar_luz
-        resp = requests.get(url, timeout=3)
-        if resp.status_code == 200:
-            return True, resp.text
-        else:
-            return False, f"Erro do ESP32: {resp.status_code}"
-    except Exception as e:
-        return False, str(e)
+intents = carregar_intents()
 
-# Verifica chave
-def checar_chave():
-    auth = request.headers.get("Authorization")
-    if not auth or not auth.startswith("Bearer "):
-        return False
-    token = auth.split(" ")[1]
-    return token == API_KEY
+def buscar_resposta(mensagem):
+    mensagem = mensagem.lower()
+    for intent in intents:
+        for pattern in intent["patterns"]:
+            if pattern.lower() in mensagem:
+                return random.choice(intent["responses"])
+    return "🌙 Não encontrei uma resposta. Pergunte outra coisa ou tente novamente."
 
-@app.route("/comando", methods=["POST"])
-def comando():
-    if not checar_chave():
-        return jsonify({"status": "erro", "mensagem": "Chave inválida"}), 401
+@app.route("/predict", methods=["POST"])
+def predict():
+    auth_header = request.headers.get("Authorization")
+    if not auth_header or auth_header != f"Bearer {API_KEY}":
+        return jsonify({"error": "Unauthorized"}), 401
 
-    data = request.json
-    if not data or "comando" not in data:
-        return jsonify({"status": "erro", "mensagem": "Comando não fornecido"}), 400
+    data = request.get_json()
+    if not data or "message" not in data:
+        return jsonify({"error": "Invalid request, missing 'message'"}), 400
 
-    comando = data["comando"]
-    sucesso, resultado = enviar_comando_esp(comando)
-    
-    if sucesso:
-        return jsonify({"status": "ok", "mensagem": f"Comando '{comando}' executado com sucesso!", "resposta_esp": resultado})
-    else:
-        return jsonify({"status": "erro", "mensagem": f"Falha ao executar '{comando}'", "erro": resultado}), 500
+    mensagem = data["message"]
+    resposta = buscar_resposta(mensagem)
+    return jsonify({"response": resposta})
 
-@app.route("/teste", methods=["GET"])
-def teste():
-    if not checar_chave():
-        return jsonify({"status": "erro", "mensagem": "Chave inválida"}), 401
-    return jsonify({"status": "ok", "mensagem": "API funcionando!"})
+@app.route("/", methods=["GET"])
+def home():
+    return "🌙 API Luna de Conhecimento Ativa!", 200
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000)
-
+    app.run(host="0.0.0.0", port=5000, debug=True)
