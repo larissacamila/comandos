@@ -3,23 +3,44 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Luna - Cliente Web Completo</title>
+<title>Luna - Assistente Web</title>
 <style>
-body { font-family: Arial, sans-serif; background: #1e1e2f; color: #f0f0f0; display: flex; flex-direction: column; align-items: center; margin: 0; padding: 20px;}
+body {
+    font-family: Arial, sans-serif;
+    background: url('https://images.unsplash.com/photo-1601758123927-2a3d2a5e11f7?auto=format&fit=crop&w=1350&q=80') no-repeat center center fixed;
+    background-size: cover;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+}
 h1 { margin-bottom: 10px; }
 #relogio { font-size: 1.2em; margin-bottom: 20px; }
-#chat { width: 90%; max-width: 600px; height: 350px; border: 1px solid #555; overflow-y: auto; padding: 10px; background: #2a2a40; border-radius: 10px;}
-.mensagem { margin: 5px 0; padding: 5px 10px; border-radius: 10px; max-width: 80%; }
+#chat {
+    width: 90%;
+    max-width: 600px;
+    height: 350px;
+    border: 1px solid #555;
+    overflow-y: auto;
+    padding: 10px;
+    background: rgba(0,0,0,0.6);
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+}
+.mensagem {
+    margin: 5px 0;
+    padding: 5px 10px;
+    border-radius: 10px;
+    max-width: 80%;
+}
 .usuario { background: #4a90e2; align-self: flex-end; }
-.luna { background: #34d399; align-self: flex-start; }
+.luna { background: #34d399; align-self: flex-start; display: flex; align-items: center; }
+.luna img { width: 30px; height: 30px; border-radius: 50%; margin-right: 5px; }
 #entrada { width: 90%; max-width: 600px; display: flex; margin-top: 10px; }
 #entrada input { flex: 1; padding: 10px; border-radius: 5px; border: none; }
 #entrada button { padding: 10px 15px; margin-left: 5px; border-radius: 5px; border: none; background: #4a90e2; color: white; cursor: pointer; }
-#comandos { margin-top: 15px; display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
-#comandos button { padding: 10px 15px; border-radius: 5px; border: none; background: #34d399; color: white; cursor: pointer; }
-#agendar { margin-top: 15px; display: flex; gap: 5px; flex-wrap: wrap; justify-content: center; align-items: center; }
-#agendar input, #agendar select { padding: 5px; border-radius: 5px; border: none; }
-#agendar button { padding: 5px 10px; border-radius: 5px; border: none; background: #f59e0b; color: white; cursor: pointer; }
 </style>
 </head>
 <body>
@@ -35,33 +56,16 @@ h1 { margin-bottom: 10px; }
     <button onclick="ouvirVoz()">🎤 Falar</button>
 </div>
 
-<div id="comandos">
-    <button onclick="comandoRapido('ligar luz')">💡 Luz</button>
-    <button onclick="comandoRapido('desligar luz')">💡 Luz Off</button>
-    <button onclick="comandoRapido('fazer café')">☕ Café</button>
-    <button onclick="comandoRapido('hora')">🕒 Hora/Data</button>
-</div>
-
-<div id="agendar">
-    <input type="time" id="horaAgendada">
-    <select id="comandoAgendado">
-        <option value="ligar luz">💡 Acender Luz</option>
-        <option value="desligar luz">💡 Apagar Luz</option>
-        <option value="fazer café">☕ Fazer Café</option>
-    </select>
-    <button onclick="agendarTarefa()">Agendar</button>
-</div>
-
 <script>
-const API_URL = "https://comandos-mmmu.onrender.com/comando"; // endpoint da API
+const API_URL = "https://comandos-mmmu.onrender.com/predict"; // seu endpoint
 const API_KEY = "156478"; // coloque sua chave
 
-// Relógio em tempo real
+// Relógio
 function atualizarRelogio() {
     const agora = new Date();
     const opcoes = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-    const texto = `${agora.toLocaleTimeString()} - ${agora.toLocaleDateString('pt-BR', opcoes)}`;
-    document.getElementById("relogio").textContent = texto;
+    document.getElementById("relogio").textContent =
+        `${agora.toLocaleTimeString()} - ${agora.toLocaleDateString('pt-BR', opcoes)}`;
 }
 setInterval(atualizarRelogio, 1000);
 atualizarRelogio();
@@ -71,16 +75,23 @@ function adicionarMensagem(texto, remetente) {
     const chat = document.getElementById("chat");
     const div = document.createElement("div");
     div.className = "mensagem " + remetente;
-    div.textContent = texto;
+    if(remetente === "luna") {
+        const img = document.createElement("img");
+        img.src = "https://i.imgur.com/3GvwNBf.png"; // avatar
+        div.appendChild(img);
+    }
+    const span = document.createElement("span");
+    span.textContent = texto;
+    div.appendChild(span);
     chat.appendChild(div);
     chat.scrollTop = chat.scrollHeight;
 }
 
-// Envia mensagem para API
-async function enviarMensagem(comando) {
+// Envia mensagem
+async function enviarMensagem() {
     const input = document.getElementById("mensagemInput");
-    const mensagem = comando || input.value.trim();
-    if (!mensagem) return;
+    const mensagem = input.value.trim();
+    if(!mensagem) return;
     adicionarMensagem(mensagem, "usuario");
     input.value = "";
 
@@ -88,42 +99,35 @@ async function enviarMensagem(comando) {
         const response = await fetch(API_URL, {
             method: "POST",
             headers: { 
-                "Content-Type": "application/json", 
+                "Content-Type": "application/json",
                 "Authorization": `Bearer ${API_KEY}`
             },
-            body: JSON.stringify({ comando: mensagem })
+            body: JSON.stringify({ message: mensagem })
         });
         const data = await response.json();
-        const resposta = data.mensagem || "🌙 Não consegui processar sua solicitação.";
+        const resposta = data.response || "🌙 Não consegui processar sua solicitação.";
         adicionarMensagem(resposta, "luna");
         falar(resposta);
-    } catch (e) {
+    } catch(e) {
         adicionarMensagem("🌙 Erro ao conectar com a API.", "luna");
         console.error(e);
     }
 }
 
-// Botões de comando rápido
-function comandoRapido(texto) {
-    enviarMensagem(texto);
-}
-
-// Enter para enviar
-document.getElementById("mensagemInput").addEventListener("keypress", function(e){
-    if(e.key === "Enter") enviarMensagem();
-});
-
-// Função de fala da Luna
+// Fala
 function falar(texto) {
-    if (!('speechSynthesis' in window)) return;
+    if(!('speechSynthesis' in window)) return;
     const msg = new SpeechSynthesisUtterance(texto);
     msg.lang = 'pt-BR';
+    msg.pitch = 1;
+    msg.rate = 1;
+    msg.voice = speechSynthesis.getVoices().find(v => v.lang === "pt-BR") || null;
     window.speechSynthesis.speak(msg);
 }
 
-// Captura voz do usuário
+// Voz
 function ouvirVoz() {
-    if (!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) {
+    if(!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) {
         alert("Seu navegador não suporta reconhecimento de voz.");
         return;
     }
@@ -136,36 +140,17 @@ function ouvirVoz() {
 
     recognition.onresult = (event) => {
         const fala = event.results[0][0].transcript;
-        const input = document.getElementById("mensagemInput");
-        input.value = fala;
+        document.getElementById("mensagemInput").value = fala;
         enviarMensagem();
     };
 
-    recognition.onerror = (event) => {
-        console.error("Erro no reconhecimento de voz:", event.error);
-    };
+    recognition.onerror = (event) => console.error("Erro no reconhecimento de voz:", event.error);
 }
 
-// Agendamento de tarefas
-function agendarTarefa() {
-    const hora = document.getElementById("horaAgendada").value;
-    const comando = document.getElementById("comandoAgendado").value;
-    if (!hora) return alert("Escolha um horário!");
-
-    const agora = new Date();
-    const partes = hora.split(":");
-    const dataAlvo = new Date(agora.getFullYear(), agora.getMonth(), agora.getDate(), partes[0], partes[1], 0);
-    let delay = dataAlvo.getTime() - agora.getTime();
-    if (delay < 0) delay += 24*60*60*1000; // se passou da hora, agenda para amanhã
-
-    setTimeout(() => {
-        enviarMensagem(comando);
-        alert(`Tarefa executada: ${comando}`);
-    }, delay);
-
-    alert(`Tarefa agendada: ${comando} às ${hora}`);
-}
+// Enter
+document.getElementById("mensagemInput").addEventListener("keypress", function(e){
+    if(e.key === "Enter") enviarMensagem();
+});
 </script>
-
 </body>
 </html>
