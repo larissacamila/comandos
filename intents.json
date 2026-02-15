@@ -70,5 +70,66 @@
       "A capital da França é Paris.",
       "Os maiores rios incluem Amazonas, Nilo e Yangtzé."
     ]
-  }
+  },
+  {
+  "category": "namoro",
+  "intents": [
+    {
+      "tag": "namoro_o_que_e",
+      "patterns": [
+        "o que é namoro",
+        "o que significa namorar",
+        "defina namoro"
+      ],
+      "responses": [
+        "Namoro é um relacionamento afetivo baseado em respeito, carinho e diálogo entre duas pessoas."
+      ]
+    },
+    {
+      "tag": "namoro_conselho",
+      "patterns": [
+        "me dê um conselho de namoro",
+        "conselho sobre namoro",
+        "como ter um bom namoro"
+      ],
+      "responses": [
+        "Um bom namoro precisa de diálogo, respeito mútuo e confiança."
+      ]
+    },
+    {
+      "tag": "namoro_amor",
+      "patterns": [
+        "o que é amor no namoro",
+        "amor no namoro",
+        "como funciona o amor no namoro"
+      ],
+      "responses": [
+        "No namoro, o amor se constrói com cuidado, atenção e respeito aos sentimentos do outro."
+      ]
+    },
+    {
+      "tag": "namoro_brigas",
+      "patterns": [
+        "brigas no namoro",
+        "é normal brigar no namoro",
+        "discussão no namoro"
+      ],
+      "responses": [
+        "Desentendimentos podem acontecer, mas o diálogo é essencial para resolver conflitos de forma saudável."
+      ]
+    },
+    {
+      "tag": "namoro_confianca",
+      "patterns": [
+        "confiança no namoro",
+        "como confiar no namoro",
+        "ciúmes no namoro"
+      ],
+      "responses": [
+        "A confiança é a base de um namoro saudável e se constrói com honestidade e respeito."
+      ]
+    }
+  ]
+}
 ]
+
