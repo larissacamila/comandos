@@ -1,41 +1,57 @@
-# API.py
 from flask import Flask, request, jsonify
 import requests
 
 app = Flask(__name__)
 
-# CONFIGURAÇÃO
-ESP32_IP = "http://192.168.15.80"  # IP do ESP32
-ESP32_API_KEY = "156478"   # chave do ESP32
+# IP do seu ESP32 na rede local
+ESP32_IP = "192.168.15.80"
+
+# Chave da API
+API_KEY = "156478"  # Coloque aqui sua chave secreta
 
 # Função para enviar comando para o ESP32
-def enviar_para_esp32(comando):
+def enviar_comando_esp(comando):
     try:
-        resp = requests.post(f"{ESP32_IP}/comando", json={"comando": comando, "key": ESP32_API_KEY}, timeout=5)
+        url = f"http://{ESP32_IP}/{comando}"  # ESP deve ter endpoints tipo /ligar_luz
+        resp = requests.get(url, timeout=3)
         if resp.status_code == 200:
-            return {"status": "sucesso", "comando": comando, "mensagem": "Comando enviado para ESP32"}
+            return True, resp.text
         else:
-            return {"status": "erro", "mensagem": f"ESP32 respondeu: {resp.text}"}
+            return False, f"Erro do ESP32: {resp.status_code}"
     except Exception as e:
-        return {"status": "erro", "mensagem": str(e)}
+        return False, str(e)
 
-# Endpoint principal de comando
+# Verifica chave
+def checar_chave():
+    auth = request.headers.get("Authorization")
+    if not auth or not auth.startswith("Bearer "):
+        return False
+    token = auth.split(" ")[1]
+    return token == API_KEY
+
 @app.route("/comando", methods=["POST"])
 def comando():
+    if not checar_chave():
+        return jsonify({"status": "erro", "mensagem": "Chave inválida"}), 401
+
     data = request.json
     if not data or "comando" not in data:
         return jsonify({"status": "erro", "mensagem": "Comando não fornecido"}), 400
 
     comando = data["comando"]
-    resultado = enviar_para_esp32(comando)
-    return jsonify(resultado)
+    sucesso, resultado = enviar_comando_esp(comando)
+    
+    if sucesso:
+        return jsonify({"status": "ok", "mensagem": f"Comando '{comando}' executado com sucesso!", "resposta_esp": resultado})
+    else:
+        return jsonify({"status": "erro", "mensagem": f"Falha ao executar '{comando}'", "erro": resultado}), 500
 
-# Endpoint de teste
-@app.route("/", methods=["GET"])
-def raiz():
-    return jsonify({"mensagem": "API Luna ativa. Use /comando para enviar comandos."})
+@app.route("/teste", methods=["GET"])
+def teste():
+    if not checar_chave():
+        return jsonify({"status": "erro", "mensagem": "Chave inválida"}), 401
+    return jsonify({"status": "ok", "mensagem": "API funcionando!"})
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
-
 
