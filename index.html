@@ -41,10 +41,10 @@ h1 { margin-bottom: 10px; }
 </div>
 
 <script>
-const API_URL = "https://comandos-mmmu.onrender.com/predict"; // seu endpoint no Render
-const API_KEY = "156478"; // se precisar
+const API_URL = "https://comandos-mmmu.onrender.com/predict";
+const API_KEY = "SUA_CHAVE_API_AQUI";
 
-// Relógio em tempo real
+// Relógio
 function atualizarRelogio() {
     const agora = new Date();
     const opcoes = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
@@ -75,7 +75,10 @@ async function enviarMensagem() {
     try {
         const response = await fetch(API_URL, {
             method: "POST",
-            headers: { "Content-Type": "application/json", ...(API_KEY && { "Authorization": `Bearer ${API_KEY}` }) },
+            headers: { 
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${API_KEY}`
+            },
             body: JSON.stringify({ message: mensagem })
         });
         const data = await response.json();
@@ -100,7 +103,7 @@ document.getElementById("mensagemInput").addEventListener("keypress", function(e
     if(e.key === "Enter") enviarMensagem();
 });
 
-// Função de fala da Luna
+// Fala da Luna
 function falar(texto) {
     if (!('speechSynthesis' in window)) return;
     const msg = new SpeechSynthesisUtterance(texto);
