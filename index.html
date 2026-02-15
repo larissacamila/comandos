@@ -17,9 +17,9 @@ h1 { margin-bottom: 10px; }
 #entrada button { padding: 10px 15px; margin-left: 5px; border-radius: 5px; border: none; background: #4a90e2; color: white; cursor: pointer; }
 #comandos { margin-top: 15px; display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
 #comandos button { padding: 10px 15px; border-radius: 5px; border: none; background: #34d399; color: white; cursor: pointer; }
-#agendamento { margin-top: 20px; display: flex; flex-direction: column; align-items: center; gap: 10px; }
-#agendamento input { padding: 5px; border-radius: 5px; border: none; }
-#agendamento button { padding: 5px 10px; border-radius: 5px; border: none; background: #ffb74d; color: #000; cursor: pointer; }
+#agendar { margin-top: 15px; display: flex; gap: 5px; flex-wrap: wrap; justify-content: center; align-items: center; }
+#agendar input, #agendar select { padding: 5px; border-radius: 5px; border: none; }
+#agendar button { padding: 5px 10px; border-radius: 5px; border: none; background: #f59e0b; color: white; cursor: pointer; }
 </style>
 </head>
 <body>
@@ -42,16 +42,19 @@ h1 { margin-bottom: 10px; }
     <button onclick="comandoRapido('hora')">🕒 Hora/Data</button>
 </div>
 
-<div id="agendamento">
-    <h3>Agendar Tarefas</h3>
+<div id="agendar">
     <input type="time" id="horaAgendada">
-    <input type="text" id="comandoAgendado" placeholder="Comando ex: ligar luz">
+    <select id="comandoAgendado">
+        <option value="ligar luz">💡 Acender Luz</option>
+        <option value="desligar luz">💡 Apagar Luz</option>
+        <option value="fazer café">☕ Fazer Café</option>
+    </select>
     <button onclick="agendarTarefa()">Agendar</button>
 </div>
 
 <script>
 const API_URL = "https://comandos-mmmu.onrender.com/comando"; // endpoint da API
-const API_KEY = "156478"; // se precisar
+const API_KEY = "156478"; // coloque sua chave
 
 // Relógio em tempo real
 function atualizarRelogio() {
@@ -74,18 +77,21 @@ function adicionarMensagem(texto, remetente) {
 }
 
 // Envia mensagem para API
-async function enviarMensagem(mensagem = null) {
+async function enviarMensagem(comando) {
     const input = document.getElementById("mensagemInput");
-    const msg = mensagem || input.value.trim();
-    if (!msg) return;
-    adicionarMensagem(msg, "usuario");
+    const mensagem = comando || input.value.trim();
+    if (!mensagem) return;
+    adicionarMensagem(mensagem, "usuario");
     input.value = "";
 
     try {
         const response = await fetch(API_URL, {
             method: "POST",
-            headers: { "Content-Type": "application/json", ...(API_KEY && { "Authorization": `Bearer ${API_KEY}` }) },
-            body: JSON.stringify({ comando: msg })
+            headers: { 
+                "Content-Type": "application/json", 
+                "Authorization": `Bearer ${API_KEY}`
+            },
+            body: JSON.stringify({ comando: mensagem })
         });
         const data = await response.json();
         const resposta = data.mensagem || "🌙 Não consegui processar sua solicitação.";
@@ -140,27 +146,26 @@ function ouvirVoz() {
     };
 }
 
-// Agendamento simples de tarefas
+// Agendamento de tarefas
 function agendarTarefa() {
     const hora = document.getElementById("horaAgendada").value;
-    const comando = document.getElementById("comandoAgendado").value.trim();
-    if (!hora || !comando) return alert("Preencha hora e comando");
+    const comando = document.getElementById("comandoAgendado").value;
+    if (!hora) return alert("Escolha um horário!");
 
     const agora = new Date();
     const partes = hora.split(":");
-    const tempoAlvo = new Date();
-    tempoAlvo.setHours(parseInt(partes[0]));
-    tempoAlvo.setMinutes(parseInt(partes[1]));
-    tempoAlvo.setSeconds(0);
+    const dataAlvo = new Date(agora.getFullYear(), agora.getMonth(), agora.getDate(), partes[0], partes[1], 0);
+    let delay = dataAlvo.getTime() - agora.getTime();
+    if (delay < 0) delay += 24*60*60*1000; // se passou da hora, agenda para amanhã
 
-    let delay = tempoAlvo - agora;
-    if (delay < 0) delay += 24*60*60*1000; // agenda para amanhã se já passou
+    setTimeout(() => {
+        enviarMensagem(comando);
+        alert(`Tarefa executada: ${comando}`);
+    }, delay);
 
-    adicionarMensagem(`⏰ Tarefa agendada: "${comando}" às ${hora}`, "luna");
-    setTimeout(() => enviarMensagem(comando), delay);
+    alert(`Tarefa agendada: ${comando} às ${hora}`);
 }
 </script>
 
 </body>
 </html>
-
