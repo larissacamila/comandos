@@ -1,49 +1,55 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import json
-import random
 import os
 
-# Configuração da chave de API
-API_KEY = "156478"  # <--- coloque sua chave aqui
-
 app = Flask(__name__)
-CORS(app)
+CORS(app)  # <<< ISSO AQUI É O CORS
 
-# Carrega intents dinamicamente
-INTENTS_FILE = os.path.join(os.path.dirname(__file__), "intents.json")
+API_KEY = "156478"
+
+INTENTS_PATH = "intents"
+
 
 def carregar_intents():
-    with open(INTENTS_FILE, "r", encoding="utf-8") as file:
-        return json.load(file)
+    intents = []
+    for arquivo in os.listdir(INTENTS_PATH):
+        if arquivo.endswith(".json"):
+            with open(os.path.join(INTENTS_PATH, arquivo), "r", encoding="utf-8") as f:
+                dados = json.load(f)
+                intents.extend(dados["intents"])
+    return intents
 
-intents = carregar_intents()
 
-def buscar_resposta(mensagem):
-    mensagem = mensagem.lower()
-    for intent in intents:
-        for pattern in intent["patterns"]:
-            if pattern.lower() in mensagem:
-                return random.choice(intent["responses"])
-    return "🌙 Não encontrei uma resposta. Pergunte outra coisa ou tente novamente."
+INTENTS = carregar_intents()
 
-@app.route("/predict", methods=["POST"])
-def predict():
-    auth_header = request.headers.get("Authorization")
-    if not auth_header or auth_header != f"Bearer {API_KEY}":
-        return jsonify({"error": "Unauthorized"}), 401
 
-    data = request.get_json()
-    if not data or "message" not in data:
-        return jsonify({"error": "Invalid request, missing 'message'"}), 400
-
-    mensagem = data["message"]
-    resposta = buscar_resposta(mensagem)
-    return jsonify({"response": resposta})
-
-@app.route("/", methods=["GET"])
+@app.route("/")
 def home():
-    return "🌙 API Luna de Conhecimento Ativa!", 200
+    return "API de Conhecimento rodando."
+
+
+@app.route("/ask", methods=["POST"])
+def ask():
+    chave = request.headers.get("x-api-key")
+    if chave != API_KEY:
+        return jsonify({"error": "Chave inválida"}), 401
+
+    data = request.json
+    texto = data.get("text", "").lower()
+
+    for intent in INTENTS:
+        for pattern in intent["patterns"]:
+            if pattern in texto:
+                return jsonify({
+                    "response": intent["responses"][0],
+                    "tag": intent["tag"]
+                })
+
+    return jsonify({
+        "response": "Não encontrei uma resposta para isso ainda."
+    })
+
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    app.run(host="0.0.0.0", port=5000)
