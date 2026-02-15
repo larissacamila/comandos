@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Luna - Cliente Web</title>
+<title>Luna - Cliente Web Completo</title>
 <style>
 body { font-family: Arial, sans-serif; background: #1e1e2f; color: #f0f0f0; display: flex; flex-direction: column; align-items: center; margin: 0; padding: 20px;}
 h1 { margin-bottom: 10px; }
@@ -17,6 +17,9 @@ h1 { margin-bottom: 10px; }
 #entrada button { padding: 10px 15px; margin-left: 5px; border-radius: 5px; border: none; background: #4a90e2; color: white; cursor: pointer; }
 #comandos { margin-top: 15px; display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
 #comandos button { padding: 10px 15px; border-radius: 5px; border: none; background: #34d399; color: white; cursor: pointer; }
+#agendamento { margin-top: 20px; display: flex; flex-direction: column; align-items: center; gap: 10px; }
+#agendamento input { padding: 5px; border-radius: 5px; border: none; }
+#agendamento button { padding: 5px 10px; border-radius: 5px; border: none; background: #ffb74d; color: #000; cursor: pointer; }
 </style>
 </head>
 <body>
@@ -37,14 +40,20 @@ h1 { margin-bottom: 10px; }
     <button onclick="comandoRapido('desligar luz')">💡 Luz Off</button>
     <button onclick="comandoRapido('fazer café')">☕ Café</button>
     <button onclick="comandoRapido('hora')">🕒 Hora/Data</button>
-    <button onclick="comandoRapido('alerta 08:00 Levantar')">⏰ Alerta</button>
+</div>
+
+<div id="agendamento">
+    <h3>Agendar Tarefas</h3>
+    <input type="time" id="horaAgendada">
+    <input type="text" id="comandoAgendado" placeholder="Comando ex: ligar luz">
+    <button onclick="agendarTarefa()">Agendar</button>
 </div>
 
 <script>
-const API_URL = "https://comandos-mmmu.onrender.com/predict";
-const API_KEY = "156478";
+const API_URL = "https://comandos-mmmu.onrender.com/comando"; // endpoint da API
+const API_KEY = "156478"; // se precisar
 
-// Relógio
+// Relógio em tempo real
 function atualizarRelogio() {
     const agora = new Date();
     const opcoes = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
@@ -65,24 +74,21 @@ function adicionarMensagem(texto, remetente) {
 }
 
 // Envia mensagem para API
-async function enviarMensagem() {
+async function enviarMensagem(mensagem = null) {
     const input = document.getElementById("mensagemInput");
-    const mensagem = input.value.trim();
-    if (!mensagem) return;
-    adicionarMensagem(mensagem, "usuario");
+    const msg = mensagem || input.value.trim();
+    if (!msg) return;
+    adicionarMensagem(msg, "usuario");
     input.value = "";
 
     try {
         const response = await fetch(API_URL, {
             method: "POST",
-            headers: { 
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${API_KEY}`
-            },
-            body: JSON.stringify({ message: mensagem })
+            headers: { "Content-Type": "application/json", ...(API_KEY && { "Authorization": `Bearer ${API_KEY}` }) },
+            body: JSON.stringify({ comando: msg })
         });
         const data = await response.json();
-        const resposta = data.response || "🌙 Não consegui processar sua solicitação.";
+        const resposta = data.mensagem || "🌙 Não consegui processar sua solicitação.";
         adicionarMensagem(resposta, "luna");
         falar(resposta);
     } catch (e) {
@@ -93,9 +99,7 @@ async function enviarMensagem() {
 
 // Botões de comando rápido
 function comandoRapido(texto) {
-    const input = document.getElementById("mensagemInput");
-    input.value = texto;
-    enviarMensagem();
+    enviarMensagem(texto);
 }
 
 // Enter para enviar
@@ -103,7 +107,7 @@ document.getElementById("mensagemInput").addEventListener("keypress", function(e
     if(e.key === "Enter") enviarMensagem();
 });
 
-// Fala da Luna
+// Função de fala da Luna
 function falar(texto) {
     if (!('speechSynthesis' in window)) return;
     const msg = new SpeechSynthesisUtterance(texto);
@@ -134,6 +138,26 @@ function ouvirVoz() {
     recognition.onerror = (event) => {
         console.error("Erro no reconhecimento de voz:", event.error);
     };
+}
+
+// Agendamento simples de tarefas
+function agendarTarefa() {
+    const hora = document.getElementById("horaAgendada").value;
+    const comando = document.getElementById("comandoAgendado").value.trim();
+    if (!hora || !comando) return alert("Preencha hora e comando");
+
+    const agora = new Date();
+    const partes = hora.split(":");
+    const tempoAlvo = new Date();
+    tempoAlvo.setHours(parseInt(partes[0]));
+    tempoAlvo.setMinutes(parseInt(partes[1]));
+    tempoAlvo.setSeconds(0);
+
+    let delay = tempoAlvo - agora;
+    if (delay < 0) delay += 24*60*60*1000; // agenda para amanhã se já passou
+
+    adicionarMensagem(`⏰ Tarefa agendada: "${comando}" às ${hora}`, "luna");
+    setTimeout(() => enviarMensagem(comando), delay);
 }
 </script>
 
