@@ -9,8 +9,9 @@
     {
       "tag": "conselho_namoro",
       "patterns": ["me dê um conselho amoroso", "conselho de namoro","briga no amor"],
-      "responses": ["Comunicação, respeito e confiança são a base de qualquer relacionamento saudável."]
+      "responses": ["Comunicação, respeito e confiança são a base de qualquer relacionamento saudável.","não brigue"]
     }
   ]
 
 }
+
