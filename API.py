@@ -1,55 +1,66 @@
-from flask import Flask, request, jsonify
-from flask_cors import CORS
 import json
-import os
-
+import random
+from flask import Flask, request, jsonify
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
+from flask_cors import CORS
 app = Flask(__name__)
-CORS(app)  # <<< ISSO AQUI É O CORS
+CORS(app)
 
-API_KEY = "156478"
+# Carregar intents
+with open("intents.json", "r", encoding="utf-8") as file:
+    data = json.load(file)
 
-INTENTS_PATH = "intents"
+patterns = []
+tags = []
+responses = {}
 
+for intent in data["intents"]:
+    for pattern in intent["patterns"]:
+        patterns.append(pattern.lower())
+        tags.append(intent["tag"])
+    responses[intent["tag"]] = intent["responses"]
 
-def carregar_intents():
-    intents = []
-    for arquivo in os.listdir(INTENTS_PATH):
-        if arquivo.endswith(".json"):
-            with open(os.path.join(INTENTS_PATH, arquivo), "r", encoding="utf-8") as f:
-                dados = json.load(f)
-                intents.extend(dados["intents"])
-    return intents
+# Vetorização
+vectorizer = TfidfVectorizer()
+X = vectorizer.fit_transform(patterns)
 
+def get_response(user_input):
+    user_input = user_input.lower()
+    user_vec = vectorizer.transform([user_input])
 
-INTENTS = carregar_intents()
+    similarities = cosine_similarity(user_vec, X)
+    best_match = similarities.argmax()
+    confidence = similarities[0][best_match]
+    fallbacks = [
+        "🌙 Não entendi muito bem sua pergunta. Você pode me dar mais detalhes?",
+        "🌙 Pode explicar um pouco melhor?",
+        "🌙 Acho que perdi alguma coisa 😅 pode reformular?",
+        "🌙 Me conta com outras palavras?"
+    ]
 
+    if confidence < 0.3:
+        return random.choice(fallbacks)
+   
+    tag = tags[best_match]
+    return random.choice(responses[tag])
+
+@app.route("/chat", methods=["POST"])
+def chat():
+    data = request.get_json()
+    user_message = data.get("message", "")
+    response = get_response(user_message)
+    return jsonify({"response": response})
+
+@app.route("/test")
+def test():
+    msg = request.args.get("msg", "")
+    resposta = get_response(msg)
+    return f"<h2>Luna:</h2><p>{resposta}</p>"
+from flask import send_from_directory
 
 @app.route("/")
-def home():
-    return "API de Conhecimento rodando."
-
-
-@app.route("/ask", methods=["POST"])
-def ask():
-    chave = request.headers.get("x-api-key")
-    if chave != API_KEY:
-        return jsonify({"error": "Chave inválida"}), 401
-
-    data = request.json
-    texto = data.get("text", "").lower()
-
-    for intent in INTENTS:
-        for pattern in intent["patterns"]:
-            if pattern in texto:
-                return jsonify({
-                    "response": intent["responses"][0],
-                    "tag": intent["tag"]
-                })
-
-    return jsonify({
-        "response": "Não encontrei uma resposta para isso ainda."
-    })
-
-
+def index():
+    return send_from_directory(".", "index.html")
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
