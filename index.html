@@ -160,9 +160,12 @@
 </div>
 
 <script>
-  /* CONFIGURAÇÕES */
-  const CHAT_PASSWORD = "1234"; // 🔑 MUDE AQUI
-  const API_URL = "https://comandos-mmmu.onrender.com";
+  /* =========================
+     CONFIGURAÇÕES
+  ========================== */
+  const CHAT_PASSWORD = "1234";          // senha do login local
+  const API_URL = "https://comandos-mmmu.onrender.com"; // 🔴 endpoint /chat
+  const API_KEY = "luna123";              // 🔐 mesma do backend
 
   const loginBox = document.getElementById("loginBox");
   const chatBox = document.getElementById("chatBox");
@@ -220,16 +223,27 @@
     try {
       const response = await fetch(API_URL, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: pergunta })
+        headers: {
+          "Content-Type": "application/json",
+          "X-API-KEY": API_KEY   // 🔐 AQUI ESTÁ A CHAVE
+        },
+        body: JSON.stringify({
+          message: pergunta
+        })
       });
 
       const data = await response.json();
+
+      if (data.error) {
+        addMessage("Luna: ❌ Acesso negado", "luna");
+        return;
+      }
+
       const resposta = data.response || "Não entendi.";
       addMessage("Luna: " + resposta, "luna");
       falar(resposta);
 
-    } catch {
+    } catch (e) {
       addMessage("Luna: Erro de conexão 😢", "luna");
     }
   }
@@ -257,4 +271,5 @@
 
 </body>
 </html>
+
 
