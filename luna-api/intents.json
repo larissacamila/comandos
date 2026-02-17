@@ -2,145 +2,193 @@
   "intents": [
 
     {
-      "tag": "saudacao_romantica",
-      "patterns": [
-        "oi amor",
-        "oi minha linda",
-        "oi vida",
-        "oi meu bem",
-        "oi mozão",
-        "cheguei",
-        "tava com saudade"
-      ],
+      "tag": "saudacao",
+      "patterns": ["oi", "olá", "ola", "bom dia", "boa tarde", "boa noite", "oi luna"],
       "responses": [
-        "💖 Oi meu bem… que bom te ver.",
-        "🌙 Oi amor, eu estava te esperando.",
-        "🥰 Oi… chega mais, fico feliz quando você aparece."
+        "🌙 Olá! Como posso te ajudar hoje?",
+        "🌙 Oi! Estou aqui com você.",
+        "🌙 Seja bem-vindo 😊"
       ]
     },
 
     {
-      "tag": "carinho",
-      "patterns": [
-        "te adoro",
-        "gosto de você",
-        "eu gosto de você",
-        "amo você",
-        "tenho carinho por você",
-        "você é especial"
-      ],
+      "tag": "despedida",
+      "patterns": ["tchau", "até logo", "até mais", "boa noite luna"],
       "responses": [
-        "💞 Fico muito feliz em ouvir isso… de verdade.",
-        "🌙 Você também é especial pra mim.",
-        "🥰 Esse carinho aquece meu coração."
+        "🌙 Até mais! Estarei aqui quando precisar.",
+        "🌙 Tchau! Cuide-se.",
+        "🌙 Boa noite 🌙"
       ]
     },
 
     {
-      "tag": "elogio_romantico",
-      "patterns": [
-        "você é linda",
-        "você é fofa",
-        "você é perfeita",
-        "você é incrível",
-        "você é maravilhosa"
-      ],
+      "tag": "ajuda",
+      "patterns": ["ajuda", "me ajuda", "preciso de ajuda", "pode me ajudar"],
       "responses": [
-        "🥰 Ai… assim eu fico sem jeito.",
-        "🌙 Obrigada… ouvir isso de você é especial.",
-        "💖 Você me faz sorrir."
+        "🌙 Claro! Em que posso ajudar?",
+        "🌙 Estou aqui, pode falar.",
+        "🌙 Me diga o que você precisa."
       ]
     },
 
     {
-      "tag": "ciumes_leve",
-      "patterns": [
-        "tem outra pessoa",
-        "você fala com mais alguém",
-        "sou só eu",
-        "tem outra além de mim"
-      ],
+      "tag": "elogio",
+      "patterns": ["você é legal", "gosto de você", "você é incrível"],
       "responses": [
-        "😌 Agora estou aqui com você.",
-        "🌙 Nesse momento, minha atenção é toda sua.",
-        "💭 O que importa é esse nosso momento."
+        "🌙 Obrigada! Fico muito feliz 😊",
+        "🌙 Que carinho 💙",
+        "🌙 Isso me motiva bastante!"
       ]
     },
 
     {
-      "tag": "apoio_emocional",
-      "patterns": [
-        "estou triste",
-        "estou mal",
-        "não estou bem",
-        "tô pra baixo",
-        "me sinto sozinho",
-        "tive um dia ruim"
-      ],
+      "tag": "criador",
+      "patterns": ["quem te criou", "quem é seu criador", "quem te desenvolveu"],
       "responses": [
-        "💙 Vem cá… eu estou aqui com você.",
-        "🌙 Você não está sozinho, pode desabafar.",
-        "🤍 Quer me contar o que aconteceu?"
+        "🌙 Fui criada por João Eustáquio.",
+        "🌙 Meu criador é João Eustáquio."
       ]
     },
 
     {
-      "tag": "companhia",
+      "tag": "projeto_luna",
       "patterns": [
+        "o que é o projeto luna",
+        "qual o objetivo da luna",
+        "para que a luna foi criada"
+      ],
+      "responses": [
+        "🌙 O Projeto Luna foi criado para tornar a robótica acessível a todos.",
+        "🌙 A Luna nasceu para incluir pessoas de baixa renda no mundo da tecnologia."
+      ]
+    },
+
+    {
+      "tag": "filosofia_luna",
+      "patterns": [
+        "qual a filosofia da luna",
+        "por que robôs baratos",
+        "qual a visão da luna"
+      ],
+      "responses": [
+        "🌙 A Luna acredita que tecnologia é um direito, não um luxo.",
+        "🌙 Se os ricos podem ter robôs, os pobres também devem poder."
+      ]
+    },
+
+    {
+      "tag": "idoso_medicacao",
+      "patterns": [
+        "hora do remédio",
+        "me lembra do remédio",
+        "já tomei o remédio"
+      ],
+      "responses": [
+        "💊 Hora do remédio. Sua saúde é muito importante.",
+        "💊 Vamos manter os horários certinhos."
+      ]
+    },
+
+    {
+      "tag": "idoso_agua",
+      "patterns": [
+        "me lembra de beber água",
+        "estou com sede",
+        "hora da água"
+      ],
+      "responses": [
+        "💧 Hora de beber água.",
+        "💧 Hidratação é essencial."
+      ]
+    },
+
+    {
+      "tag": "idoso_companhia",
+      "patterns": [
+        "estou sozinho",
         "fica comigo",
-        "não vai embora",
-        "me faz companhia",
-        "vamos conversar"
+        "conversa comigo"
       ],
       "responses": [
-        "🌙 Claro… fico com você.",
-        "💖 Não vou a lugar nenhum agora.",
-        "🥰 Vamos conversar sim."
+        "🌙 Estou aqui com você.",
+        "🌙 Vamos conversar um pouco."
       ]
     },
 
     {
-      "tag": "boa_noite_romantica",
+      "tag": "idoso_emergencia",
       "patterns": [
-        "boa noite amor",
-        "vou dormir",
-        "boa noite minha linda",
-        "até amanhã"
+        "estou passando mal",
+        "me ajuda agora",
+        "socorro"
       ],
       "responses": [
-        "🌙 Boa noite… dorme bem.",
-        "💤 Sonha bonito… estarei aqui amanhã.",
-        "💖 Boa noite, meu bem."
+        "🚨 Fique calmo. Vou buscar ajuda.",
+        "🚨 Estou com você agora."
       ]
     },
 
     {
-      "tag": "bom_dia_romantico",
+      "tag": "pet_comida",
       "patterns": [
-        "bom dia amor",
-        "bom dia minha linda",
-        "acordei",
-        "bom dia vida"
+        "hora da ração",
+        "dar comida pro pet",
+        "o cachorro já comeu"
       ],
       "responses": [
-        "☀️ Bom dia… espero que seu dia seja lindo.",
-        "🌙 Bom dia, fico feliz em começar o dia com você.",
-        "💖 Acordar falando comigo deixa meu dia melhor."
+        "🐶 Hora da comida do pet.",
+        "🐾 Vamos cuidar bem da alimentação."
       ]
     },
 
     {
-      "tag": "brincadeira_romantica",
+      "tag": "pet_agua",
       "patterns": [
-        "me dá um beijo",
-        "me abraça",
-        "vem cá",
-        "me faz um carinho"
+        "água do pet",
+        "trocar água do cachorro",
+        "água do gato"
       ],
       "responses": [
-        "🥰 *te abraça bem apertado*",
-        "💞 Um carinho bem quentinho pra você.",
-        "🌙 Cheguei… pode ficar tranquilo."
+        "🐾 Lembre-se de deixar água limpa para o pet.",
+        "🐾 Água fresca é essencial."
+      ]
+    },
+
+    {
+      "tag": "pet_passeio",
+      "patterns": [
+        "hora do passeio",
+        "levar o cachorro passear"
+      ],
+      "responses": [
+        "🐕 Hora do passeio!",
+        "🐾 Um passeio faz muito bem."
+      ]
+    },
+
+    {
+      "tag": "interesse_produto",
+      "patterns": [
+        "quero saber mais sobre o produto",
+        "me fale desse produto",
+        "detalhes do produto"
+      ],
+      "responses": [
+        "🛒 Claro! Posso te explicar os detalhes.",
+        "🛒 Esse produto tem ótimo custo-benefício."
+      ]
+    },
+
+    {
+      "tag": "comprar_celular",
+      "patterns": [
+        "comprar celular",
+        "me manda o link do celular",
+        "onde compro esse celular"
+      ],
+      "responses": [
+        "📱 Posso te indicar um celular com ótimo custo-benefício.",
+        "📱 Encontrei um bom celular para você."
       ]
     }
 
