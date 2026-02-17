@@ -2,9 +2,11 @@ import json
 import random
 import numpy as np
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 from sklearn.metrics.pairwise import cosine_similarity
 
 app = Flask(__name__)
+CORS(app)  # 🔥 ESSENCIAL PARA HTML LOCAL / BROWSER
 
 # =============================
 # CONFIGURAÇÃO DE SEGURANÇA
@@ -12,8 +14,7 @@ app = Flask(__name__)
 API_KEY = "luna123"
 
 def check_api_key(req):
-    key = req.headers.get("X-API-KEY")
-    return key == API_KEY
+    return req.headers.get("X-API-KEY") == API_KEY
 
 # =============================
 # CARREGAR INTENTS
@@ -32,15 +33,16 @@ def mock_embedding(text):
     if not vec:
         vec = [0]
     vec = np.array(vec, dtype=float)
-    return vec / np.linalg.norm(vec)
+    norm = np.linalg.norm(vec)
+    return vec / norm if norm != 0 else vec
 
 # =============================
 # PREPARAR BASE
 # =============================
 for intent in data["intents"]:
     tag = intent["tag"]
-    responses[tag] = intent["responses"]
-    for pattern in intent["patterns"]:
+    responses[tag] = intent.get("responses", [])
+    for pattern in intent.get("patterns", []):
         embeddings_db.append({
             "tag": tag,
             "embedding": mock_embedding(pattern)
@@ -52,6 +54,8 @@ for intent in data["intents"]:
 memory_server = {}
 
 def save_memory(user_id, role, text):
+    if not text:
+        return
     if user_id not in memory_server:
         memory_server[user_id] = []
     memory_server[user_id].append({"role": role, "text": text})
@@ -60,7 +64,10 @@ def save_memory(user_id, role, text):
 # =============================
 # RESPOSTA
 # =============================
-def get_response(user_input, user_memory):
+def get_response(user_input):
+    if not user_input:
+        return "🌙 Pode falar comigo 😊"
+
     input_emb = mock_embedding(user_input).reshape(1, -1)
 
     best_score = -1
@@ -69,6 +76,7 @@ def get_response(user_input, user_memory):
     for item in embeddings_db:
         vec = item["embedding"]
         min_len = min(len(vec), input_emb.shape[1])
+
         score = cosine_similarity(
             input_emb[:, :min_len],
             vec[:min_len].reshape(1, -1)
@@ -78,10 +86,10 @@ def get_response(user_input, user_memory):
             best_score = score
             best_tag = item["tag"]
 
-    if best_score < 0.7:
+    if best_tag is None or best_score < 0.7:
         return "🌙 Não entendi muito bem, pode explicar melhor?"
 
-    return random.choice(responses[best_tag])
+    return random.choice(responses.get(best_tag, ["🌙 Ok 😊"]))
 
 # =============================
 # ENDPOINT CHAT (PROTEGIDO)
@@ -91,25 +99,25 @@ def chat():
     if not check_api_key(request):
         return jsonify({"error": "Acesso negado"}), 403
 
-    data = request.get_json()
-    user_message = data.get("message", "")
-    user_memory_html = data.get("memory", [])
-    user_id = request.remote_addr
+    data = request.get_json(silent=True)
+    if not data:
+        return jsonify({"response": "🌙 Não recebi a mensagem."})
+
+    user_message = data.get("message", "").strip()
+    user_id = request.remote_addr or "anon"
 
     save_memory(user_id, "user", user_message)
-    combined_memory = memory_server[user_id] + user_memory_html
-
-    response = get_response(user_message, combined_memory)
+    response = get_response(user_message)
     save_memory(user_id, "luna", response)
 
     return jsonify({"response": response})
 
 # =============================
-# TESTE LOCAL
+# TESTE
 # =============================
 @app.route("/test")
 def test():
-    return "API Luna protegida 🔐"
+    return jsonify({"status": "ok", "msg": "API Luna protegida 🔐"})
 
 # =============================
 # RUN
