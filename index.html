@@ -53,7 +53,7 @@
       font-size: 0.9em;
     }
 
-    /* CHAT (seu código original) */
+    /* CHAT */
     .chat-container {
       display: none;
       width: 360px;
@@ -135,7 +135,7 @@
 
 <!-- LOGIN -->
 <div class="login-container" id="loginBox">
-  <h3>🔒 Acesso Luna2</h3>
+  <h3>🔒 Acesso Luna</h3>
   <input type="password" id="senha" placeholder="Digite a senha">
   <button onclick="login()">Entrar</button>
   <div class="erro" id="erro"></div>
@@ -160,6 +160,7 @@
 </div>
 
 <script>
+  /* CONFIGURAÇÕES */
   const CHAT_PASSWORD = "1234"; // 🔑 MUDE AQUI
   const API_URL = "https://comandos-mmmu.onrender.com";
 
@@ -204,7 +205,7 @@
     if (!vozSelecionada) carregarVozes();
     const fala = new SpeechSynthesisUtterance(removerEmojis(texto));
     fala.lang = "pt-BR";
-    fala.pitch = 1.2;
+    fala.pitch = 1.1;
     speechSynthesis.cancel();
     speechSynthesis.speak(fala);
   }
@@ -242,6 +243,7 @@
     const r = new webkitSpeechRecognition();
     r.lang = "pt-BR";
     r.start();
+
     r.onresult = e => {
       userInput.value = e.results[0][0].transcript;
       enviar();
