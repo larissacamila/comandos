@@ -1,9 +1,11 @@
 import json
 import random
+import os
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
-from flask_cors import CORS
+
 app = Flask(__name__)
 CORS(app)
 
@@ -32,6 +34,7 @@ def get_response(user_input):
     similarities = cosine_similarity(user_vec, X)
     best_match = similarities.argmax()
     confidence = similarities[0][best_match]
+
     fallbacks = [
         "🌙 Não entendi muito bem sua pergunta. Você pode me dar mais detalhes?",
         "🌙 Pode explicar um pouco melhor?",
@@ -41,7 +44,7 @@ def get_response(user_input):
 
     if confidence < 0.3:
         return random.choice(fallbacks)
-   
+
     tag = tags[best_match]
     return random.choice(responses[tag])
 
@@ -57,10 +60,11 @@ def test():
     msg = request.args.get("msg", "")
     resposta = get_response(msg)
     return f"<h2>Luna:</h2><p>{resposta}</p>"
-from flask import send_from_directory
 
 @app.route("/")
 def index():
-    return send_from_directory(".", "index.html")
+    return "API Luna online 🚀"
+
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000)
+    port = int(os.environ.get("PORT", 10000))
+    app.run(host="0.0.0.0", port=port)
