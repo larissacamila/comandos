@@ -1,126 +1,66 @@
 import json
 import random
-import numpy as np
 from flask import Flask, request, jsonify
-from flask_cors import CORS
+from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
-
+from flask_cors import CORS
 app = Flask(__name__)
-CORS(app)  # 🔥 ESSENCIAL PARA HTML LOCAL / BROWSER
+CORS(app)
 
-# =============================
-# CONFIGURAÇÃO DE SEGURANÇA
-# =============================
-API_KEY = "luna123"
-
-def check_api_key(req):
-    return req.headers.get("X-API-KEY") == API_KEY
-
-# =============================
-# CARREGAR INTENTS
-# =============================
+# Carregar intents
 with open("intents.json", "r", encoding="utf-8") as file:
     data = json.load(file)
 
+patterns = []
+tags = []
 responses = {}
-embeddings_db = []
 
-# =============================
-# EMBEDDING SIMPLES
-# =============================
-def mock_embedding(text):
-    vec = [ord(c) for c in text.lower() if c.isalnum()]
-    if not vec:
-        vec = [0]
-    vec = np.array(vec, dtype=float)
-    norm = np.linalg.norm(vec)
-    return vec / norm if norm != 0 else vec
-
-# =============================
-# PREPARAR BASE
-# =============================
 for intent in data["intents"]:
-    tag = intent["tag"]
-    responses[tag] = intent.get("responses", [])
-    for pattern in intent.get("patterns", []):
-        embeddings_db.append({
-            "tag": tag,
-            "embedding": mock_embedding(pattern)
-        })
+    for pattern in intent["patterns"]:
+        patterns.append(pattern.lower())
+        tags.append(intent["tag"])
+    responses[intent["tag"]] = intent["responses"]
 
-# =============================
-# MEMÓRIA CURTA
-# =============================
-memory_server = {}
+# Vetorização
+vectorizer = TfidfVectorizer()
+X = vectorizer.fit_transform(patterns)
 
-def save_memory(user_id, role, text):
-    if not text:
-        return
-    if user_id not in memory_server:
-        memory_server[user_id] = []
-    memory_server[user_id].append({"role": role, "text": text})
-    memory_server[user_id] = memory_server[user_id][-10:]
-
-# =============================
-# RESPOSTA
-# =============================
 def get_response(user_input):
-    if not user_input:
-        return "🌙 Pode falar comigo 😊"
+    user_input = user_input.lower()
+    user_vec = vectorizer.transform([user_input])
 
-    input_emb = mock_embedding(user_input).reshape(1, -1)
+    similarities = cosine_similarity(user_vec, X)
+    best_match = similarities.argmax()
+    confidence = similarities[0][best_match]
+    fallbacks = [
+        "🌙 Não entendi muito bem sua pergunta. Você pode me dar mais detalhes?",
+        "🌙 Pode explicar um pouco melhor?",
+        "🌙 Acho que perdi alguma coisa 😅 pode reformular?",
+        "🌙 Me conta com outras palavras?"
+    ]
 
-    best_score = -1
-    best_tag = None
+    if confidence < 0.3:
+        return random.choice(fallbacks)
+   
+    tag = tags[best_match]
+    return random.choice(responses[tag])
 
-    for item in embeddings_db:
-        vec = item["embedding"]
-        min_len = min(len(vec), input_emb.shape[1])
-
-        score = cosine_similarity(
-            input_emb[:, :min_len],
-            vec[:min_len].reshape(1, -1)
-        )[0][0]
-
-        if score > best_score:
-            best_score = score
-            best_tag = item["tag"]
-
-    if best_tag is None or best_score < 0.7:
-        return "🌙 Não entendi muito bem, pode explicar melhor?"
-
-    return random.choice(responses.get(best_tag, ["🌙 Ok 😊"]))
-
-# =============================
-# ENDPOINT CHAT (PROTEGIDO)
-# =============================
 @app.route("/chat", methods=["POST"])
 def chat():
-    if not check_api_key(request):
-        return jsonify({"error": "Acesso negado"}), 403
-
-    data = request.get_json(silent=True)
-    if not data:
-        return jsonify({"response": "🌙 Não recebi a mensagem."})
-
-    user_message = data.get("message", "").strip()
-    user_id = request.remote_addr or "anon"
-
-    save_memory(user_id, "user", user_message)
+    data = request.get_json()
+    user_message = data.get("message", "")
     response = get_response(user_message)
-    save_memory(user_id, "luna", response)
-
     return jsonify({"response": response})
 
-# =============================
-# TESTE
-# =============================
 @app.route("/test")
 def test():
-    return jsonify({"status": "ok", "msg": "API Luna protegida 🔐"})
+    msg = request.args.get("msg", "")
+    resposta = get_response(msg)
+    return f"<h2>Luna:</h2><p>{resposta}</p>"
+from flask import send_from_directory
 
-# =============================
-# RUN
-# =============================
+@app.route("/")
+def index():
+    return send_from_directory(".", "index.html")
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
