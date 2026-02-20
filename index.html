@@ -2,43 +2,78 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
+<title>Luna</title>
 
 <style>
 body {
     background: #0f172a;
-    font-family: Arial;
+    font-family: Arial, sans-serif;
     color: white;
 }
+
 #chat {
-    max-width: 400px;
-    margin: auto;
-    margin-top: 40px;
+    max-width: 420px;
+    margin: 40px auto;
     background: #020617;
     padding: 15px;
-    border-radius: 10px;
+    border-radius: 12px;
 }
+
+#messages {
+    min-height: 260px;
+    max-height: 260px;
+    overflow-y: auto;
+    margin-bottom: 10px;
+}
+
 .msg { margin: 6px 0; }
 .user { color: #38bdf8; }
 .luna { color: #a78bfa; }
-input { width: 75%; padding: 8px; }
-button { padding: 8px; }
+
+.controls {
+    display: flex;
+    gap: 6px;
+}
+
+input {
+    flex: 1;
+    padding: 8px;
+    border-radius: 6px;
+    border: none;
+}
+
+button {
+    padding: 8px 10px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+}
 </style>
 </head>
+
 <body>
 
 <div id="chat">
     <h3>🌙 Luna</h3>
+
     <div id="messages"></div>
-    <input id="texto" placeholder="Digite algo">
-    <button onclick="enviar()">Enviar</button>
+
+    <div class="controls">
+        <input id="texto" placeholder="Digite ou fale com a Luna">
+        <button onclick="enviar()">➤</button>
+        <button onclick="falar()">🎤</button>
+    </div>
 </div>
 
 <script>
-// 👉 TROQUE AQUI SE QUISER OUTRA API
 const API = "https://comandos-mmmu.onrender.com/chat";
 
-function enviar() {
-    const texto = document.getElementById("texto").value.trim();
+// ============================
+// ENVIO DE TEXTO
+// ============================
+function enviar(textoManual = null) {
+    const input = document.getElementById("texto");
+    const texto = textoManual || input.value.trim();
     if (!texto) return;
 
     add("Você", texto, "user");
@@ -46,13 +81,12 @@ function enviar() {
     fetch(API, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ texto: texto })
+        body: JSON.stringify({ texto })
     })
     .then(res => res.json())
     .then(data => {
         console.log("API respondeu:", data);
 
-        // 🔥 ADAPTAÇÃO IMPORTANTE
         const resposta =
             data.resposta ||
             data.response ||
@@ -60,23 +94,71 @@ function enviar() {
             "🌙 Recebi, mas não sei responder agora.";
 
         add("Luna", resposta, "luna");
+        falarTexto(resposta);
     })
     .catch(err => {
         console.error(err);
         add("Luna", "Erro de conexão 😢", "luna");
     });
 
-    document.getElementById("texto").value = "";
+    input.value = "";
 }
 
+// ============================
+// MICROFONE (STT)
+// ============================
+function falar() {
+    if (!("webkitSpeechRecognition" in window)) {
+        alert("Reconhecimento de voz não suportado neste navegador");
+        return;
+    }
+
+    const recognition = new webkitSpeechRecognition();
+    recognition.lang = "pt-BR";
+    recognition.continuous = false;
+    recognition.interimResults = false;
+
+    recognition.onstart = () => {
+        add("Sistema", "🎤 Ouvindo...", "luna");
+    };
+
+    recognition.onresult = (event) => {
+        const texto = event.results[0][0].transcript;
+        enviar(texto);
+    };
+
+    recognition.onerror = () => {
+        add("Sistema", "Erro ao ouvir 😢", "luna");
+    };
+
+    recognition.start();
+}
+
+// ============================
+// VOZ DA LUNA (TTS)
+// ============================
+function falarTexto(texto) {
+    if (!("speechSynthesis" in window)) return;
+
+    const fala = new SpeechSynthesisUtterance(texto);
+    fala.lang = "pt-BR";
+    fala.rate = 1;
+    fala.pitch = 1;
+    speechSynthesis.speak(fala);
+}
+
+// ============================
+// UI
+// ============================
 function add(nome, texto, cls) {
     const div = document.createElement("div");
     div.className = "msg " + cls;
     div.innerHTML = `<b>${nome}:</b> ${texto}`;
-    document.getElementById("messages").appendChild(div);
+    const messages = document.getElementById("messages");
+    messages.appendChild(div);
+    messages.scrollTop = messages.scrollHeight;
 }
 </script>
 
 </body>
 </html>
-
