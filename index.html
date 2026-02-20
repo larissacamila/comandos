@@ -2,50 +2,84 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<title>Luna</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Luna Mobile</title>
 
 <style>
 body {
+    margin: 0;
     background: #0f172a;
     font-family: Arial, sans-serif;
     color: white;
+    display: flex;
+    justify-content: center;
 }
 
-#chat {
+#app {
+    width: 100%;
     max-width: 420px;
-    margin: 40px auto;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
     background: #020617;
-    padding: 15px;
-    border-radius: 12px;
 }
 
+/* TOPO */
+header {
+    text-align: center;
+    padding: 12px;
+    background: #020617;
+}
+
+/* AVATAR */
+#avatar {
+    width: 120px;
+    height: 120px;
+    margin: 10px auto;
+    border-radius: 50%;
+    background: radial-gradient(circle at top, #a78bfa, #312e81);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 48px;
+    box-shadow: 0 0 25px rgba(167,139,250,0.6);
+}
+
+/* CHAT */
 #messages {
-    min-height: 260px;
-    max-height: 260px;
+    flex: 1;
+    padding: 10px;
     overflow-y: auto;
-    margin-bottom: 10px;
 }
 
-.msg { margin: 6px 0; }
+.msg {
+    margin: 6px 0;
+    font-size: 14px;
+}
 .user { color: #38bdf8; }
 .luna { color: #a78bfa; }
 
-.controls {
+/* CONTROLES */
+#controls {
     display: flex;
     gap: 6px;
+    padding: 10px;
+    background: #020617;
 }
 
 input {
     flex: 1;
-    padding: 8px;
-    border-radius: 6px;
+    padding: 10px;
+    border-radius: 8px;
     border: none;
+    font-size: 14px;
 }
 
 button {
-    padding: 8px 10px;
-    border-radius: 6px;
+    padding: 10px;
+    border-radius: 8px;
     border: none;
+    font-size: 16px;
     cursor: pointer;
 }
 </style>
@@ -53,30 +87,36 @@ button {
 
 <body>
 
-<div id="chat">
+<div id="app">
+
+<header>
     <h3>🌙 Luna</h3>
+    <div id="avatar">🤖</div>
+</header>
 
-    <div id="messages"></div>
+<div id="messages"></div>
 
-    <div class="controls">
-        <input id="texto" placeholder="Digite ou fale com a Luna">
-        <button onclick="enviar()">➤</button>
-        <button onclick="falar()">🎤</button>
-    </div>
+<div id="controls">
+    <input id="texto" placeholder="Digite ou fale">
+    <button onclick="enviar()">➤</button>
+    <button onclick="ouvir()">🎤</button>
+</div>
+
 </div>
 
 <script>
 const API = "https://comandos-mmmu.onrender.com/chat";
 
-// ============================
-// ENVIO DE TEXTO
-// ============================
+// =========================
+// ENVIO TEXTO
+// =========================
 function enviar(textoManual = null) {
     const input = document.getElementById("texto");
     const texto = textoManual || input.value.trim();
     if (!texto) return;
 
     add("Você", texto, "user");
+    animarAvatar(true);
 
     fetch(API, {
         method: "POST",
@@ -85,8 +125,6 @@ function enviar(textoManual = null) {
     })
     .then(res => res.json())
     .then(data => {
-        console.log("API respondeu:", data);
-
         const resposta =
             data.resposta ||
             data.response ||
@@ -94,72 +132,76 @@ function enviar(textoManual = null) {
             "🌙 Recebi, mas não sei responder agora.";
 
         add("Luna", resposta, "luna");
-        falarTexto(resposta);
+        falar(resposta);
     })
-    .catch(err => {
-        console.error(err);
+    .catch(() => {
         add("Luna", "Erro de conexão 😢", "luna");
     });
 
     input.value = "";
 }
 
-// ============================
-// MICROFONE (STT)
-// ============================
-function falar() {
+// =========================
+// MICROFONE
+// =========================
+function ouvir() {
     if (!("webkitSpeechRecognition" in window)) {
-        alert("Reconhecimento de voz não suportado neste navegador");
+        alert("Microfone não suportado");
         return;
     }
 
-    const recognition = new webkitSpeechRecognition();
-    recognition.lang = "pt-BR";
-    recognition.continuous = false;
-    recognition.interimResults = false;
+    const rec = new webkitSpeechRecognition();
+    rec.lang = "pt-BR";
 
-    recognition.onstart = () => {
-        add("Sistema", "🎤 Ouvindo...", "luna");
-    };
+    animarAvatar(true);
+    rec.start();
 
-    recognition.onresult = (event) => {
-        const texto = event.results[0][0].transcript;
+    rec.onresult = e => {
+        const texto = e.results[0][0].transcript;
         enviar(texto);
     };
 
-    recognition.onerror = () => {
+    rec.onerror = () => {
+        animarAvatar(false);
         add("Sistema", "Erro ao ouvir 😢", "luna");
     };
-
-    recognition.start();
 }
 
-// ============================
-// VOZ DA LUNA (TTS)
-// ============================
-function falarTexto(texto) {
+// =========================
+// VOZ
+// =========================
+function falar(texto) {
     if (!("speechSynthesis" in window)) return;
 
-    const fala = new SpeechSynthesisUtterance(texto);
-    fala.lang = "pt-BR";
-    fala.rate = 1;
-    fala.pitch = 1;
-    speechSynthesis.speak(fala);
+    const voz = new SpeechSynthesisUtterance(texto);
+    voz.lang = "pt-BR";
+
+    voz.onend = () => animarAvatar(false);
+    speechSynthesis.speak(voz);
 }
 
-// ============================
+// =========================
+// AVATAR
+// =========================
+function animarAvatar(ativo) {
+    const avatar = document.getElementById("avatar");
+    avatar.style.boxShadow = ativo
+        ? "0 0 35px #a78bfa"
+        : "0 0 15px rgba(167,139,250,0.5)";
+}
+
+// =========================
 // UI
-// ============================
+// =========================
 function add(nome, texto, cls) {
     const div = document.createElement("div");
     div.className = "msg " + cls;
     div.innerHTML = `<b>${nome}:</b> ${texto}`;
-    const messages = document.getElementById("messages");
-    messages.appendChild(div);
-    messages.scrollTop = messages.scrollHeight;
+    const msg = document.getElementById("messages");
+    msg.appendChild(div);
+    msg.scrollTop = msg.scrollHeight;
 }
 </script>
 
 </body>
 </html>
-
