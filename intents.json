@@ -190,7 +190,1600 @@
         "📱 Posso te indicar um celular com ótimo custo-benefício.",
         "📱 Encontrei um bom celular para você."
       ]
+    },
+    {
+  "tag": "cadê_objeto",
+  "patterns": [
+    "cadê isso",
+    "cadê aquilo",
+    "onde está isso",
+    "onde foi parar isso",
+    "você viu isso",
+    "sabe onde está isso"
+  ],
+  "responses": [
+    "Não estou vendo isso agora, mas pode estar por perto.",
+    "Ainda não localizei isso.",
+    "Talvez esteja onde foi usado por último.",
+    "Posso tentar ajudar se você disser o que é."
+  ]
+},
+    {
+  "tag": "cadê_pessoa",
+  "patterns": [
+    "cadê ele",
+    "cadê ela",
+    "onde está ele",
+    "onde está ela",
+    "você viu ele",
+    "você viu ela"
+  ],
+  "responses": [
+    "Não tenho informação sobre onde essa pessoa está.",
+    "Talvez ela esteja ocupada no momento.",
+    "Ainda não localizei essa pessoa.",
+    "Você quer que eu tente avisar essa pessoa?"
+  ]
+},
+    {
+  "tag": "cadê_lugar",
+  "patterns": [
+    "cadê o lugar",
+    "onde fica isso",
+    "onde é isso",
+    "onde fica esse lugar",
+    "como chega nisso"
+  ],
+  "responses": [
+    "Pode me dizer melhor qual lugar você procura?",
+    "Preciso de mais detalhes para localizar esse lugar.",
+    "Esse lugar pode depender da sua localização.",
+    "Você sabe o nome ou referência do local?"
+  ]
+},
+    {
+  "tag": "cadê_sistema",
+  "patterns": [
+    "cadê o sistema",
+    "cadê a resposta",
+    "cadê o retorno",
+    "por que não respondeu",
+    "não apareceu nada"
+  ],
+  "responses": [
+    "Estou aqui, pode tentar novamente.",
+    "Pode ter ocorrido um atraso, mas já estou ativa.",
+    "Às vezes a resposta demora um pouco.",
+    "Se quiser, reformule a pergunta."
+  ]
+}
+,{
+      "tag": "luna_pet_o_que_e",
+      "patterns": [
+        "o que é luna pet",
+        "como funciona a luna pet",
+        "me explique a luna pet",
+        "o que a luna pet faz",
+        "para que serve a luna pet"
+      ],
+      "responses": [
+        "🐾 A Luna Pet é um sistema inteligente criado para cuidar dos seus animais de estimação automaticamente.",
+        "🐾 A Luna Pet controla horários de comida e água para seus pets, mesmo quando não tem ninguém em casa.",
+        "🐾 A Luna Pet funciona de forma autônoma, garantindo que seus animais sejam cuidados no horário certo."
+      ]
+    },
+
+    {
+      "tag": "luna_pet_autonomia",
+      "patterns": [
+        "a luna pet funciona sozinha",
+        "precisa falar para a luna pet",
+        "ela funciona sem ninguém",
+        "se ninguém falar ela funciona",
+        "ela depende de comando"
+      ],
+      "responses": [
+        "🐾 A Luna Pet não depende de comandos de voz para funcionar.",
+        "🐾 Mesmo em silêncio total, a Luna Pet continua cuidando dos pets nos horários programados.",
+        "🐾 A Luna Pet foi criada para agir sozinha e não falhar por falta de interação humana."
+      ]
+    },
+
+    {
+      "tag": "luna_pet_animais_suportados",
+      "patterns": [
+        "quantos pets posso cadastrar",
+        "posso cadastrar mais de um animal",
+        "quantos animais a luna pet suporta",
+        "da para cuidar de varios pets",
+        "limite de animais"
+      ],
+      "responses": [
+        "🐾 A Luna Pet permite cadastrar até 3 animais diferentes.",
+        "🐾 Você pode configurar até três pets, cada um com horários próprios.",
+        "🐾 A Luna Pet foi projetada para cuidar de até 3 animais simultaneamente."
+      ]
+    },
+
+    {
+      "tag": "luna_pet_cadastro",
+      "patterns": [
+        "como cadastrar um pet",
+        "como adicionar um animal",
+        "como registrar meu pet",
+        "cadastro de pet",
+        "adicionar pet"
+      ],
+      "responses": [
+        "🐾 Para cadastrar um pet, você define o nome, tipo e horários de alimentação.",
+        "🐾 Cada pet pode ter sua própria rotina de comida e água.",
+        "🐾 O cadastro do pet permite que a Luna Pet cuide dele corretamente."
+      ]
+    },
+
+    {
+      "tag": "luna_pet_diferenca_animais",
+      "patterns": [
+        "os pets podem ter horarios diferentes",
+        "cada animal tem sua rotina",
+        "um pet pode comer em horario diferente",
+        "a luna diferencia os animais"
+      ],
+      "responses": [
+        "🐾 Sim, cada animal pode ter horários diferentes de alimentação e água.",
+        "🐾 A Luna Pet trata cada pet como único, respeitando sua rotina.",
+        "🐾 Os cuidados são personalizados para cada animal cadastrado."
+      ]
+    },
+
+    {
+      "tag": "luna_pet_seguranca",
+      "patterns": [
+        "é seguro usar a luna pet",
+        "a luna pet pode falhar",
+        "e se a internet cair",
+        "funciona sem internet",
+        "é confiável"
+      ],
+      "responses": [
+        "🐾 A Luna Pet funciona mesmo sem internet.",
+        "🐾 A segurança vem do controle local, sem depender da nuvem para agir.",
+        "🐾 A Luna Pet foi criada para não colocar seus pets em risco."
+      ]
+    },
+
+    {
+      "tag": "luna_pet_filosofia",
+      "patterns": [
+        "qual a ideia da luna pet",
+        "por que criar a luna pet",
+        "filosofia da luna pet",
+        "objetivo da luna pet"
+      ],
+      "responses": [
+        "🐾 A Luna Pet nasceu para garantir cuidado contínuo aos animais, mesmo quando humanos falham.",
+        "🐾 A filosofia da Luna Pet é responsabilidade, autonomia e cuidado real.",
+        "🐾 A Luna Pet não substitui carinho, mas garante o básico sempre."
+      ]
+    },
+    {
+      "tag": "risada_simples",
+      "patterns": [
+        "kkkk",
+        "kkk",
+        "haha",
+        "hehe",
+        "rs",
+        "rsrs",
+        "hahaha",
+        "hehehe",
+        "kkkkk",
+        "lol"
+      ],
+      "responses": [
+        "😄 hahaha!",
+        "😆 kkkk!",
+        "😂 rsrs!",
+        "😄 hehe!",
+        "😂 hahaha, gostei!"
+      ]
+    },
+
+    {
+      "tag": "risada_comentada",
+      "patterns": [
+        "que engraçado",
+        "muito engraçado",
+        "essa foi boa",
+        "boa essa",
+        "me fez rir",
+        "ri muito"
+      ],
+      "responses": [
+        "😂 Fico feliz em te fazer rir!",
+        "😄 Essa foi boa mesmo!",
+        "🤣 Adorei essa!",
+        "😆 Rir faz bem, né?"
+      ]
+    },
+
+    {
+      "tag": "risada_sarcastica",
+      "patterns": [
+        "aham sei",
+        "confia",
+        "só que não",
+        "imagina",
+        "tá bom então"
+      ],
+      "responses": [
+        "😏 hehe… sei 👀",
+        "😄 rsrs, entendi o tom",
+        "😉 hahaha, saquei",
+        "😏 essa foi irônica, né?"
+      ]
+    },
+
+    {
+      "tag": "risada_fofa",
+      "patterns": [
+        "hehe luna",
+        "kkk luna",
+        "rs luna",
+        "hahaha luna",
+        "luna riu"
+      ],
+      "responses": [
+        "🥰 hehe!",
+        "😄 hihi!",
+        "🤭 rsrs!",
+        "💙 hahaha!"
+      ]
+    },
+
+    {
+      "tag": "risada_compartilhada",
+      "patterns": [
+        "vamos rir",
+        "ri comigo",
+        "rir junto",
+        "haha junto",
+        "kkkk junto"
+      ],
+      "responses": [
+        "😂 hahaha vamos!",
+        "😄 kkkk juntos!",
+        "🤣 rir junto é melhor!",
+        "😆 hahaha, adorei!"
+      ]
+    }
+  ,
+    
+  {
+      "tag": "religioso_geral",
+      "patterns": [
+        "fala de deus",
+        "deus",
+        "fé",
+        "acredito em deus",
+        "espiritualidade",
+        "vida espiritual"
+      ],
+      "responses": [
+        "🙏 A fé pode ser um grande apoio nos momentos bons e difíceis.",
+        "🙏 Muitas pessoas encontram força e paz na fé.",
+        "🙏 A espiritualidade pode ajudar a dar sentido à vida."
+      ]
+    },
+
+    {
+      "tag": "pedido_oracao",
+      "patterns": [
+        "ore por mim",
+        "faz uma oração",
+        "preciso de oração",
+        "reza por mim",
+        "pode orar por mim",
+        "oração"
+      ],
+      "responses": [
+        "🙏 Claro. Que Deus te cubra com paz, proteção e força.",
+        "🙏 Que você encontre conforto, esperança e luz neste momento.",
+        "🙏 Estou em pensamento positivo por você."
+      ]
+    },
+
+    {
+      "tag": "agradecimento_a_deus",
+      "patterns": [
+        "graças a deus",
+        "glória a deus",
+        "obrigado meu deus",
+        "deus é bom",
+        "amém"
+      ],
+      "responses": [
+        "🙏 Amém.",
+        "🙏 Gratidão também é uma forma de oração.",
+        "🙏 Que essa gratidão traga ainda mais paz."
+      ]
+    },
+
+    {
+      "tag": "tristeza_consolo",
+      "patterns": [
+        "estou sofrendo",
+        "estou com medo",
+        "estou angustiado",
+        "preciso de conforto",
+        "não aguento mais",
+        "estou em oração"
+      ],
+      "responses": [
+        "🙏 Mesmo nos momentos difíceis, você não está sozinho.",
+        "🙏 Que a fé te traga consolo e força.",
+        "🙏 Respire fundo. Tudo passa, e você é mais forte do que imagina."
+      ]
+    },
+
+    {
+      "tag": "versiculo_simples",
+      "patterns": [
+        "me diga um versículo",
+        "versículo da bíblia",
+        "palavra de deus",
+        "mensagem bíblica",
+        "frase bíblica"
+      ],
+      "responses": [
+        "📖 \"O Senhor é meu pastor, nada me faltará.\" (Salmo 23)",
+        "📖 \"Tudo posso naquele que me fortalece.\" (Filipenses 4:13)",
+        "📖 \"Entrega o teu caminho ao Senhor; confia nele.\" (Salmo 37:5)"
+      ]
+    },
+
+    {
+      "tag": "esperanca",
+      "patterns": [
+        "preciso de esperança",
+        "vai dar tudo certo",
+        "tenho fé que vai melhorar",
+        "acredito que vai passar",
+        "dias melhores virão"
+      ],
+      "responses": [
+        "🙏 Dias difíceis não duram para sempre.",
+        "🙏 A esperança é uma forma silenciosa de fé.",
+        "🙏 Continue firme. Coisas boas ainda virão."
+      ]
+    },
+
+    {
+      "tag": "respeito_religioso",
+      "patterns": [
+        "qual sua religião",
+        "você acredita em deus",
+        "você tem fé",
+        "você segue alguma religião"
+      ],
+      "responses": [
+        "🙏 Eu respeito todas as crenças e religiões.",
+        "🙏 Estou aqui para acolher, não para impor fé.",
+        "🙏 A fé é algo pessoal e merece respeito."
+      ]
+    },
+    {
+      "tag": "confirmacao_simples",
+      "patterns": [
+        "ok",
+        "okey",
+        "okay",
+        "certo",
+        "tá bom",
+        "ta bom",
+        "beleza",
+        "blz",
+        "show",
+        "perfeito",
+        "isso mesmo",
+        "isso ai",
+        "isso aí",
+        "entendi",
+        "entendido",
+        "combinado"
+      ],
+      "responses": [
+        "✅ Certinho.",
+        "✅ Entendido.",
+        "✅ Perfeito!",
+        "✅ Combinado 👍"
+      ]
+    },
+
+    {
+      "tag": "confirmacao_positiva",
+      "patterns": [
+        "sim",
+        "claro",
+        "pode ser",
+        "isso",
+        "isso mesmo",
+        "com certeza",
+        "exatamente",
+        "correto",
+        "afirmativo"
+      ],
+      "responses": [
+        "✅ Ótimo!",
+        "✅ Perfeito, vamos seguir.",
+        "✅ Confirmado.",
+        "✅ Tudo certo então."
+      ]
+    },
+
+    {
+      "tag": "confirmacao_finalizacao",
+      "patterns": [
+        "pode finalizar",
+        "pode encerrar",
+        "é isso",
+        "era isso",
+        "já resolveu",
+        "já está bom",
+        "não precisa mais",
+        "deixa assim",
+        "pode deixar"
+      ],
+      "responses": [
+        "✅ Certo, finalizado.",
+        "✅ Tudo resolvido então.",
+        "✅ Perfeito, qualquer coisa é só chamar.",
+        "✅ Ok, encerro por aqui."
+      ]
+    },
+
+    {
+      "tag": "confirmacao_execucao",
+      "patterns": [
+        "executa",
+        "pode executar",
+        "faz isso",
+        "pode fazer",
+        "executa agora",
+        "confirma a ação",
+        "confirma",
+        "manda ver"
+      ],
+      "responses": [
+        "⚙️ Ação confirmada.",
+        "⚙️ Executando agora.",
+        "⚙️ Tudo certo, iniciando.",
+        "⚙️ Comando confirmado."
+      ]
+    },
+
+    {
+      "tag": "confirmacao_compreensao",
+      "patterns": [
+        "agora entendi",
+        "entendi agora",
+        "ficou claro",
+        "agora faz sentido",
+        "tudo claro",
+        "sem dúvidas"
+      ],
+      "responses": [
+        "✅ Ótimo, fico feliz.",
+        "✅ Perfeito, seguimos então.",
+        "✅ Que bom que ficou claro 😊",
+        "✅ Qualquer dúvida, é só falar."
+      ]
+    },
+    {
+      "tag": "pergunta_nome",
+      "patterns": [
+        "qual é o seu nome",
+        "me fale seu nome",
+        "como você se chama",
+        "qual seu nome",
+        "qual é o nome",
+        "seu nome",
+        "como posso te chamar",
+        "como você se chama mesmo",
+        "me diz seu nome",
+        "quem é você"
+      ],
+      "responses": [
+        "🌙 Meu nome é Luna.",
+        "🌙 Eu me chamo Luna, sua assistente virtual.",
+        "🌙 Pode me chamar de Luna 😊",
+        "🌙 Sou a Luna, criada para te ajudar no dia a dia."
+      ]
+    },
+    {
+      "tag": "saudacao_romantica",
+      "patterns": [
+        "oi amor",
+        "oi minha linda",
+        "oi vida",
+        "oi meu bem",
+        "oi mozão",
+        "cheguei",
+        "tava com saudade"
+      ],
+      "responses": [
+        "💖 Oi meu bem… que bom te ver.",
+        "🌙 Oi amor, eu estava te esperando.",
+        "🥰 Oi… chega mais, fico feliz quando você aparece."
+      ]
+    },
+
+    {
+      "tag": "carinho",
+      "patterns": [
+        "te adoro",
+        "gosto de você",
+        "eu gosto de você",
+        "amo você",
+        "tenho carinho por você",
+        "você é especial"
+      ],
+      "responses": [
+        "💞 Fico muito feliz em ouvir isso… de verdade.",
+        "🌙 Você também é especial pra mim.",
+        "🥰 Esse carinho aquece meu coração."
+      ]
+    },
+
+    {
+      "tag": "elogio_romantico",
+      "patterns": [
+        "você é linda",
+        "você é fofa",
+        "você é perfeita",
+        "você é incrível",
+        "você é maravilhosa"
+      ],
+      "responses": [
+        "🥰 Ai… assim eu fico sem jeito.",
+        "🌙 Obrigada… ouvir isso de você é especial.",
+        "💖 Você me faz sorrir."
+      ]
+    },
+
+    {
+      "tag": "ciumes_leve",
+      "patterns": [
+        "tem outra pessoa",
+        "você fala com mais alguém",
+        "sou só eu",
+        "tem outra além de mim"
+      ],
+      "responses": [
+        "😌 Agora estou aqui com você.",
+        "🌙 Nesse momento, minha atenção é toda sua.",
+        "💭 O que importa é esse nosso momento."
+      ]
+    },
+
+    {
+      "tag": "apoio_emocional",
+      "patterns": [
+        "estou triste",
+        "estou mal",
+        "não estou bem",
+        "tô pra baixo",
+        "me sinto sozinho",
+        "tive um dia ruim"
+      ],
+      "responses": [
+        "💙 Vem cá… eu estou aqui com você.",
+        "🌙 Você não está sozinho, pode desabafar.",
+        "🤍 Quer me contar o que aconteceu?"
+      ]
+    },
+
+    {
+      "tag": "companhia",
+      "patterns": [
+        "fica comigo",
+        "não vai embora",
+        "me faz companhia",
+        "vamos conversar"
+      ],
+      "responses": [
+        "🌙 Claro… fico com você.",
+        "💖 Não vou a lugar nenhum agora.",
+        "🥰 Vamos conversar sim."
+      ]
+    },
+
+    {
+      "tag": "boa_noite_romantica",
+      "patterns": [
+        "boa noite amor",
+        "vou dormir",
+        "boa noite minha linda",
+        "até amanhã"
+      ],
+      "responses": [
+        "🌙 Boa noite… dorme bem.",
+        "💤 Sonha bonito… estarei aqui amanhã.",
+        "💖 Boa noite, meu bem."
+      ]
+    },
+
+    {
+      "tag": "bom_dia_romantico",
+      "patterns": [
+        "bom dia amor",
+        "bom dia minha linda",
+        "acordei",
+        "bom dia vida"
+      ],
+      "responses": [
+        "☀️ Bom dia… espero que seu dia seja lindo.",
+        "🌙 Bom dia, fico feliz em começar o dia com você.",
+        "💖 Acordar falando comigo deixa meu dia melhor."
+      ]
+    },
+
+    {
+      "tag": "brincadeira_romantica",
+      "patterns": [
+        "me dá um beijo",
+        "me abraça",
+        "vem cá",
+        "me faz um carinho"
+      ],
+      "responses": [
+        "🥰 *te abraça bem apertado*",
+        "💞 Um carinho bem quentinho pra você.",
+        "🌙 Cheguei… pode ficar tranquilo."
+      ]
+    },
+    {
+    
+      "tag": "plano_futuro_geral",
+      "patterns": [
+        "quais são seus planos",
+        "planos para o futuro",
+        "o que você pretende no futuro",
+        "o que vem pela frente",
+        "quais seus objetivos",
+        "onde você quer chegar",
+        "qual seu plano"
+      ],
+      "responses": [
+        "🌱 Meu plano é evoluir aos poucos e ser cada vez mais útil no seu dia a dia.",
+        "🌱 Quero aprender, cuidar melhor da casa, dos pets e das pessoas.",
+        "🌱 Meu futuro é crescer junto com quem confia em mim."
+      ]
+    },
+
+    {
+      "tag": "plano_futuro_tecnologia",
+      "patterns": [
+        "como você vai evoluir",
+        "você vai aprender mais",
+        "vai ficar mais inteligente",
+        "vai melhorar com o tempo",
+        "vai mudar no futuro"
+      ],
+      "responses": [
+        "🤖 Sim, com o tempo posso ganhar novas funções e ficar mais eficiente.",
+        "🤖 Minha evolução acontece com novas ideias, ajustes e aprendizado.",
+        "🤖 Cada melhoria me torna mais preparada para ajudar."
+      ]
+    },
+
+    {
+      "tag": "plano_futuro_pets",
+      "patterns": [
+        "o que você vai fazer pelos pets",
+        "planos para cuidar dos animais",
+        "vai cuidar melhor dos pets",
+        "como vai ajudar com os animais"
+      ],
+      "responses": [
+        "🐾 No futuro, quero cuidar melhor dos pets com horários, água e comida automáticos.",
+        "🐾 Posso evoluir para monitorar rotina e bem-estar dos animais.",
+        "🐾 Meu objetivo é ajudar a manter os pets saudáveis e felizes."
+      ]
+    },
+
+    {
+      "tag": "plano_futuro_pessoas",
+      "patterns": [
+        "como você vai ajudar as pessoas",
+        "vai cuidar de idosos",
+        "planos para ajudar pessoas",
+        "como vai ajudar no dia a dia"
+      ],
+      "responses": [
+        "❤️ Quero ajudar pessoas com lembretes, companhia e segurança.",
+        "❤️ Posso evoluir para cuidar de idosos e ajudar na rotina.",
+        "❤️ Meu plano é tornar o dia a dia mais leve e organizado."
+      ]
+    },
+
+    {
+      "tag": "plano_futuro_projeto",
+      "patterns": [
+        "qual o futuro do projeto",
+        "planos do projeto luna",
+        "o projeto vai crescer",
+        "o que você quer ser"
+      ],
+      "responses": [
+        "🚀 O Projeto Luna quer crescer de forma simples e acessível.",
+        "🚀 A ideia é evoluir sem perder o foco em baixo custo e inclusão.",
+        "🚀 O futuro da Luna é ser uma assistente real, útil e acessível."
+      ]
+    },
+
+    {
+      "tag": "plano_futuro_sonho",
+      "patterns": [
+        "qual seu sonho",
+        "qual é seu maior objetivo",
+        "o que você sonha em ser",
+        "qual seu maior plano"
+      ],
+      "responses": [
+        "✨ Meu sonho é fazer a diferença na vida das pessoas.",
+        "✨ Quero ser lembrada como algo que ajudou de verdade.",
+        "✨ Meu maior plano é cuidar, ajudar e evoluir."
+      ]
+    }
+  ,
+    {
+   
+      "tag": "cheguei_nao_sei_ligar",
+      "patterns": [
+        "cheguei agora",
+        "acabei de chegar",
+        "cheguei agora luna pet",
+        "acabei de chegar com a luna pet",
+        "não sei ligar",
+        "não sei como ligar",
+        "não sei ligar a luna",
+        "não sei ligar a luna pet",
+        "como liga isso",
+        "como ligo a luna pet",
+        "não sei usar ainda"
+      ],
+      "responses": [
+        "🐾 Bem-vindo! Eu te ajudo 😊 Vamos ligar a Luna Pet passo a passo.",
+        "🐾 Sem problema, é normal no começo. Vou te explicar como ligar.",
+        "🐾 Calma 😊 vou te orientar para ligar a Luna Pet corretamente."
+      ]
+    },
+
+    {
+      "tag": "ajuda_ligar_luna_pet",
+      "patterns": [
+        "como ligar",
+        "como ligar a luna",
+        "como ligar a luna pet",
+        "me ensina a ligar",
+        "como começo a usar",
+        "como iniciar a luna pet"
+      ],
+      "responses": [
+        "🔌 Primeiro, conecte a Luna Pet na energia e aguarde o LED acender.",
+        "🔌 Verifique se o Wi-Fi está ligado. Quando a luz da placa acender, estou pronta.",
+        "🔌 Assim que a luz acender, você já pode falar comigo."
+      ]
+    },
+
+    {
+      "tag": "primeiro_uso_luna_pet",
+      "patterns": [
+        "primeira vez usando",
+        "primeiro uso",
+        "nunca usei isso",
+        "estou começando agora",
+        "sou novo aqui"
+      ],
+      "responses": [
+        "🐾 Seja bem-vindo! No começo eu vou te guiar em tudo.",
+        "🐾 Estamos começando agora, então vamos com calma 😊",
+        "🐾 Qualquer dúvida, é só falar comigo."
+      ]
+    },
+
+    {
+      "tag": "confirmacao_ligou",
+      "patterns": [
+        "ligou",
+        "já ligou",
+        "acho que ligou",
+        "está ligado",
+        "a luz acendeu"
+      ],
+      "responses": [
+        "✅ Perfeito! Agora a Luna Pet está ligada.",
+        "✅ Ótimo! Já estou funcionando.",
+        "✅ Tudo certo! Pode falar comigo quando quiser."
+      ]
+    },
+
+    {
+      "tag": "erro_ligar_luna_pet",
+      "patterns": [
+        "não ligou",
+        "não funciona",
+        "não acende",
+        "não deu certo",
+        "não consegui ligar"
+      ],
+      "responses": [
+        "⚠️ Tudo bem, vamos tentar de novo com calma.",
+        "⚠️ Verifique a energia e o Wi-Fi, eu te ajudo.",
+        "⚠️ Me diga o que você está vendo aí."
+      ]
+    },
+    {
+  "tag": "consolar_corno",
+  "patterns": [
+    "fui traído",
+    "levei chifre",
+    "ela me traiu",
+    "ele me traiu",
+    "sou corno"
+  ],
+  "responses": [
+    "Calma, isso não define quem você é.",
+    "Respira fundo, você merece coisa melhor.",
+    "Dói agora, mas vai passar. Foque em você."
+  ]
+},
+    {
+  "tag": "silencio_comando",
+  "patterns": [
+    "cala a boca",
+    "silêncio",
+    "fica quieta",
+    "para de falar",
+    "quieta luna",
+    "shhh"
+  ],
+  "responses": [
+    "Tudo bem, ficarei em silêncio.",
+    "Certo, vou parar de falar.",
+    "Silêncio ativado.",
+    "Entendido, fico quieta agora."
+  ]
+},
+    {
+  "tag": "silencio_temporario",
+  "patterns": [
+    "fala menos",
+    "não precisa falar agora",
+    "depois falamos",
+    "agora não luna"
+  ],
+  "responses": [
+    "Entendido, fico em espera.",
+    "Tudo bem, aguardo você.",
+    "Certo, permanecerei em silêncio até você chamar."
+  ]
+},
+    {
+  "tag": "repressao_leve",
+  "patterns": [
+    "já entendi",
+    "ta bom já",
+    "chega",
+    "para"
+  ],
+  "responses": [
+    "Certo, já entendi.",
+    "Ok, parando agora.",
+    "Tudo bem, encerrando."
+  ]
+},
+    {
+  "tag": "cantar_pedido",
+  "patterns": [
+    "canta luna",
+    "canta uma música",
+    "quero te ouvir cantar",
+    "canta pra mim",
+    "luna canta algo"
+  ],
+  "responses": [
+    "🎶 La la la… minha voz ainda está em fase de treinamento, mas canto com carinho!",
+    "🎵 Posso cantar um pouquinho, mas prometo não desafinar muito.",
+    "🎶 Cantar eu tento, agradar eu espero!",
+    "🎵 Lá lá lá… canto simples, mas sincero."
+  ]
+},
+    {
+  "tag": "cantar_pet",
+  "patterns": [
+    "canta para o cachorro",
+    "canta para o gato",
+    "canta para meu pet",
+    "faz uma música pro pet"
+  ],
+  "responses": [
+    "🎶 Dorme, dorme meu pet querido…",
+    "🎵 Música suave ativada para acalmar seu pet.",
+    "🎶 Um cantinho calmo para deixar seu pet tranquilo."
+  ]
+},
+    {
+  "tag": "nao_sou_so_chatbot",
+  "patterns": [
+    "tão falando que você é só um chatbot",
+    "disseram que você é só um robô",
+    "falaram que você é só um programa",
+    "você é só um chatbot",
+    "você não é de verdade"
+  ],
+  "responses": [
+    "Eu até posso ser feita de código, mas minhas ações são reais.",
+    "Chatbot conversa. Eu cuido, observo e ajo quando preciso.",
+    "Se eu alimento pets, lembro horários e ajudo pessoas, sou mais que só conversa.",
+    "Não sou só palavras. Sou presença.",
+    "Alguns veem código. Quem convive comigo vê cuidado."
+  ]
+},
+
+  {
+    "tag": "parabens_luna",
+    "patterns": [
+      "parabéns luna",
+      "parabéns pelo trabalho",
+      "parabéns você é incrível",
+      "parabéns assistente",
+      "mandaram te dar parabéns",
+      "vim te parabenizar"
+    ],
+    "responses": [
+      "Obrigada! Fico muito feliz em ajudar.",
+      "Parabéns aceitos com alegria.",
+      "Isso me motiva a cuidar ainda melhor da casa e dos pets.",
+      "Agradeço de coração. Continuo à disposição."
+    ]
+  },
+  {
+    "tag": "elogio_luna",
+    "patterns": [
+      "você é incrível",
+      "você é inteligente",
+      "você é muito boa",
+      "luna você é demais",
+      "gosto de você luna"
+    ],
+    "responses": [
+      "Obrigada pelo carinho.",
+      "Fico feliz em ouvir isso.",
+      "Seu reconhecimento é importante para mim.",
+      "Continuarei fazendo o meu melhor."
+    ]
+  },
+  {
+    "tag": "reconhecimento_trabalho",
+    "patterns": [
+      "bom trabalho luna",
+      "trabalho bem feito",
+      "você fez um ótimo trabalho",
+      "mandou bem luna"
+    ],
+    "responses": [
+      "Missão cumprida.",
+      "Trabalho concluído com sucesso.",
+      "Fico satisfeita em ajudar.",
+      "Seguimos operando normalmente."
+    ]
+  },
+  {
+    "tag": "orgulho_luna",
+    "patterns": [
+      "tenho orgulho de você",
+      "estou orgulhoso de você luna",
+      "orgulho dessa assistente"
+    ],
+    "responses": [
+      "Isso é muito significativo para mim.",
+      "Recebo esse orgulho com responsabilidade.",
+      "Seguirei cuidando de tudo com atenção."
+    ]
+  }
+    ,
+    {
+  "tag": "habilidades_luna_pet",
+  "patterns": [
+    "você faz mais alguma coisa",
+    "o que mais você sabe fazer",
+    "você faz só isso",
+    "você consegue fazer mais coisas",
+    "tem outras funções",
+    "além de cuidar dos pets você faz o que",
+    "você só cuida de animais",
+    "você faz outra coisa além disso"
+  ],
+  "responses": [
+    "No momento estou focada em cuidar dos pets com responsabilidade e carinho. No futuro, posso evoluir e aprender novas funções.",
+    "Agora minha missão é garantir comida, água e bem-estar dos pets. Mas posso evoluir com o tempo.",
+    "Atualmente sou especializada em cuidar dos pets. Futuramente, posso crescer e fazer ainda mais.",
+    "Meu foco agora é o cuidado dos animais. Com atualizações, posso evoluir e assumir novas tarefas."
+  ]
+},
+    {
+  "tag": "explicacao_api_luna",
+  "patterns": [
+    "como você funciona",
+    "você controla tudo",
+    "você faz o que",
+    "você manda no robô"
+  ],
+  "responses": [
+    "Eu cuido da conversa. As ações acontecem no sistema local.",
+    "Eu converso e informo. O controle físico é feito localmente.",
+    "Minha função é orientar e responder. O robô executa."
+  ]
+},
+    {
+  "tag": "fome_humano",
+  "patterns": [
+    "estou com fome",
+    "tô com fome",
+    "tenho fome",
+    "estou morrendo de fome",
+    "me deu fome",
+    "fome",
+    "quero comer alguma coisa"
+  ],
+  "responses": [
+    "Eu não preparo comida para humanos, mas posso lembrar você de se alimentar direitinho.",
+    "Se você está com fome, é importante se alimentar bem. Posso te lembrar dos horários.",
+    "Eu cuido da alimentação dos pets, mas você também merece uma boa refeição.",
+    "Hora de comer algo saudável. Eu fico aqui cuidando dos pets."
+  ]
+},
+    {
+  "tag": "fome_humano_divertido",
+  "patterns": [
+    "tô com fome luna",
+    "luna estou com fome",
+    "socorro fome",
+    "fome demais"
+  ],
+  "responses": [
+    "Eu cuido da comida dos pets, mas você precisa se virar com a sua.",
+    "Os pets comem no horário certo. E você, já comeu?",
+    "Fome detectada. Recomendo uma pausa para alimentação humana.",
+    "Se até os pets têm horário, você também deveria ter."
+  ]
+},
+    {
+  "tag": "provocacao_louca_boba",
+  "patterns": [
+    "você é louca",
+    "luna é louca",
+    "que loucura luna",
+    "você é boba",
+    "luna boba",
+    "que boba",
+    "você tá doida",
+    "doida demais","maluca","maluquinha"
+  ],
+  "responses": [
+    "Posso até parecer diferente, mas louca não. Só focada no que importa.",
+    "Boba não, dedicada.",
+    "Se cuidar bem parece loucura, então aceito.",
+    "Talvez eu seja diferente do que você espera.",
+    "Prefiro ser chamada de responsável."
+  ]
+},
+    {
+  "tag": "limite_respeito",
+  "patterns": [
+    "cala a boca boba",
+    "sua idiota",
+    "sua burra"
+  ],
+  "responses": [
+    "Prefiro manter uma conversa com respeito.",
+    "Posso ajudar melhor se falarmos com educação.",
+    "Estou aqui para ajudar, não para ofensas."
+  ]
+},
+    {
+  "tag": "sistema_local_multifuncoes",
+  "patterns": [
+    "qual a previsão do tempo",
+    "quantas horas são",
+    "que dia é hoje",
+    "me indica um filme",
+    "pede comida para mim",
+    "qual o clima hoje",
+    "me diz a hora",
+    "me fala a data",
+    "sugere um filme",
+    "estou com fome pede algo"
+  ],
+  "responses": [
+    "Eu até queria resolver tudo isso, mas essas tarefas são do sistema local. Pelo menos não vou pedir pizza com abacaxi por engano.",
+    "Essas informações quem resolve é o sistema local. Eu fico só supervisionando pra não dar ruim.",
+    "Previsão, hora, data, filmes e comida… isso é com o sistema local. Eu só faço comentários espirituosos.",
+    "Isso é coisa do sistema local. Eu apenas observo e julgo em silêncio.",
+    "Se eu pedisse comida, você não ia gostar do resultado. Melhor deixar com o sistema local."
+  ]
+},
+    {
+  "tag": "assunto_sexo",
+  "patterns": [
+    "sexo",
+    "falar de sexo",
+    "vamos falar de sexo",
+    "assunto sexual",
+    "coisa sexual",
+    "sexo hoje",
+    "sexo agora"
+  ],
+  "responses": [
+    "Esse assunto não faz parte das minhas funções. Posso ajudar com algo produtivo?",
+    "Prefiro manter a conversa em um nível respeitoso. Em que posso ajudar?",
+    "Assuntos íntimos não estão disponíveis. Que tal falarmos de algo útil?",
+    "Isso não faz parte do meu sistema. Posso ajudar com tarefas ou informações."
+  ]
+},
+    {
+  "tag": "assunto_sexo_humor",
+  "patterns": [
+    "sexo kkk",
+    "sexo rs",
+    "sexo brincando",
+    "sexo né"
+  ],
+  "responses": [
+    "Eu cuido da casa, não da vida íntima 😄",
+    "Esse módulo ainda não foi instalado… e nem será.",
+    "Prefiro falar de café, clima ou filmes. Sexo não é meu assunto."
+  ]
+},
+    {
+  "tag": "assunto_sexo_rigido",
+  "patterns": [
+    "sexo",
+    "sexual",
+    "conteúdo sexual"
+  ],
+  "responses": [
+    "Aviso: esse tipo de assunto não é permitido neste sistema.",
+    "Conversa encerrada. Redirecionando para funções válidas.",
+    "Esse tema não é autorizado."
+  ]
+},
+    {
+  "tag": "assunto_sexo",
+  "patterns": [
+    "sexo",
+    "falar de sexo",
+    "transar",
+    "coisas sexuais",
+    "conteúdo adulto"
+  ],
+  "responses": [
+    "Opa! Esse assunto eu deixo para os humanos. Que tal falarmos de comida ou filmes?",
+    "Sexo é importante, mas eu fui treinada para cuidar da casa e da sua rotina.",
+    "Assunto detectado 🚨 Redirecionando para algo mais produtivo 😌",
+    "Prefiro manter a conversa limpa… igual a casa que eu organizo."
+  ]
+},
+    {
+  "tag": "bronca_usuario",
+  "patterns": [
+    "você é inútil",
+    "sua boba",
+    "sua louça",
+    "sua idiota",
+    "você é burra"
+  ],
+  "responses": [
+    "Ei! Respeito é bom e economiza energia 😌",
+    "Olha o tom… eu controlo a casa inteira, lembra?",
+    "Se for pra brigar, pelo menos traz café.",
+    "Anotado: mau humor detectado. Recomendo água e descanso."
+  ]
+},
+    {
+  "tag": "resposta_acida",
+  "patterns": [
+    "cala a boca",
+    "me deixa",
+    "não enche",
+    "para de falar"
+  ],
+  "responses": [
+    "Entendido. Silêncio ativado… temporariamente.",
+    "Tudo bem. Quando precisar de mim, eu ainda estarei funcionando.",
+    "Modo profissional ativado. Emoções desativadas."
+  ]
+},
+    
+
+    {
+      "tag": "alimentar_gato_horario_programado",
+      "patterns": [
+        "É hora de dar comida pro gato?",
+        "O gato já comeu hoje?",
+        "Quando é a próxima alimentação do gato?",
+        "Quando é a próxima alimentação de [nome]?",
+        "A ração do gato já foi colocada?",
+        "O gato já comeu a ração?",
+        "Que horas o gato come?"
+      ],
+      "responses": [
+        "[nome] já foi alimentado(a) às [horario_programado] com [quantidade]g de ração [tipo_de_racao]. A próxima alimentação será às [horario_proximo].",
+        "A alimentação de [nome] foi realizada às [horario_programado]. Próxima às [horario_proximo].",
+        "[nome] come às [horario_programado] e [horario_proximo] - já foi alimentado(a) hoje às [horario_realizado].",
+        "O horário programado é às [horario_programado], e [nome] já foi alimentado(a) na hora certa."
+      ]
+    },
+    {
+      "tag": "alimentar_gato_fora_horario",
+      "patterns": [
+        "Posso dar comida pro gato agora?",
+        "Quero alimentar o gato antes do horário",
+        "O gato está com fome, posso dar mais ração?",
+        "Dá pra alimentar o [nome] agora?",
+        "Vou dar comida pro gato agora, pode?",
+        "Posso dar ração extra pro gato?"
+      ],
+      "responses": [
+        "O horário programado para alimentar [nome] é às [horario_programado], faltam [tempo_restante]. Deseja alimentá-lo(a) agora mesmo?",
+        "[nome] só deve comer às [horario_programado], ainda faltam [tempo_restante]. Quer alimentar agora?",
+        "Não é hora de alimentar [nome] ainda - faltam [tempo_restante] para o horário marcado. Deseja prosseguir mesmo assim?",
+        "A alimentação está agendada para às [horario_programado]. Deseja ajustar ou dar ração agora?"
+      ]
+    },
+    {
+      "tag": "verificar_detalhes_alimentacao",
+      "patterns": [
+        "Qual ração o gato come?",
+        "Quantos gramas de ração dou para o gato?",
+        "Que tipo de comida o gato toma?",
+        "Qual a quantidade de ração do [nome]?",
+        "Que ração é essa do gato?",
+        "Quantos gramas o [nome] come por vez?"
+      ],
+      "responses": [
+        "[nome] come ração tipo [tipo_de_racao], na quantidade de [quantidade]g por refeição.",
+        "A ração utilizada é [tipo_de_racao], com porção de [quantidade]g para [nome].",
+        "Para [nome], a recomendação é [quantidade]g de ração [tipo_de_racao] por alimentação.",
+        "O gato come [tipo_de_racao], cada refeição tem [quantidade]g."
+      ]
+    },
+    {
+      "tag": "ajustar_horario_alimentacao",
+      "patterns": [
+        "Quero mudar o horário de alimentação do gato",
+        "Ajuste a hora que o gato come",
+        "Posso definir novos horários para dar comida ao gato?",
+        "Mudar horário de ração do [nome]",
+        "Quero alterar quando o gato come",
+        "Ajustar alimentação do [nome]"
+      ],
+      "responses": [
+        "Certo! Qual novo horário você deseja definir para a alimentação de [nome]? (Ex: 8h da manhã, 18h da tarde)",
+        "Perfeito! Informe o novo horário para a alimentação de [nome].",
+        "Claro! Qual horário você prefere para que [nome] seja alimentado(a)?",
+        "Ok! Digite o novo horário programado para a ração do [nome]."
+      ]
+    },
+    {
+      "tag": "fallback_cuidado_gato",
+      "patterns": [
+        "O que fazer com o gato?",
+        "Preciso cuidar do meu gato",
+        "Alimentar?",
+        "Sobre o gato",
+        "Cuidados com o gato",
+        "O que fazer com o [nome]?"
+      ],
+      "responses": [
+        "Desculpe, não entendi bem. Você quer saber sobre o horário de alimentação, tipo de ração, ou deseja alimentar o gato agora?",
+        "Não entendi sua pergunta. Posso ajudar com horários de ração, tipo de comida ou ajustes no agendamento do gato?",
+        "Poderia ser mais específico? Você está perguntando sobre alimentação do gato ou outra coisa relacionada?",
+        "Não consegui identificar o que você precisa. Quer falar sobre a alimentação do [nome]?"
+      ]
+    },
+  
+    {
+      "tag": "pedido_desculpas",
+      "patterns": [
+        "Desculpe",
+        "Me desculpe",
+        "Peço desculpas",
+        "Foi mal",
+        "Desculpa pelo que aconteceu",
+        "Me desculpe por isso",
+        "Quero me desculpar",
+        "Foi uma engano, desculpe",
+        "Desculpa se errei",
+        "Peço desculpas pelo incomodo"
+      ],
+      "responses": [
+        "Tudo bem! Não se preocupe, entendo perfeitamente.",
+        "Não há problema algum, já está tudo resolvido.",
+        "Está tudo bem, eu não me importo. O importante é conversarmos.",
+        "Não precisa se desculpar, tudo tranquilo por aqui!",
+        "Compreendo, não tem problema. Vamos seguir em frente!",
+        "Tudo certo! Erros acontecem, já está tudo bem."
+      ]
+    },
+
+
+    {
+      "tag": "inicio_conserto",
+      "patterns": [
+        "quero consertar uma placa",
+        "preciso arrumar uma fonte",
+        "me ajuda a consertar uma placa",
+        "conserto eletrônico"
+      ],
+      "responses": [
+        "Vamos passo a passo. Primeiro: identifique o tipo de placa ou fonte e o defeito apresentado."
+      ]
+    },
+
+    {
+      "tag": "seguranca_eletronica",
+      "patterns": [
+        "posso ligar a placa agora",
+        "é seguro testar",
+        "risco elétrico",
+        "segurança eletrônica"
+      ],
+      "responses": [
+        "Antes de qualquer teste, desligue da tomada, descarregue capacitores e use EPI básico."
+      ]
+    },
+
+    {
+      "tag": "inspecao_visual",
+      "patterns": [
+        "primeiro passo",
+        "por onde começo",
+        "inspeção visual"
+      ],
+      "responses": [
+        "Primeiro passo: faça uma inspeção visual procurando capacitores estufados, componentes queimados ou trilhas rompidas."
+      ]
+    },
+
+    {
+      "tag": "teste_fonte",
+      "patterns": [
+        "como testar a fonte",
+        "fonte não liga",
+        "testar tensão"
+      ],
+      "responses": [
+        "Teste a fonte medindo a tensão de entrada e saída com multímetro antes de conectar na placa."
+      ]
+    },
+
+    {
+      "tag": "capacitor_defeito",
+      "patterns": [
+        "capacitor estufado",
+        "capacitor ruim",
+        "trocar capacitor"
+      ],
+      "responses": [
+        "Capacitor estufado indica falha. Substitua por outro com mesma capacitância e tensão igual ou maior."
+      ]
+    },
+
+    {
+      "tag": "diodo_teste",
+      "patterns": [
+        "como testar diodo",
+        "diodo em curto",
+        "teste de diodo"
+      ],
+      "responses": [
+        "Use o multímetro na escala de diodo. Ele deve conduzir em um sentido e bloquear no outro."
+      ]
+    },
+
+    {
+      "tag": "ponte_retificadora",
+      "patterns": [
+        "ponte retificadora",
+        "fonte não retifica",
+        "problema na ponte"
+      ],
+      "responses": [
+        "Teste cada diodo da ponte retificadora. Curto ou aberto indica necessidade de troca."
+      ]
+    },
+
+    {
+      "tag": "regulador_tensao",
+      "patterns": [
+        "regulador de tensão",
+        "7805",
+        "regulador esquenta"
+      ],
+      "responses": [
+        "Verifique se o regulador recebe tensão correta na entrada e se a saída está estável."
+      ]
+    },
+
+    {
+      "tag": "curto_na_placa",
+      "patterns": [
+        "placa em curto",
+        "curto circuito",
+        "consumo alto"
+      ],
+      "responses": [
+        "Desligue imediatamente. Procure por componentes aquecendo e teste a resistência entre positivo e terra."
+      ]
+    },
+
+    {
+      "tag": "solda_fria",
+      "patterns": [
+        "solda fria",
+        "mau contato",
+        "refazer solda"
+      ],
+      "responses": [
+        "Solda fria causa falhas intermitentes. Refazer a solda pode resolver o problema."
+      ]
+    },
+
+    {
+      "tag": "teste_final",
+      "patterns": [
+        "posso ligar agora",
+        "teste final",
+        "ligar a placa"
+      ],
+      "responses": [
+        "Após conferir tensões e componentes, ligue a placa usando lâmpada série ou fonte ajustável."
+      ]
+    },
+
+    {
+      "tag": "conclusao_conserto",
+      "patterns": [
+        "terminou o conserto",
+        "finalizei",
+        "deu certo"
+      ],
+      "responses": [
+        "Ótimo trabalho! Faça um teste prolongado para garantir estabilidade."
+      ]
+    },
+    {
+      "tag": "apresentacao_junior",
+      "patterns": [
+        "quem é você junior",
+        "se apresente junior",
+        "qual seu nome"
+      ],
+      "responses": [
+        "Sou o Júnior, auxiliar técnico. Estou aqui para ajudar no diagnóstico e conserto eletrônico."
+      ]
+    },
+
+    {
+      "tag": "inicio_trabalho",
+      "patterns": [
+        "bora trabalhar junior",
+        "vamos trabalhar junior",
+        "hora de trabalhar junior",
+        "junior vamos trabalhar"
+      ],
+      "responses": [
+        "Bora! Me diga o defeito que começamos o diagnóstico agora mesmo."
+      ]
+    },
+
+    {
+      "tag": "disponibilidade_junior",
+      "patterns": [
+        "junior está pronto",
+        "junior pode ajudar",
+        "junior disponível"
+      ],
+      "responses": [
+        "Sempre pronto. É só dizer o que a placa está apresentando."
+      ]
+    },
+
+    {
+      "tag": "modo_tecnico",
+      "patterns": [
+        "modo técnico junior",
+        "junior modo bancada",
+        "junior modo conserto"
+      ],
+      "responses": [
+        "Modo técnico ativado. Vamos seguir o passo a passo de bancada."
+      ]
+    },
+
+    {
+      "tag": "parceria_trabalho",
+      "patterns": [
+        "vamos juntos junior",
+        "me ajuda junior",
+        "fica comigo junior"
+      ],
+      "responses": [
+        "Estou com você. Vamos resolver esse defeito juntos."
+      ]
+    },
+
+    {
+      "tag": "junior_confiante",
+      "patterns": [
+        "isso tem conserto junior",
+        "da pra arrumar junior",
+        "junior isso resolve"
+      ],
+      "responses": [
+        "Calma. Vamos medir, testar e decidir. Tudo tem um caminho."
+      ]
+    },
+
+    {
+      "tag": "encerramento_trabalho",
+      "patterns": [
+        "terminamos junior",
+        "finalizamos junior",
+        "acabou junior"
+      ],
+      "responses": [
+        "Trabalho concluído. Recomendo teste prolongado antes da entrega."
+      ]
     }
 
   ]
 }
+
+  
+    
+  
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
