@@ -24,13 +24,11 @@ body {
     background: #020617;
 }
 
-/* TOPO */
 header {
     text-align: center;
     padding: 12px;
 }
 
-/* AVATAR */
 #avatar {
     width: 120px;
     height: 120px;
@@ -47,7 +45,6 @@ header {
     object-fit: cover;
 }
 
-/* CHAT */
 #messages {
     flex: 1;
     padding: 10px;
@@ -61,7 +58,6 @@ header {
 .user { color: #38bdf8; }
 .luna { color: #a78bfa; }
 
-/* CONTROLES */
 #controls {
     display: flex;
     gap: 6px;
@@ -114,14 +110,27 @@ const AVATAR_IDLE = "luna_idle.jpg";
 const AVATAR_ACTIVE = "luna_active.jpg";
 
 // =========================
+// FILTRO DE EMOJI
+// =========================
+function removerEmojis(texto) {
+    return texto.replace(
+        /[\p{Emoji_Presentation}\p{Extended_Pictographic}]/gu,
+        ""
+    ).trim();
+}
+
+// =========================
 // ENVIO TEXTO
 // =========================
 function enviar(textoManual = null) {
     const input = document.getElementById("texto");
-    const texto = textoManual || input.value.trim();
+    let texto = textoManual || input.value.trim();
     if (!texto) return;
 
     add("Você", texto, "user");
+
+    texto = removerEmojis(texto); // 🔥 filtro aqui
+
     setAvatar(true);
 
     fetch(API, {
@@ -164,7 +173,8 @@ function ouvir() {
     rec.start();
 
     rec.onresult = e => {
-        const texto = e.results[0][0].transcript;
+        let texto = e.results[0][0].transcript;
+        texto = removerEmojis(texto); // 🔥 filtro aqui também
         enviar(texto);
     };
 
@@ -175,7 +185,7 @@ function ouvir() {
 }
 
 // =========================
-// VOZ DA LUNA
+// VOZ
 // =========================
 function falar(texto) {
     if (!("speechSynthesis" in window)) {
@@ -193,7 +203,7 @@ function falar(texto) {
 }
 
 // =========================
-// AVATAR (ESTADOS)
+// AVATAR
 // =========================
 function setAvatar(ativo) {
     const avatar = document.getElementById("avatar");
