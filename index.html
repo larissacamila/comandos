@@ -28,7 +28,6 @@ body {
 header {
     text-align: center;
     padding: 12px;
-    background: #020617;
 }
 
 /* AVATAR */
@@ -37,12 +36,15 @@ header {
     height: 120px;
     margin: 10px auto;
     border-radius: 50%;
-    background: radial-gradient(circle at top, #a78bfa, #312e81);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 48px;
-    box-shadow: 0 0 25px rgba(167,139,250,0.6);
+    overflow: hidden;
+    box-shadow: 0 0 15px rgba(167,139,250,0.5);
+    transition: box-shadow 0.3s ease;
+}
+
+#avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
 
 /* CHAT */
@@ -64,7 +66,6 @@ header {
     display: flex;
     gap: 6px;
     padding: 10px;
-    background: #020617;
 }
 
 input {
@@ -91,7 +92,9 @@ button {
 
 <header>
     <h3>🌙 Luna</h3>
-    <div id="avatar">🤖</div>
+    <div id="avatar">
+        <img id="avatarImg" src="luna_idle.jpg" alt="Luna">
+    </div>
 </header>
 
 <div id="messages"></div>
@@ -107,6 +110,9 @@ button {
 <script>
 const API = "https://comandos-mmmu.onrender.com/chat";
 
+const AVATAR_IDLE = "luna_idle.jpg";
+const AVATAR_ACTIVE = "luna_active.jpg";
+
 // =========================
 // ENVIO TEXTO
 // =========================
@@ -116,7 +122,7 @@ function enviar(textoManual = null) {
     if (!texto) return;
 
     add("Você", texto, "user");
-    animarAvatar(true);
+    setAvatar(true);
 
     fetch(API, {
         method: "POST",
@@ -136,6 +142,7 @@ function enviar(textoManual = null) {
     })
     .catch(() => {
         add("Luna", "Erro de conexão 😢", "luna");
+        setAvatar(false);
     });
 
     input.value = "";
@@ -153,7 +160,7 @@ function ouvir() {
     const rec = new webkitSpeechRecognition();
     rec.lang = "pt-BR";
 
-    animarAvatar(true);
+    setAvatar(true);
     rec.start();
 
     rec.onresult = e => {
@@ -162,32 +169,43 @@ function ouvir() {
     };
 
     rec.onerror = () => {
-        animarAvatar(false);
+        setAvatar(false);
         add("Sistema", "Erro ao ouvir 😢", "luna");
     };
 }
 
 // =========================
-// VOZ
+// VOZ DA LUNA
 // =========================
 function falar(texto) {
-    if (!("speechSynthesis" in window)) return;
+    if (!("speechSynthesis" in window)) {
+        setAvatar(false);
+        return;
+    }
 
     const voz = new SpeechSynthesisUtterance(texto);
     voz.lang = "pt-BR";
 
-    voz.onend = () => animarAvatar(false);
+    voz.onstart = () => setAvatar(true);
+    voz.onend = () => setAvatar(false);
+
     speechSynthesis.speak(voz);
 }
 
 // =========================
-// AVATAR
+// AVATAR (ESTADOS)
 // =========================
-function animarAvatar(ativo) {
+function setAvatar(ativo) {
     const avatar = document.getElementById("avatar");
-    avatar.style.boxShadow = ativo
-        ? "0 0 35px #a78bfa"
-        : "0 0 15px rgba(167,139,250,0.5)";
+    const img = document.getElementById("avatarImg");
+
+    if (ativo) {
+        img.src = AVATAR_ACTIVE;
+        avatar.style.boxShadow = "0 0 35px #a78bfa";
+    } else {
+        img.src = AVATAR_IDLE;
+        avatar.style.boxShadow = "0 0 15px rgba(167,139,250,0.5)";
+    }
 }
 
 // =========================
