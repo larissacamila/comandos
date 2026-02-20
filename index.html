@@ -110,7 +110,7 @@ const AVATAR_IDLE = "luna_idle.jpg";
 const AVATAR_ACTIVE = "luna_active.jpg";
 
 // =========================
-// FILTRO DE EMOJI
+// FILTRO DE EMOJI (GLOBAL)
 // =========================
 function removerEmojis(texto) {
     return texto.replace(
@@ -120,23 +120,25 @@ function removerEmojis(texto) {
 }
 
 // =========================
-// ENVIO TEXTO
+// ENVIO DE TEXTO
 // =========================
 function enviar(textoManual = null) {
     const input = document.getElementById("texto");
-    let texto = textoManual || input.value.trim();
-    if (!texto) return;
+    let textoOriginal = textoManual || input.value.trim();
+    if (!textoOriginal) return;
 
-    add("Você", texto, "user");
+    // Mostra o texto original (com emoji) no chat
+    add("Você", textoOriginal, "user");
 
-    texto = removerEmojis(texto); // 🔥 filtro aqui
+    // Remove emoji ANTES de ir para API
+    const textoLimpo = removerEmojis(textoOriginal);
 
     setAvatar(true);
 
     fetch(API, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ texto })
+        body: JSON.stringify({ texto: textoLimpo })
     })
     .then(res => res.json())
     .then(data => {
@@ -146,7 +148,10 @@ function enviar(textoManual = null) {
             data.msg ||
             "🌙 Recebi, mas não sei responder agora.";
 
+        // Mostra resposta com emoji
         add("Luna", resposta, "luna");
+
+        // Fala SEM emoji
         falar(resposta);
     })
     .catch(() => {
@@ -173,9 +178,8 @@ function ouvir() {
     rec.start();
 
     rec.onresult = e => {
-        let texto = e.results[0][0].transcript;
-        texto = removerEmojis(texto); // 🔥 filtro aqui também
-        enviar(texto);
+        const textoFalado = e.results[0][0].transcript;
+        enviar(textoFalado);
     };
 
     rec.onerror = () => {
@@ -185,7 +189,7 @@ function ouvir() {
 }
 
 // =========================
-// VOZ
+// VOZ DA LUNA (SEM EMOJI)
 // =========================
 function falar(texto) {
     if (!("speechSynthesis" in window)) {
@@ -193,7 +197,13 @@ function falar(texto) {
         return;
     }
 
-    const voz = new SpeechSynthesisUtterance(texto);
+    const textoLimpo = removerEmojis(texto);
+    if (!textoLimpo) {
+        setAvatar(false);
+        return;
+    }
+
+    const voz = new SpeechSynthesisUtterance(textoLimpo);
     voz.lang = "pt-BR";
 
     voz.onstart = () => setAvatar(true);
@@ -203,7 +213,7 @@ function falar(texto) {
 }
 
 // =========================
-// AVATAR
+// AVATAR (ESTADOS)
 // =========================
 function setAvatar(ativo) {
     const avatar = document.getElementById("avatar");
