@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<title>Luna Celular</title>
+<title>Luna Mobile</title>
 <style>
 body {
     background: #0f172a;
@@ -47,6 +47,7 @@ img.msg-img {
     border-radius: 8px;
     margin-left: 48px;
     margin-top: 4px;
+    display: block;
 }
 </style>
 </head>
@@ -62,17 +63,15 @@ img.msg-img {
 </div>
 
 <script>
-// ===== CONFIGURAÇÕES =====
-const API = "https://comandos-mmmu.onrender.com/chat"; // sua API
-
-// Lista de imagens na raiz
+// API e imagens
+const API = "https://comandos-mmmu.onrender.com/chat";
 const imagens = {
     "gato": "gato.jpg",
     "cachorro": "cachorro.jpg",
     "lua": "lua.jpeg"
 };
 
-// ===== FUNÇÃO ENVIAR =====
+// Função enviar mensagem
 function enviar() {
     const texto = document.getElementById("texto").value;
     if (!texto) return;
@@ -97,7 +96,7 @@ function enviar() {
     document.getElementById("texto").value = "";
 }
 
-// ===== FUNÇÃO ADD =====
+// Função adicionar mensagem
 function add(nome, texto, cls) {
     const div = document.createElement("div");
     div.className = "msg " + cls;
