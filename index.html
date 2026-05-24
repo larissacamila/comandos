@@ -62,12 +62,7 @@ border-radius:12px;
 font-weight:bold;
 cursor:pointer;
 margin-top:10px;
-transition:0.2s;
 font-size:16px;
-}
-
-button:hover{
-transform:scale(1.02);
 }
 
 .primary{
@@ -85,12 +80,6 @@ background:#ef4444;
 color:white;
 }
 
-.status{
-text-align:center;
-margin-top:15px;
-font-weight:bold;
-}
-
 .motorista{
 background:#111827;
 padding:12px;
@@ -99,24 +88,12 @@ margin-top:10px;
 border:1px solid #374151;
 }
 
-.badge{
-display:inline-block;
-padding:5px 10px;
-background:#22c55e;
-border-radius:10px;
-font-size:12px;
-margin-bottom:10px;
-}
-
-#mapaMotorista{
-margin-top:15px;
-}
-
 iframe{
 width:100%;
 height:300px;
 border:none;
 border-radius:15px;
+margin-top:15px;
 }
 
 </style>
@@ -133,9 +110,13 @@ border-radius:15px;
 
 <!-- LOGIN -->
 
-<div class="card" id="loginCard">
+<div
+class="card"
+id="loginCard">
 
-<h3>Login / Cadastro</h3>
+<h3>
+Login / Cadastro
+</h3>
 
 <input
 id="nome"
@@ -170,10 +151,6 @@ Entrar
 
 </button>
 
-<p
-id="loginStatus"
-class="status"></p>
-
 </div>
 
 <!-- DASHBOARD -->
@@ -207,19 +184,7 @@ Cancelar corrida
 
 </button>
 
-<hr>
-
-<div class="badge">
-Motoristas online
-</div>
-
-<div id="motoristasArea">
-Nenhum motorista online
-</div>
-
-<p
-id="corridaStatus"
-class="status"></p>
+<div id="corridaStatus"></div>
 
 <div id="mapaMotorista"></div>
 
@@ -241,9 +206,9 @@ let corridaId = null;
 
 let motoristaAtual = null;
 
-let motoristaInfo = null;
-
-/* LOGIN AUTO */
+/* =========================
+   AUTO LOGIN
+========================= */
 
 const userSalvo =
 localStorage.getItem(
@@ -269,14 +234,14 @@ document.getElementById(
 ).style.display =
 "block";
 
-buscarMotoristas();
-
 }
 );
 
 }
 
-/* REGISTER */
+/* =========================
+   REGISTER
+========================= */
 
 async function register(){
 
@@ -320,14 +285,15 @@ tipo:"passageiro"
 
 );
 
-document.getElementById(
-"loginStatus"
-).innerHTML =
-"Conta criada ✔";
+alert(
+"Conta criada"
+);
 
 }
 
-/* LOGIN */
+/* =========================
+   LOGIN
+========================= */
 
 async function login(){
 
@@ -369,13 +335,13 @@ user =
 data.user;
 
 localStorage.setItem(
-"token",
-data.token
+"user",
+JSON.stringify(user)
 );
 
 localStorage.setItem(
-"user",
-JSON.stringify(user)
+"token",
+data.token
 );
 
 document.getElementById(
@@ -388,8 +354,6 @@ document.getElementById(
 ).style.display =
 "block";
 
-buscarMotoristas();
-
 }else{
 
 alert(
@@ -400,156 +364,9 @@ alert(
 
 }
 
-/* MOTORISTAS */
-
-async function buscarMotoristas(){
-
-const res =
-await fetch(
-API+"/motoristas_online"
-);
-
-const data =
-await res.json();
-
-const area =
-document.getElementById(
-"motoristasArea"
-);
-
-area.innerHTML = "";
-
-if(data.length === 0){
-
-area.innerHTML =
-"Nenhum motorista online";
-
-return;
-
-}
-
-data.forEach((m)=>{
-
-area.innerHTML += `
-
-<div class="motorista">
-
-🚗 ${m.nome}
-
-<br>
-
-${m.carro || ""}
-
-</div>
-
-`;
-
-});
-
-}
-
-/* CALCULAR */
-
-async function calcularCorrida(
-origem,
-destino
-){
-
-const API_KEY =
-"eyJvcmciOiI1YjNjZTM1OTc4NTExMTAwMDFjZjYyNDgiLCJpZCI6IjBkNzdmNzYyMzU3YzQxZThhODJjMDNlMmJlOTJlMTNiIiwiaCI6Im11cm11cjY0In0=";
-
-/* GEO */
-
-async function buscarCoordenadas(local){
-
-if(local.includes(",")){
-
-const partes =
-local.split(",");
-
-return [
-
-parseFloat(partes[1]),
-parseFloat(partes[0])
-
-];
-
-}
-
-const url =
-
-`https://api.openrouteservice.org/geocode/search?api_key=${API_KEY}&text=${encodeURIComponent(local)}&boundary.country=BR`;
-
-const res =
-await fetch(url);
-
-const data =
-await res.json();
-
-const coords =
-data.features[0]
-.geometry.coordinates;
-
-return coords;
-
-}
-
-try{
-
-const origemCoords =
-await buscarCoordenadas(
-origem
-);
-
-const destinoCoords =
-await buscarCoordenadas(
-destino
-);
-
-const rotaUrl =
-
-`https://api.openrouteservice.org/v2/directions/driving-car?api_key=${API_KEY}&start=${origemCoords[0]},${origemCoords[1]}&end=${destinoCoords[0]},${destinoCoords[1]}`;
-
-const rotaRes =
-await fetch(rotaUrl);
-
-const rotaData =
-await rotaRes.json();
-
-const metros =
-
-rotaData.features[0]
-.properties.summary.distance;
-
-const km =
-metros / 1000;
-
-const valor =
-km * 2;
-
-return {
-
-km: km.toFixed(1),
-
-valor: valor.toFixed(2)
-
-};
-
-}catch(err){
-
-console.log(err);
-
-alert(
-"Erro calcular rota"
-);
-
-return null;
-
-}
-
-}
-
-/* CHAMAR CORRIDA */
+/* =========================
+   CHAMAR CORRIDA
+========================= */
 
 async function chamarCorrida(){
 
@@ -557,6 +374,21 @@ if(!navigator.geolocation){
 
 alert(
 "GPS não suportado"
+);
+
+return;
+
+}
+
+const destino =
+document.getElementById(
+"destino"
+).value;
+
+if(!destino){
+
+alert(
+"Digite o destino"
 );
 
 return;
@@ -578,38 +410,6 @@ pos.coords.longitude;
 const origem =
 `${latitude},${longitude}`;
 
-const destino =
-document.getElementById(
-"destino"
-).value;
-
-const corrida =
-await calcularCorrida(
-origem,
-destino
-);
-
-if(!corrida){
-return;
-}
-
-document.getElementById(
-"corridaStatus"
-).innerHTML = `
-
-
-
-<br><br>
-
-💰 Valor:
-R$ ${corrida.valor}
-
-<br><br>
-
-🔎 Procurando motorista...
-
-`;
-
 const res =
 await fetch(
 API+"/nova_corrida",
@@ -623,13 +423,16 @@ headers:{
 
 body:JSON.stringify({
 
-passageiro_id:user.id,
+passageiro_id:
+user.id,
 
+origem:
 origem,
 
+destino:
 destino,
 
-valor:corrida.valor
+valor:0
 
 })
 
@@ -640,20 +443,29 @@ valor:corrida.valor
 const data =
 await res.json();
 
-console.log(
-"CORRIDA",
-data
-);
+console.log(data);
 
 corridaId =
 data.corrida_id;
+
+document.getElementById(
+"corridaStatus"
+).innerHTML = `
+
+<div class="motorista">
+
+🔎 Procurando motorista...
+
+</div>
+
+`;
 
 }catch(err){
 
 console.log(err);
 
 alert(
-"Erro chamar corrida"
+"Erro ao chamar corrida"
 );
 
 }
@@ -680,21 +492,15 @@ maximumAge:0
 
 }
 
-/* CANCELAR */
+/* =========================
+   CANCELAR
+========================= */
 
 async function cancelarCorrida(){
 
 if(!corridaId){
-
-alert(
-"Nenhuma corrida ativa"
-);
-
 return;
-
 }
-
-try{
 
 await fetch(
 API+"/cancelar_corrida/"+corridaId,
@@ -707,11 +513,7 @@ document.getElementById(
 "corridaStatus"
 ).innerHTML = `
 
-<div style="
-background:#111827;
-padding:20px;
-border-radius:15px;
-">
+<div class="motorista">
 
 ❌ Corrida cancelada
 
@@ -725,52 +527,35 @@ document.getElementById(
 
 corridaId = null;
 
-}catch(err){
-
-console.log(err);
-
-alert(
-"Erro cancelar corrida"
-);
-
 }
 
-}
-
-/* CORRIDA ACEITA */
+/* =========================
+   MOTORISTA ACEITOU
+========================= */
 
 socket.on(
 "corrida_aceita",
 (data)=>{
 
-console.log(
-"CORRIDA ACEITA",
-data
-);
+if(
+data.corrida_id !=
+corridaId
+){
+return;
+}
 
 motoristaAtual =
 data.motorista_id;
-
-motoristaInfo =
-data;
 
 document.getElementById(
 "corridaStatus"
 ).innerHTML = `
 
-<div style="
-background:#111827;
-padding:20px;
-border-radius:15px;
-">
+<div class="motorista">
 
-<h2 style="
-color:#22c55e;
-">
-
-🚗 Corrida aceita
-
-</h2>
+<h3>
+🚗 Motorista a caminho
+</h3>
 
 <p>
 👨 ${data.motorista_nome}
@@ -788,27 +573,12 @@ color:#22c55e;
 
 `;
 
-document.getElementById(
-"mapaMotorista"
-).innerHTML = `
-
-<div style="
-background:#111827;
-padding:20px;
-border-radius:15px;
-text-align:center;
-">
-
-🗺️ Aguardando motorista...
-
-</div>
-
-`;
-
 }
 );
 
-/* LOCALIZAÇÃO MOTORISTA */
+/* =========================
+   LOCALIZAÇÃO MOTORISTA
+========================= */
 
 socket.on(
 "localizacao_motorista",
@@ -838,7 +608,9 @@ src="https://maps.google.com/maps?q=${data.latitude},${data.longitude}&z=15&outp
 }
 );
 
-/* CORRIDA CANCELADA */
+/* =========================
+   CANCELAMENTO
+========================= */
 
 socket.on(
 "corrida_cancelada",
@@ -855,11 +627,7 @@ document.getElementById(
 "corridaStatus"
 ).innerHTML = `
 
-<div style="
-background:#111827;
-padding:20px;
-border-radius:15px;
-">
+<div class="motorista">
 
 ❌ Corrida cancelada
 
