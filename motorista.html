@@ -713,31 +713,28 @@ envioLocalizacaoInterval = setInterval(() => {
             };
 
             try {
-                // ✅ ROTA EXATA: /finalizar_corrida/<corridaId>
-                const resposta = await fetch(`${API_URL}/finalizar_corrida/${corridaId}`, {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json'
-                    },
-                    body: JSON.stringify(dadosEnvio)
-                });
+                // 🚫 NÃO FAÇA ASSIM:
+// socket.emit('viagem_finalizada', { ... })
 
-                let retornoServidor = {};
-                try { 
-                    retornoServidor = await resposta.json(); 
-                } catch(e) {}
+// ✅ FAÇA ASSIM:
+fetch(`${API_URL}/finalizar_corrida/${corridaId}`, {
+    method: "POST",
+    headers: {
+        "Authorization": "Bearer " + token,
+        "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+        valor: valorFinal,
+        motorista_nome: usuario.nome,
+        motorista_id: usuario.id
+    })
+})
+.then(res => res.json())
+.then(dados => {
+    console.log("Corrida finalizada:", dados);
+    clearInterval(envioLocalizacaoInterval); // parar localização
+});
 
-                if(resposta.ok || resposta.status === 200 || resposta.status === 201) {
-                    document.getElementById('somDinheiro').play();
-                    falar("Corrida finalizada! Você recebeu R$ " + valorFinal.toFixed(2).replace('.', ','));
-
-                    socket.emit('viagem_finalizada', {
-                        corrida_id: corridaId,
-                        valor: valorFinal,
-                        motorista_nome: usuario.nome
-                    });
 
                     if(envioLocalizacaoInterval) clearInterval(envioLocalizacaoInterval);
 
