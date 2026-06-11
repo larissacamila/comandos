@@ -644,7 +644,7 @@
         async function finalizarAgora() {
             if (!estado.viagemIniciada) return mostrarErro("Inicie a viagem primeiro!");
             try {
-                const res = await fetch(`${APIUrl}/finalizar_corrida/${corrida.id}`, {
+                const res = await fetch(`${API_URL}/finalizar_corrida/${corrida.id}`, {
                     method: 'POST', headers: { 'Authorization': `Bearer ${token}` }
                 });
                 const dados = await res.json();
