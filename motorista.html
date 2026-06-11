@@ -589,7 +589,7 @@
                         motorista: usuario,
                         status: "aceito"
                     });
-                    
+                    socket.emit("entrar_na_sala", { corrida_id: cid });
                     envioLocalizacaoInterval = setInterval(() => {
                         socket.emit('localizacao_motorista', {
                             corrida_id: corridaId,
