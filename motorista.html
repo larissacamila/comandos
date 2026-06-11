@@ -588,17 +588,20 @@
                         corrida_id: corridaId, 
                         motorista: usuario,
                         status: "aceito"
-                    });
-                    socket.emit("entrar_na_sala", { corrida_id: cid });
-                    envioLocalizacaoInterval = setInterval(() => {
-                        socket.emit('localizacao_motorista', {
-                            corrida_id: corridaId,
-                            lat: posicaoAtual.lat,
-                            lng: posicaoAtual.lng,
-                            motorista_id: usuario.id,
-                            status: estado
-                        });
-                    }, 1000);
+                    })
+// Usa a variável que já tem o valor correto: corridaId
+socket.emit("entrar_na_sala", { corrida_id: corridaId });
+
+envioLocalizacaoInterval = setInterval(() => {
+    socket.emit('localizacao_motorista', {
+        corrida_id: corridaId,
+        lat: posicaoAtual.lat,
+        lng: posicaoAtual.lng,
+        motorista_id: usuario.id,
+        status: estado
+    });
+}, 1000);
+
 
                     document.getElementById('somSucesso').play();
                     falar("Corrida aceita! Vá até o passageiro");
