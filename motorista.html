@@ -795,7 +795,7 @@ envioLocalizacaoInterval = setInterval(() => {
         // ==============================================
         // 🔴 CANCELAMENTO (SOCKET)
         // ==============================================
-        socket.on("cancelar_corrida", (dados) => {
+        socket.on("corrida_cancelada", (dados) => {
             console.log("🚫 CANCELAR RECEBIDO:", dados);
             const corridaId = corrida?.corrida_id || corrida?.id;
             if(corridaId && dados?.corrida_id == corridaId) {
