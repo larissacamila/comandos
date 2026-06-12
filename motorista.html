@@ -264,6 +264,22 @@
             <button class="btn-danger" onclick="recusarCorrida()">❌ RECUSAR</button>
         </div>
     </div>
+<div class="barra-inferior" id="barra" style="display:none;">
+    <!-- BOTÃO NA ESQUERDA -->
+    <button id="btnOnline" class="btn-success" onclick="ficarOnline()">
+        <i class="fas fa-power-off"></i>
+    </button>
+
+    <!-- BOTÃO NA DIREITA -->
+    <button class="btn-danger" onclick="sair()">
+        <i class="fas fa-door-open"></i>
+    </button>
+
+    <!-- BOTÃO OFFLINE (SÓ APARECE QUANDO ESTIVER ONLINE) -->
+    <button id="btnOffline" class="btn-danger" onclick="ficarOffline()" style="display:none;">
+        <i class="fas fa-power-off"></i>
+    </button>
+</div>
 
 
         <!-- 🟡 ÁREA DE AÇÕES -->
