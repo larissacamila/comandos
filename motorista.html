@@ -131,11 +131,17 @@
   padding: 6px 12px !important;
   font-size: 13px !important;
   width: auto !important;
-  min-width: 90px;
+  min-width: 85px;
   border-radius: 20px !important;
   gap: 4px !important;
   margin: 0 !important;
 }
+.grupo-botoes-topo {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
 .grupo-botoes-topo {
   display: flex;
   gap: 8px;
@@ -219,20 +225,15 @@
     </div>
 
     <!-- BARRA DE CONTROLES -->
-    <!-- BARRA DE CONTROLES → SOMENTE O QUE PRECISA -->
-<div class="barra-inferior" id="barra" style="display:none;">
-    <!-- ❌ REMOVIDOS OS BOTÕES GRANDES DAQUI -->
-
-    <!-- ✅ PERMANECEM SOMENTE ESSES PEQUENOS E FUNCIONAIS -->
     <div class="grupo-botoes-topo">
-        <button id="btnFicarOnline" class="btn-success btn-topo">
-            <i class="fa fa-check"></i> Online
-        </button>
-        <button id="btnFicarOffline" class="btn-danger btn-topo" style="display:none;">
-            <i class="fa fa-times"></i> Offline
-        </button>
-    </div>
+    <button id="btnFicarOnline" class="btn-success btn-topo" onclick="ficarOnline()">
+        <i class="fa fa-check"></i> Online
+    </button>
+    <button id="btnFicarOffline" class="btn-danger btn-topo" onclick="ficarOffline()" style="display:none;">
+        <i class="fa fa-times"></i> Offline
+    </button>
 </div>
+
 
         <!-- 🟡 ÁREA DE AÇÕES -->
         <div id="areaAcoes" class="acoes">
@@ -433,6 +434,9 @@
                 telaPrincipal();
                 iniciarGPS();
                 falar("Bem vindo " + usuario.nome + "! Você está pronto para rodar.");
+                 // Ao entrar, começa com botão ONLINE visível
+                document.getElementById('btnFicarOnline').style.display = 'inline-flex';
+                document.getElementById('btnFicarOffline').style.display = 'none';
 
             } catch(e) { 
                 console.error(e);
