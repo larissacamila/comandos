@@ -469,7 +469,8 @@
             }
             tocarSom('sucesso');
             falar(`Motorista ${dadosCorrida.motorista_nome || 'parceiro'} aceitou sua corrida e está a caminho!`);
-            mostrarStatusCorridaAceita(dadosCorrida);
+           // mostrarStatusCorridaAceita(dadosCorrida);
+            mostrarDadosMotorista(dados); 
             inicializarMapaRastreamento();
         });
 
