@@ -580,7 +580,7 @@
             const origem = `${corrida.origem_lat},${corrida.origem_lng}`;
             const destino = `${corrida.destino_lat},${corrida.destino_lng}`;
             document.getElementById('mapaFrame').src = `https://maps.google.com/maps?q=${origem}&saddr=${origem}&daddr=${destino}&output=embed`;
-            
+            iniciarGPS()
             falar("A caminho do passageiro");
         }
 
