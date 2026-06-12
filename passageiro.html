@@ -824,6 +824,7 @@
             document.getElementById('tituloAvaliacao').innerText = `Avalie ${nome || 'o motorista'}`;
             document.querySelectorAll('.estrela').forEach(e => e.classList.remove('ativa'));
             document.getElementById('modalAvaliacaoPassageiro').style.display = "flex";
+            limparTelaCorrida();
         }
 
         function selecionarEstrela(nota) {
@@ -908,6 +909,30 @@
                 carregarAvaliacoes();
             }
         };
+        function limparTelaCorrida() {
+    corridaAtual = null;
+
+    // Para recebimento de localização
+    if (typeof envioLocalizacaoInterval !== "undefined" && envioLocalizacaoInterval) {
+        clearInterval(envioLocalizacaoInterval);
+        envioLocalizacaoInterval = null;
+    }
+
+    // Oculta blocos e limpa conteúdo
+    const elCorrida = document.getElementById("corridaAtiva");
+    if (elCorrida) elCorrida.style.display = "none";
+
+    const elMapa = document.getElementById("mapa");
+    if (elMapa) elMapa.innerHTML = "";
+
+    const elStatus = document.getElementById("statusCorrida");
+    if (elStatus) elStatus.textContent = "Nenhuma corrida em andamento";
+
+    // Limpa também lista/chamadas antigas
+    const lista = document.getElementById("listaCorridas");
+    if (lista) lista.innerHTML = "";
+}
+
     </script>
 </body>
 </html>
