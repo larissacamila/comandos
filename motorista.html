@@ -83,43 +83,64 @@
         
         /* === BARRA INFERIOR === */
 .barra-inferior {
-    position: absolute; bottom: 0; left: 0; right: 0; padding: 19px 20px 25px;
-    background: var(--card); border-top: 1px solid var(--borda);
+    position: absolute; bottom: 0; left: 0; right: 0; 
+    padding: 10px 20px; /* Ajustei o padding para caber melhor */
+    background: var(--card); 
+    border-top: 1px solid var(--borda);
     z-index: 300;
     display: flex;
-    gap: 15px;
-    justify-content: center;
-    flex-wrap: wrap;
+    justify-content: space-between; /* UM DO LADO ESQUERDO, OUTRO DO DIREITO */
+    align-items: center;
 }
 
 /* ==============================================
-   ✅ TODOS OS BOTÕES DA BARRA INFERIOR (INCLUINDO O SAIR)
-   ============================================== */
+✅ BOTÕES PEQUENOS, REDONDINHOS E UM DE CADA LADO
+============================================== */
 .barra-inferior #btnOnline,
-.barra-inferior #btnOffline,
-.barra-inferior .btn-danger[onclick="sair()"] { /* Aplica no botão sair existente */
-    width: 30px !important;
-    height: 30px !important;
-    font-size: 15px !important;
-    padding: 10px !important;
-    border-radius: 15px !important;
+.barra-inferior #btnOffline {
+    width: 60px !important; /* BOTÕES PEQUENINHOS E REDONDOS */
+    height: 60px !important;
+    border-radius: 50% !important; /* DEIXA TOTALMENTE REDONDO */
+    font-size: 0 !important; /* TIRA O TEXTO, SÓ ÍCONE */
+    padding: 0 !important;
+    border: none !important;
+}
+
+/* ÍCONES CENTRALIZADOS NO BOTÃO */
+.barra-inferior #btnOnline i,
+.barra-inferior #btnOffline i {
+    font-size: 24px !important; /* TAMANHO DO ÍCONE */
+}
+
+/* CORES */
+.barra-inferior #btnOnline {
+    background-color: #22c55e !important;
+    color: white !important;
+}
+
+.barra-inferior #btnOffline {
+    background-color: #ef4444 !important;
+    color: white !important;
 }
 
 /* ==============================================
-   ✅ AJUSTE ESPECÍFICO PARA O BOTÃO SAIR EXISTENTE
-   ============================================== */
+✅ BOTÃO SAIR TAMBÉM PEQUENO E NA DIREITA
+============================================== */
 .barra-inferior .btn-danger[onclick="sair()"] {
-    /* Mantém o estilo original dele e ajusta o tamanho */
+    width: 60px !important;
+    height: 60px !important;
+    border-radius: 50% !important; /* TOTALMENTE REDONDO */
     background: transparent !important;
     border: 1px solid var(--perigo) !important;
     color: var(--perigo) !important;
-    width: 30px !important;
-    height: 30px !important;
-    font-size: 15px !important;
-    margin-top: 0 !important; /* Remove a margem de 12px que ele tinha */
+    font-size: 0 !important; /* TIRA O TEXTO, SÓ ÍCONE */
+    padding: 0 !important;
 }
 
- 
+.barra-inferior .btn-danger[onclick="sair()"] i {
+    font-size: 24px !important; /* ÍCONE GRANDE E VISÍVEL */
+}
+
 
 
         
