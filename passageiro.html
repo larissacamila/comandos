@@ -909,7 +909,8 @@
                 carregarAvaliacoes();
             }
         };
-        function limparTelaCorrida() {
+        
+function limparTelaCorrida() {
     corridaAtual = null;
 
     // Para recebimento de localização
@@ -918,7 +919,7 @@
         envioLocalizacaoInterval = null;
     }
 
-    // Oculta blocos e limpa conteúdo
+    // Oculta/limpa blocos principais
     const elCorrida = document.getElementById("corridaAtiva");
     if (elCorrida) elCorrida.style.display = "none";
 
@@ -928,9 +929,26 @@
     const elStatus = document.getElementById("statusCorrida");
     if (elStatus) elStatus.textContent = "Nenhuma corrida em andamento";
 
-    // Limpa também lista/chamadas antigas
     const lista = document.getElementById("listaCorridas");
     if (lista) lista.innerHTML = "";
+
+    // 🚗 LIMPAR CARD DO MOTORISTA — O QUE ESTAVA FALTANDO
+    const cardMotorista = document.getElementById("cardMotorista");
+    if (cardMotorista) {
+        cardMotorista.style.display = "none";
+        cardMotorista.innerHTML = ""; // apaga todo o conteúdo interno
+    }
+
+    // Se houver campos individuais, zere também:
+    const nomeMotorista = document.getElementById("nomeMotoristaInfo");
+    const carroMotorista = document.getElementById("carroMotoristaInfo");
+    const placaMotorista = document.getElementById("placaMotoristaInfo");
+    const fotoMotorista = document.getElementById("fotoMotoristaInfo");
+
+    if (nomeMotorista) nomeMotorista.textContent = "";
+    if (carroMotorista) carroMotorista.textContent = "";
+    if (placaMotorista) placaMotorista.textContent = "";
+    if (fotoMotorista) fotoMotorista.src = "";
 }
 
     </script>
