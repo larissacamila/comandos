@@ -80,7 +80,7 @@
         .linha { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--borda); font-size: 15px; }
         .valor-grande { font-size: 26px; font-weight: 800; color: var(--sucesso); }
         .grupo-botoes { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
-
+        
         /* === BARRA INFERIOR === */
 .barra-inferior {
     position: absolute; bottom: 0; left: 0; right: 0; padding: 15px 20px 25px;
@@ -92,41 +92,43 @@
 }
 
 /* ==============================================
-   ✅ BOTÕES COM TAMANHO FORÇADO E PRIORIDADE MÁXIMA
+   ✅ BOTÕES DA BARRA INFERIOR APENAS!
    ============================================== */
 .barra-inferior #btnOnline,
 .barra-inferior #btnOffline {
-    /* !important FORÇA APLICAÇÃO DOS ESTILOS */
-    width: 200px !important; /* AUMENTEI PARA 200PX DE LARGURA */
-    height: 60px !important; /* AUMENTEI PARA 60PX DE ALTURA */
-    font-size: 18px !important; /* FONTE MAIOR */
+    width: 200px !important; 
+    height: 60px !important; 
+    font-size: 18px !important; 
     padding: 10px !important;
     border-radius: 15px !important;
     border: none !important;
-    text-transform: uppercase; /* DEIXA O TEXTO EM MAIÚSCULO */
-    font-weight: 600 !important; /* NEGRITO */
+    text-transform: uppercase;
+    font-weight: 600 !important;
 }
 
-/* CORES ESPECÍFICAS (FORÇADAS) */
+/* CORES ESPECÍFICAS */
 .barra-inferior #btnOnline {
-    background-color: #22c55e !important; /* VERDE MAIS INTENSO */
+    background-color: #22c55e !important;
     color: white !important;
 }
 
 .barra-inferior #btnOffline {
-    background-color: #ef4444 !important; /* VERMELHO MAIS INTENSO */
+    background-color: #ef4444 !important;
     color: white !important;
 }
 
 /* ==============================================
-   🚨 REMOVER ESTILOS PADRÃO DO BOOTSTRAP QUE INTERFEREM
+   🚨 REMOVE ESTILOS DO BOOTSTRAP APENAS NA BARRA INFERIOR
    ============================================== */
 .barra-inferior .btn-success,
 .barra-inferior .btn-danger {
-    padding: 0 !important; /* ZERA PADDING PADRÃO DO BOOTSTRAP */
-    min-width: 0 !important; /* REMOVE LARGURA MÍNIMA DO BOOTSTRAP */
-    min-height: 0 !important; /* REMOVE ALTURA MÍNIMA DO BOOTSTRAP */
+    padding: 0 !important; 
+    min-width: 0 !important; 
+    min-height: 0 !important;
 }
+
+ 
+
 
         
          
