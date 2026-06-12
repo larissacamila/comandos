@@ -83,6 +83,24 @@
             animation: sobe 0.3s ease;
         }
         @keyframes sobe { from { opacity:0; transform: translateX(-50%) translateY(30px); } to { opacity:1; transform: translateX(-50%) translateY(0); } }
+        
+        /* Container da Foto do Passageiro */
+        .passageiro-perfil {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 15px;
+            gap: 8px;
+        }
+        .passageiro-foto {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid var(--sucesso);
+            background: #272E3B;
+        }
+
         .linha { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--borda); font-size: 15px; }
         .valor-grande { font-size: 26px; font-weight: 800; color: var(--sucesso); }
         .grupo-botoes { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
@@ -157,7 +175,6 @@
         <button class="btn-success acao-full" onclick="enviarAvaliacao()" style="margin-top:15px; width:100%;">✅ ENVIAR AVALIAÇÃO</button>
     </div>
 
-    <!-- TELA LOGIN → PRIMEIRA A APARECER -->
     <div id="loginScreen">
         <div class="logo">
             <h1>ROTA BRASIL🇧🇷</h1>
@@ -177,12 +194,10 @@
         </div>
     </div>
 
-    <!-- MAPA -->
     <div id="mapa">
-        <iframe id="mapaFrame" src="https://www.google.com/maps/embed/v1/view?key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8&center=-23.5645,-46.6523&zoom=16&maptype=roadmap"></iframe>
+        <iframe id="mapaFrame" src="about:blank"></iframe>
     </div>
 
-    <!-- HEADER → APARECE SÓ DEPOIS DO LOGIN -->
     <div class="header" id="header">
         <div class="header-titulo">ROTA BRASIL 🇧🇷</div>
         <div class="grupo-botoes-topo">
@@ -201,9 +216,14 @@
         </div>
     </div>
 
-    <!-- CARD CORRIDA -->
     <div id="cardCorrida" class="card-corrida">
         <h3 style="text-align:center; margin-bottom:15px; color:var(--alerta);"><i class="fas fa-bell fa-shake"></i> NOVA CORRIDA</h3>
+        
+        <div class="passageiro-perfil">
+            <img id="cFoto" src="" alt="Foto do Passageiro" class="passageiro-foto" style="display: none;">
+            <i id="cFotoIcon" class="fas fa-user-circle" style="font-size: 70px; color: #86909C;"></i>
+        </div>
+
         <div class="linha"><span>Passageiro</span> <span id="cPassageiro">-</span></div>
         <div class="linha"><span>Telefone</span> <span id="cTelefone">-</span></div>
         <div class="linha"><span>Origem</span> <span id="cOrigem">-</span></div>
@@ -215,7 +235,6 @@
         </div>
     </div>
 
-    <!-- BARRA INFERIOR -->
     <div class="barra-inferior" id="barra">
         <div id="etapaTexto" class="etapa etapa1">📦 Corrida Aceita! Vá ao passageiro</div>
         <div id="areaAcoes" class="acoes">
@@ -234,11 +253,10 @@
         </div>
     </div>
 
-    <!-- SONS -->
-    <audio id="somAlerta" preload="auto"><source src="https://rotabrasil-v1cf.onrender.com/static/sounds/chamada.mp3" type="audio/mpeg">
-    <audio id="somAlto" preload="auto"><source src="https://rotabrasil-v1cf.onrender.com/static/sounds/chamada.mp3" type="audio/mpeg">
-    <audio id="somSucesso" preload="auto"><source src="https://rotabrasil-v1cf.onrender.com/static/sounds/sucesso.mp3" type="audio/mpeg">
-    <audio id="somDinheiro" preload="auto"><source src="https://rotabrasil-v1cf.onrender.com/static/sounds/dinheiro.mp3" type="audio/mpeg">
+    <audio id="somAlerta" preload="auto"><source src="https://rotabrasil-v1cf.onrender.com/static/sounds/chamada.mp3" type="audio/mpeg"></audio>
+    <audio id="somAlto" preload="auto"><source src="https://rotabrasil-v1cf.onrender.com/static/sounds/chamada.mp3" type="audio/mpeg"></audio>
+    <audio id="somSucesso" preload="auto"><source src="https://rotabrasil-v1cf.onrender.com/static/sounds/sucesso.mp3" type="audio/mpeg"></audio>
+    <audio id="somDinheiro" preload="auto"><source src="https://rotabrasil-v1cf.onrender.com/static/sounds/dinheiro.mp3" type="audio/mpeg"></audio>
 
     <script>
         const API_URL = "https://rotabrasil-5jcp.onrender.com";
@@ -322,14 +340,13 @@
 
         window.onload = () => {
             const t=localStorage.getItem("token_motorista"),d=localStorage.getItem("dados_motorista");
-            if(t&&d){try{usuario=JSON.parse(d);token=t;telaPrincipal();iniciarGPS();falar("Bem vindo de volta "+usuario.nome);}catch(){localStorage.clear();}}
+            if(t&&d){try{usuario=JSON.parse(d);token=t;telaPrincipal();iniciarGPS();falar("Bem vindo de volta "+usuario.nome);}catch{localStorage.clear();}}
             document.querySelectorAll('.estrela').forEach(e=>e.addEventListener('click',()=>{
                 notaAvaliacao=parseInt(e.dataset.valor);
                 document.querySelectorAll('.estrela').forEach((el,i)=>el.classList.toggle('ativa',i<notaAvaliacao));
             }));
         };
 
-        // ✅ ONLINE / OFFLINE FUNCIONANDO
         async function ficarOffline() {
             try {
                 await fetch(`${API_URL}/ficar_offline/${usuario.id}`,{method:'POST',headers:{'Authorization':`Bearer ${token}`}});
@@ -352,12 +369,26 @@
             }catch(e){console.error(e);}
         }
 
+        // CAPTURA E INSERÇÃO DOS DADOS DA CORRIDA E DA FOTO DO PASSAGEIRO
         socket.on('nova_corrida',(dados)=>{
             if(estado.aceito)return; corrida=dados; estado={aceito:true,pegouPassageiro:false,viagemIniciada:false};
             document.getElementById('cPassageiro').textContent=dados.passageiro_nome||"Cliente";
             document.getElementById('cTelefone').textContent=dados.passageiro_telefone||"-";
             document.getElementById('cOrigem').textContent=dados.origem; document.getElementById('cDestino').textContent=dados.destino;
             document.getElementById('cValor').textContent=`R$ ${parseFloat(dados.valor||0).toFixed(2)}`;
+            
+            // Renderiza a foto se ela vier do backend
+            const fotoImg = document.getElementById('cFoto');
+            const fotoIcon = document.getElementById('cFotoIcon');
+            if(dados.passageiro_foto) {
+                fotoImg.src = dados.passageiro_foto;
+                fotoImg.style.display = 'block';
+                fotoIcon.style.display = 'none';
+            } else {
+                fotoImg.style.display = 'none';
+                fotoIcon.style.display = 'block';
+            }
+
             document.getElementById('cardCorrida').style.display='block';
             const s=document.getElementById('somAlerta'); s.currentTime=0;s.play();
             falar("Nova corrida, valor R$ "+parseFloat(dados.valor).toFixed(2).replace('.',','));
@@ -380,12 +411,12 @@
                 document.getElementById('somSucesso').play(); falar("Corrida aceita! Vá ao passageiro");
             }catch(e){mostrarErro(e.message);}
         }
-        function recusarCorrida(){document.getElementById('cardCorrida').style.display='none';corrida=null;falar("Corrida recusada");}
+        function recusarCorrida()){document.getElementById('cardCorrida').style.display='none';corrida=null;falar("Corrida recusada");}
 
         function irAoPassageiro(){
             if(!estado.aceito)return mostrarErro("Aceite primeiro"); estado.pegouPassageiro=true;
             const dest=(corrida.origem_lat&&corrida.origem_lng)?`${corrida.origem_lat},${corrida.origem_lng}`:corrida.origem;
-            document.getElementById('mapaFrame').src=`https://www.google.com/maps/embed/v1/directions?key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8&origin=${posicaoAtual.lat},${posicaoAtual.lng}&destination=${dest}&mode=driving`;
+            document.getElementById('mapaFrame').src=`https://maps.google.com/maps?q=${posicaoAtual.lat},${posicaoAtual.lng}&saddr=${posicaoAtual.lat},${posicaoAtual.lng}&daddr=${dest}&output=embed`;
             atualizarEtapa(2); document.getElementById('btnIrPassageiro').style.display='none';
             document.getElementById('btnIniciarViagem').style.display='flex'; falar("Indo ao passageiro");
         }
@@ -393,7 +424,7 @@
             if(!estado.aceito||!estado.pegouPassageiro)return mostrarErro("Vá buscar primeiro");
             estado.viagemIniciada=true;
             const dest=(corrida.destino_lat&&corrida.destino_lng)?`${corrida.destino_lat},${corrida.destino_lng}`:corrida.destino;
-            document.getElementById('mapaFrame').src=`https://www.google.com/maps/embed/v1/directions?key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8&origin=${posicaoAtual.lat},${posicaoAtual.lng}&destination=${dest}&mode=driving`;
+            document.getElementById('mapaFrame').src=`https://maps.google.com/maps?q=${posicaoAtual.lat},${posicaoAtual.lng}&saddr=${posicaoAtual.lat},${posicaoAtual.lng}&daddr=${dest}&output=embed`;
             atualizarEtapa(3); document.getElementById('btnIniciarViagem').style.display='none';
             document.getElementById('btnFinalizar').style.display='flex';
             socket.emit('viagem_iniciada',{corrida_id:corrida.corrida_id||corrida.id});
@@ -450,12 +481,11 @@
             document.getElementById('cardCorrida').style.display='none'; document.getElementById('areaAcoes').style.display='none';
             document.getElementById('modalAvaliacao').style.display='none'; document.getElementById('alertaCancel').style.display='none';
             document.getElementById('comentarioAvaliacao').value=''; document.querySelectorAll('.estrela').forEach(e=>e.classList.remove('ativa'));
-            document.getElementById('mapaFrame').src=`https://www.google.com/maps/embed/v1/view?key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8&center=${posicaoAtual.lat},${posicaoAtual.lng}&zoom=16&maptype=roadmap`;
+            document.getElementById('mapaFrame').src=`https://maps.google.com/maps?q=${posicaoAtual.lat},${posicaoAtual.lng}&zoom=16&output=embed`;
         }
 
         socket.on('connect',()=>console.log("✅ Conectado"));
         socket.on('disconnect',()=>mostrarErro("Conexão perdida"));
     </script>
-
 </body>
 </html>
