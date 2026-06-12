@@ -940,50 +940,7 @@ envioLocalizacaoInterval = setInterval(() => {
                 return e.returnValue;
             }
         });
-        async function ficarOffline() {
-    try {
-        await fetch(`${API_URL}/ficar_offline/${usuario.id}`, { 
-            method:'POST', 
-            headers: {'Authorization': `Bearer ${token}`} 
-        });
-
-        // ✅ AGORA USA OS IDs DOS BOTÕES PEQUENOS
-        document.getElementById('btnFicarOnline').style.display = 'inline-flex';
-        document.getElementById('btnFicarOffline').style.display = 'none';
-
-        // Status
-        document.getElementById('statusMotorista').className = 'status-bolinha offline';
-        document.getElementById('statusMotorista').innerHTML = `<i class="fas fa-circle"></i> <span>Offline</span>`;
-
-        socket.emit('motorista_offline', {id: usuario.id});
-        falar("Você está offline");
         
-        if(envioLocalizacaoInterval) clearInterval(envioLocalizacaoInterval);
-    } catch(e) {
-        console.error("Erro ao ficar offline:", e);
-    }
-}
-
-// ✅ E A FUNÇÃO FICAR ONLINE TAMBÉM AJUSTADA:
-async function ficarOnline() {
-    try {
-        await fetch(`${API_URL}/ficar_online/${usuario.id}`, { 
-            method:'POST', 
-            headers: {'Authorization': `Bearer ${token}`} 
-        });
-
-        document.getElementById('btnFicarOnline').style.display = 'none';
-        document.getElementById('btnFicarOffline').style.display = 'inline-flex';
-
-        document.getElementById('statusMotorista').className = 'status-bolinha online';
-        document.getElementById('statusMotorista').innerHTML = `<i class="fas fa-circle"></i> <span>Online</span>`;
-
-        socket.emit('motorista_online', {id: usuario.id});
-        falar("Você está online");
-    } catch(e) {
-        console.error("Erro ao ficar online:", e);
-    }
-}
 
 
      </script>
