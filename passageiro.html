@@ -273,14 +273,6 @@
         .btn-blocked { background-color: var(--cor-card-claro) !important; color: var(--cor-texto-secundario) !important; cursor: not-allowed; }
 
         @keyframes pulse { 0% { opacity: 0.5; } 50% { opacity: 1; } 100% { opacity: 0.5; } }
-        /* carde foto*/
-        #cardMotorista {
-  background: #fff;
-  padding: 15px;
-  border-radius: 8px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-}
-
     </style>
 </head>
 <body>
@@ -410,23 +402,6 @@
             </div>
         </div>
     </div>
-    <!-- 🚗 CARD DO MOTORISTA -->
-<div id="cardMotorista" class="card" style="display: none; border-left:4px solid #2980b9; margin-bottom:15px;">
-    <h4>👤 Dados do Motorista</h4>
-    <div style="display:flex; align-items:center; gap:15px; margin-top:10px;">
-        <!-- Foto -->
-        <div>
-            <img id="fotoMotoristaInfo" src="" alt="Foto do motorista" 
-                 style="width:70px; height:70px; border-radius:50%; object-fit:cover; border:2px solid #ccc;">
-        </div>
-        <!-- Dados -->
-        <div>
-            <p><strong>Nome:</strong> <span id="nomeMotoristaInfo"></span></p>
-            <p><strong>Carro:</strong> <span id="carroMotoristaInfo"></span></p>
-            <p><strong>Placa:</strong> <span id="placaMotoristaInfo"></span></p>
-        </div>
-    </div>
-</div>
 
     <script>
         const API = "https://rotabrasil-5jcp.onrender.com";
@@ -470,7 +445,6 @@
             tocarSom('sucesso');
             falar(`Motorista ${dadosCorrida.motorista_nome || 'parceiro'} aceitou sua corrida e está a caminho!`);
             mostrarStatusCorridaAceita(dadosCorrida);
-            mostrarDadosMotorista(dadosCorrida); 
             inicializarMapaRastreamento();
         });
 
@@ -695,26 +669,6 @@
                     </div>
                     <button class="btn-danger" onclick="cancelarCorrida()">❌ Cancelar Viagem</button>
                 </div>`;
-            // chamar foto 
-            function mostrarDadosMotorista(dadosCorrida) {
-    const card = document.getElementById("cardMotorista");
-    const foto = document.getElementById("fotoMotoristaInfo");
-    const nome = document.getElementById("nomeMotoristaInfo");
-    const carro = document.getElementById("carroMotoristaInfo");
-    const placa = document.getElementById("placaMotoristaInfo");
-
-    // Preenche os valores
-    nome.textContent = dados.motorista_nome || "Não informado";
-    carro.textContent = dados.carro || "Carro particular";
-    placa.textContent = dados.placa || "Não informada";
-
-    // Foto: se vier vazia, usa uma padrão
-    foto.src = dados.foto_perfil || "https://via.placeholder.com/70";
-
-    // Mostra o card
-    card.style.display = "block";
-}
-
         }
 
         function buscarEndereco(texto, tipo) {
