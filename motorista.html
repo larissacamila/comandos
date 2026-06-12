@@ -82,23 +82,23 @@
         .grupo-botoes { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
 
         /* === BARRA INFERIOR === */
-.barra-inferior button {
-    height: 60px;
-    padding: 0 30px;
-    font-size: 18px;
-    width: 100%; /* Ocupa toda a largura disponível */
+        .barra-inferior .btnOfline {
+    width: 150px;
+    height: 50px;
 }
 
-
-
-
-/* Se os botões estiverem em uma div flex ou grid, pode ajustar o espaçamento também */
-.barra-inferior .botoes-container {
-    display: flex;
-    gap: 10px; /* Espaçamento entre os botões */
-    justify-content: center; /* Centraliza os botões */
+.barra-inferior .btnOnline {
+    width: 150px;
+    height: 50px;
 }
 
+        /*divisao 1*/
+        
+        .barra-inferior {
+            position: absolute; bottom: 0; left: 0; right: 0; padding: 15px 20px 25px;
+            background: var(--card); border-top: 1px solid var(--borda);
+            z-index: 300;
+        }
         .acoes { display: none; margin-top: 10px; gap: 10px; grid-template-columns: 1fr 1fr; }
         .acao-full { grid-column: 1 / -1; }
         .etapa {
