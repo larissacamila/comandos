@@ -61,7 +61,7 @@
             position: absolute; top: 0; left: 0; right: 0; padding: 12px 15px;
             background: linear-gradient(180deg, var(--fundo), transparent);
             display: flex; justify-content: space-between; align-items: center;
-            z-index: 100;
+            z-index: 100; display:none;
         }
         .header-titulo { font-weight:800; font-size:17px; }
         .grupo-botoes-topo { display:flex; gap:6px; align-items:center; }
@@ -157,7 +157,7 @@
         <button class="btn-success acao-full" onclick="enviarAvaliacao()" style="margin-top:15px; width:100%;">✅ ENVIAR AVALIAÇÃO</button>
     </div>
 
-    <!-- TELA LOGIN -->
+    <!-- TELA LOGIN → PRIMEIRA A APARECER -->
     <div id="loginScreen">
         <div class="logo">
             <h1>ROTA BRASIL🇧🇷</h1>
@@ -182,8 +182,8 @@
         <iframe id="mapaFrame" src="https://www.google.com/maps/embed/v1/view?key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8&center=-23.5645,-46.6523&zoom=16&maptype=roadmap"></iframe>
     </div>
 
-    <!-- HEADER COM TUDO NO TOPO -->
-    <div class="header" id="header" style="display:none;">
+    <!-- HEADER → APARECE SÓ DEPOIS DO LOGIN -->
+    <div class="header" id="header">
         <div class="header-titulo">ROTA BRASIL 🇧🇷</div>
         <div class="grupo-botoes-topo">
             <div id="statusMotorista" class="status-bolinha offline">
@@ -195,7 +195,7 @@
             <button id="btnFicarOffline" class="btn-danger btn-topo" onclick="ficarOffline()" style="display:none;">
                 <i class="fa fa-times"></i> Off
             </button>
-            <button id="btnSairTopo" class="btn-danger btn-topo" style="background:#444; border-color:#666;" onclick="sair()">
+            <button id="btnSairTopo" class="btn-danger btn-topo" style="background:#444;" onclick="sair()">
                 <i class="fa fa-sign-out-alt"></i> Sair
             </button>
         </div>
@@ -329,7 +329,7 @@
             }));
         };
 
-        // ✅ ONLINE / OFFLINE FUNCIONANDO COM BOTÕES DO TOPO
+        // ✅ ONLINE / OFFLINE FUNCIONANDO
         async function ficarOffline() {
             try {
                 await fetch(`${API_URL}/ficar_offline/${usuario.id}`,{method:'POST',headers:{'Authorization':`Bearer ${token}`}});
