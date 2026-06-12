@@ -83,48 +83,40 @@
         
         /* === BARRA INFERIOR === */
 .barra-inferior {
-    position: absolute; bottom: 0; left: 0; right: 0; padding: 15px 20px 25px;
+    position: absolute; bottom: 0; left: 0; right: 0; padding: 19px 20px 25px;
     background: var(--card); border-top: 1px solid var(--borda);
     z-index: 300;
     display: flex;
     gap: 15px;
     justify-content: center;
+    flex-wrap: wrap;
 }
 
 /* ==============================================
-   ✅ BOTÕES DA BARRA INFERIOR APENAS!
+   ✅ TODOS OS BOTÕES DA BARRA INFERIOR (INCLUINDO O SAIR)
    ============================================== */
 .barra-inferior #btnOnline,
-.barra-inferior #btnOffline {
-    width: 50px !important; 
-    height: 30px !important; 
-    font-size: 16px !important; 
+.barra-inferior #btnOffline,
+.barra-inferior .btn-danger[onclick="sair()"] { /* Aplica no botão sair existente */
+    width: 30px !important;
+    height: 30px !important;
+    font-size: 15px !important;
     padding: 10px !important;
     border-radius: 15px !important;
-    border: none !important;
-    text-transform: uppercase;
-    font-weight: 600 !important;
-}
-
-/* CORES ESPECÍFICAS */
-.barra-inferior #btnOnline {
-    background-color: #22c55e !important;
-    color: white !important;
-}
-
-.barra-inferior #btnOffline {
-    background-color: #ef4444 !important;
-    color: white !important;
 }
 
 /* ==============================================
-   🚨 REMOVE ESTILOS DO BOOTSTRAP APENAS NA BARRA INFERIOR
+   ✅ AJUSTE ESPECÍFICO PARA O BOTÃO SAIR EXISTENTE
    ============================================== */
-.barra-inferior .btn-success,
-.barra-inferior .btn-danger {
-    padding: 0 !important; 
-    min-width: 0 !important; 
-    min-height: 0 !important;
+.barra-inferior .btn-danger[onclick="sair()"] {
+    /* Mantém o estilo original dele e ajusta o tamanho */
+    background: transparent !important;
+    border: 1px solid var(--perigo) !important;
+    color: var(--perigo) !important;
+    width: 30px !important;
+    height: 30px !important;
+    font-size: 15px !important;
+    margin-top: 0 !important; /* Remove a margem de 12px que ele tinha */
 }
 
  
