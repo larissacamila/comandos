@@ -82,11 +82,30 @@
         .grupo-botoes { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
 
         /* === BARRA INFERIOR === */
-        .barra-inferior {
-            position: absolute; bottom: 0; left: 0; right: 0; padding: 15px 20px 25px;
-            background: var(--card); border-top: 1px solid var(--borda);
-            z-index: 300;
-        }
+.barra-inferior {
+    position: absolute; bottom: 0; left: 0; right: 0; padding: 15px 20px 25px;
+    background: var(--card); border-top: 1px solid var(--borda);
+    z-index: 300;
+}
+
+/* === AJUSTE DO TAMANHO DOS BOTÕES DA BARRA INFERIOR === */
+.barra-inferior button {
+    /* Defina os valores que quiser aqui */
+    height: 50px; /* Altura dos botões */
+    padding: 0 20px; /* Espaçamento interno (esquerda/direita) */
+    font-size: 16px; /* Tamanho da fonte */
+    min-width: 120px; /* Largura mínima */
+    max-width: 200px; /* Largura máxima (se quiser limitar) */
+    border-radius: 12px; /* Manter o estilo arredondado */
+}
+
+/* Se os botões estiverem em uma div flex ou grid, pode ajustar o espaçamento também */
+.barra-inferior .botoes-container {
+    display: flex;
+    gap: 10px; /* Espaçamento entre os botões */
+    justify-content: center; /* Centraliza os botões */
+}
+
         .acoes { display: none; margin-top: 10px; gap: 10px; grid-template-columns: 1fr 1fr; }
         .acao-full { grid-column: 1 / -1; }
         .etapa {
