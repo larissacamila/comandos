@@ -937,6 +937,24 @@ envioLocalizacaoInterval = setInterval(() => {
                 return e.returnValue;
             }
         });
+        const btnFicarOnline = document.getElementById("btnFicarOnline");
+const btnFicarOffline = document.getElementById("btnFicarOffline");
+
+// Ficar Online
+btnFicarOnline.addEventListener("click", async () => {
+  await fetch(`${API_URL}/ficar_online/${motoristaId}`, { method: "POST" });
+  btnFicarOnline.style.display = "none";
+  btnFicarOffline.style.display = "inline-flex";
+  // Atualiza indicador de status se quiser
+});
+
+// Ficar Offline
+btnFicarOffline.addEventListener("click", async () => {
+  await fetch(`${API_URL}/ficar_offline/${motoristaId}`, { method: "POST" });
+  btnFicarOnline.style.display = "inline-flex";
+  btnFicarOffline.style.display = "none";
+});
+
 
      </script>
 
