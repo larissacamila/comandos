@@ -332,33 +332,45 @@
         <i class="fas fa-power-off"></i>
     </button>
 </div>
+<!-- 🟡 ÁREA DE AÇÕES -->
+<div id="areaAcoes" class="acoes" style="display:none;"> <!-- Esconde a área até que seja necessária -->
+    <div id="etapaTexto" class="etapa etapa1">📦 Corrida Aceita! Vá ao passageiro</div>
+
+    <button id="btnIrPassageiro" class="btn-primary acao-full" onclick="irAoPassageiro()">
+        <i class="fas fa-location-arrow"></i> 📍 IR ATÉ PASSAGEIRO
+    </button>
+
+    <button id="btnIniciarViagem" class="btn-warning acao-full" onclick="iniciarViagem()" style="display:none;">
+        <i class="fas fa-route"></i> 🟢 INICIAR VIAGEM AO DESTINO
+    </button>
+
+    <button id="btnLigar" class="btn-purple" onclick="ligarCliente()">
+        <i class="fas fa-phone-alt"></i> LIGAR / WPP
+    </button>
+
+    <button id="btnFinalizar" class="btn-success acao-full" onclick="finalizarAgora()" style="display:none;">
+        <i class="fas fa-check-double"></i> ✅ FINALIZAR CORRIDA
+    </button>
+</div>
+
+<!-- === BARRA INFERIOR COM BOTÕES REDONDINHOS === -->
+<div class="barra-inferior" id="barra" style="display:none;">
+    <!-- BOTÃO ONLINE/OFFLINE NA ESQUERDA -->
+    <button id="btnOnline" class="btn-success" onclick="ficarOnline()">
+        <i class="fas fa-power-off"></i>
+    </button>
+    <button id="btnOffline" class="btn-danger" onclick="ficarOffline()" style="display:none;">
+        <i class="fas fa-power-off"></i>
+    </button>
+
+    <!-- BOTÃO SAIR NA DIREITA -->
+    <button id="btnSair" class="btn-danger" onclick="sair()">
+        <i class="fas fa-door-open"></i>
+    </button>
+</div>
 
 
-        <!-- 🟡 ÁREA DE AÇÕES -->
-        <div id="areaAcoes" class="acoes">
-            <div id="etapaTexto" class="etapa etapa1">📦 Corrida Aceita! Vá ao passageiro</div>
-
-            <button id="btnIrPassageiro" class="btn-primary acao-full" onclick="irAoPassageiro()" style="display:none;">
-                <i class="fas fa-location-arrow"></i> 📍 IR ATÉ PASSAGEIRO
-            </button>
-
-            <button id="btnIniciarViagem" class="btn-warning acao-full" onclick="iniciarViagem()" style="display:none;">
-                <i class="fas fa-route"></i> 🟢 INICIAR VIAGEM AO DESTINO
-            </button>
-
-            <button id="btnLigar" class="btn-purple" onclick="ligarCliente()" style="display:none;">
-                <i class="fas fa-phone-alt"></i> LIGAR / WPP
-            </button>
-
-            <button id="btnFinalizar" class="btn-success acao-full" onclick="finalizarAgora()" style="display:none;">
-                <i class="fas fa-check-double"></i> ✅ FINALIZAR CORRIDA
-            </button>
-        </div>
-
-        <button class="btn-danger" style="margin-top:12px; background:transparent; border:1px solid var(--perigo); color:var(--perigo);" onclick="sair()">
-            <i class="fas fa-door-open"></i> SAIR
-        </button>
-    </div>
+        
 
     <!-- SONS ✅ TROCADOS PARA SEU SERVIDOR (rotabrasil-v1cf.onrender.com) -->
     <audio id="somAlerta" preload="auto">
