@@ -273,6 +273,46 @@
         .btn-blocked { background-color: var(--cor-card-claro) !important; color: var(--cor-texto-secundario) !important; cursor: not-allowed; }
 
         @keyframes pulse { 0% { opacity: 0.5; } 50% { opacity: 1; } 100% { opacity: 0.5; } }
+
+    .modal-carteira{
+    position:fixed;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%);
+    width:90%;
+    max-width:380px;
+
+    background:#1e293b;
+
+    border:1px solid #334155;
+    border-radius:16px;
+
+    padding:20px;
+
+    color:white;
+
+    display:none;
+
+    z-index:99999;
+
+    box-shadow:0 0 30px rgba(0,0,0,0.5);
+}
+
+.modal-carteira h2{
+    margin-bottom:15px;
+}
+
+.modal-carteira p{
+    margin-bottom:12px;
+}
+
+.btn-carteira{
+    background:#16a34a;
+    color:white;
+    border:none;
+    padding:12px 18px;
+    border-radius:10px;
+}
     </style>
 </head>
 <body>
@@ -333,6 +373,9 @@
             <span>Sua Nota atual:</span>
             <span class="nota-num">5.0</span>
             <span class="estrelas"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></span>
+            <button class="btn-carteira" onclick="abrirCarteira()">
+           💰 Carteira
+            </button>
         </div>
 
         <div class="card-solicitacao">
@@ -402,6 +445,37 @@
             </div>
         </div>
     </div>
+    <div id="painelCarteira" class="modal-carteira">
+
+    <h2>💰 Minha Carteira</h2>
+
+    <p>
+        Saldo disponível:
+        <strong id="saldoCarteira">
+            R$ 0,00
+        </strong>
+    </p>
+
+    <p>
+        Saldo bloqueado:
+        <strong id="saldoBloqueado">
+            R$ 0,00
+        </strong>
+    </p>
+
+    <button class="btn-success">
+        ➕ Adicionar Saldo
+    </button>
+
+    <button class="btn-primary">
+        📜 Histórico
+    </button>
+
+    <button class="btn-danger" onclick="fecharCarteira()">
+        ❌ Fechar
+    </button>
+
+</div>
 
     <script>
         const API = "https://rotabrasil-5jcp.onrender.com";
@@ -951,6 +1025,41 @@ function limparTelaCorrida() {
     if (fotoMotorista) fotoMotorista.src = "";
     resetarInterfaceAposCancelamento();
 }
+async function abrirCarteira() {
+
+    document.getElementById(
+        "painelCarteira"
+    ).style.display = "block";
+
+    const resposta = await fetch(
+        `${API}/carteira/saldo`,
+        {
+            headers:{
+                Authorization:`Bearer ${token}`
+            }
+        }
+    );
+
+    const dados = await resposta.json();
+
+    document.getElementById(
+        "saldoCarteira"
+    ).textContent =
+        `R$ ${dados.saldo.toFixed(2)}`;
+
+    document.getElementById(
+        "saldoBloqueado"
+    ).textContent =
+        `R$ ${dados.bloqueado.toFixed(2)}`;
+}
+
+function fecharCarteira(){
+    document.getElementById(
+        "painelCarteira"
+    ).style.display = "none";
+}
+
+        
 
     </script>
 </body>
