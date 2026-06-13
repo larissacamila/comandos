@@ -80,126 +80,13 @@
         .linha { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--borda); font-size: 15px; }
         .valor-grande { font-size: 26px; font-weight: 800; color: var(--sucesso); }
         .grupo-botoes { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
-      /* === ÁREA DE AÇÕES DAS CORRIDAS === */
-.acoes {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    padding: 15px;
-    margin-bottom: 80px; /* Espaço para a barra inferior */
-}
 
-.etapa {
-    background: var(--card);
-    color: white;
-    padding: 15px;
-    border-radius: 12px;
-    text-align: center;
-    font-weight: 600;
-    margin-bottom: 10px;
-}
-
-/* ESTILO DOS BOTÕES DA ÁREA DE AÇÕES */
-.btn-primary.acao-full,
-.btn-warning.acao-full,
-.btn-success.acao-full,
-.btn-purple {
-    width: 100%;
-    height: 55px;
-    border: none;
-    border-radius: 12px;
-    font-size: 16px;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-}
-
-.btn-primary.acao-full {
-    background: #3b82f6;
-    color: white;
-}
-
-.btn-warning.acao-full {
-    background: #f59e0b;
-    color: white;
-}
-
-.btn-success.acao-full {
-    background: #22c55e;
-    color: white;
-}
-
-.btn-purple {
-    background: #8b5cf6;
-    color: white;
-    width: 100%;
-}
-
-/* === BARRA INFERIOR COM BOTÕES REDONDINHOS === */
-.barra-inferior {
-    position: absolute; bottom: 0; left: 0; right: 0; 
-    padding: 10px 20px;
-    background: var(--card); 
-    border-top: 1px solid var(--borda);
-    z-index: 300;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.barra-inferior #btnOnline,
-.barra-inferior #btnOffline {
-    width: 60px !important;
-    height: 60px !important;
-    border-radius: 50% !important;
-    font-size: 0 !important;
-    padding: 0 !important;
-    border: none !important;
-}
-
-.barra-inferior #btnOnline i,
-.barra-inferior #btnOffline i {
-    font-size: 24px !important;
-}
-
-.barra-inferior #btnOnline {
-    background-color: #22c55e !important;
-    color: white !important;
-}
-
-.barra-inferior #btnOffline {
-    background-color: #ef4444 !important;
-    color: white !important;
-}
-
-/* BOTÃO SAIR NA BARRA INFERIOR */
-.barra-inferior #btnSair {
-    width: 60px !important;
-    height: 60px !important;
-    border-radius: 50% !important;
-    background: transparent !important;
-    border: 1px solid var(--perigo) !important;
-    color: var(--perigo) !important;
-    font-size: 0 !important;
-    padding: 0 !important;
-}
-
-.barra-inferior #btnSair i {
-    font-size: 24px !important;
-}
-  
-        
-
-
-
-
-        
-         
-
-
-
+        /* === BARRA INFERIOR === */
+        .barra-inferior {
+            position: absolute; bottom: 0; left: 0; right: 0; padding: 15px 20px 25px;
+            background: var(--card); border-top: 1px solid var(--borda);
+            z-index: 300;
+        }
         .acoes { display: none; margin-top: 10px; gap: 10px; grid-template-columns: 1fr 1fr; }
         .acao-full { grid-column: 1 / -1; }
         .etapa {
@@ -301,7 +188,6 @@
             <i class="fas fa-circle"></i> <span>Offline</span>
         </div>
     </div>
-    
 
     <!-- CARD DE CORRIDA ENTRANDO -->
     <div id="cardCorrida" class="card-corrida">
@@ -316,61 +202,37 @@
             <button class="btn-danger" onclick="recusarCorrida()">❌ RECUSAR</button>
         </div>
     </div>
-<div class="barra-inferior" id="barra" style="display:none;">
-    <!-- BOTÃO NA ESQUERDA -->
-    <button id="btnOnline" class="btn-success" onclick="ficarOnline()">
-        <i class="fas fa-power-off"></i>
-    </button>
 
-    <!-- BOTÃO NA DIREITA -->
-    <button class="btn-danger" onclick="sair()">
-        <i class="fas fa-door-open"></i>
-    </button>
+    <!-- BARRA DE CONTROLES -->
+    <div class="barra-inferior" id="barra" style="display:none;">
+        <button id="btnOnline" class="btn-success" onclick="ficarOnline()"><i class="fas fa-power-off"></i> FICAR ONLINE</button>
+        <button id="btnOffline" class="btn-danger" onclick="ficarOffline()" style="display:none;"><i class="fas fa-power-off"></i> FICAR OFFLINE</button>
 
-    <!-- BOTÃO OFFLINE (SÓ APARECE QUANDO ESTIVER ONLINE) -->
-    <button id="btnOffline" class="btn-danger" onclick="ficarOffline()" style="display:none;">
-        <i class="fas fa-power-off"></i>
-    </button>
-</div>
-<!-- 🟡 ÁREA DE AÇÕES -->
-<div id="areaAcoes" class="acoes" style="display:none;"> <!-- Esconde a área até que seja necessária -->
-    <div id="etapaTexto" class="etapa etapa1">📦 Corrida Aceita! Vá ao passageiro</div>
+        <!-- 🟡 ÁREA DE AÇÕES -->
+        <div id="areaAcoes" class="acoes">
+            <div id="etapaTexto" class="etapa etapa1">📦 Corrida Aceita! Vá ao passageiro</div>
 
-    <button id="btnIrPassageiro" class="btn-primary acao-full" onclick="irAoPassageiro()">
-        <i class="fas fa-location-arrow"></i> 📍 IR ATÉ PASSAGEIRO
-    </button>
+            <button id="btnIrPassageiro" class="btn-primary acao-full" onclick="irAoPassageiro()" style="display:none;">
+                <i class="fas fa-location-arrow"></i> 📍 IR ATÉ PASSAGEIRO
+            </button>
 
-    <button id="btnIniciarViagem" class="btn-warning acao-full" onclick="iniciarViagem()" style="display:none;">
-        <i class="fas fa-route"></i> 🟢 INICIAR VIAGEM AO DESTINO
-    </button>
+            <button id="btnIniciarViagem" class="btn-warning acao-full" onclick="iniciarViagem()" style="display:none;">
+                <i class="fas fa-route"></i> 🟢 INICIAR VIAGEM AO DESTINO
+            </button>
 
-    <button id="btnLigar" class="btn-purple" onclick="ligarCliente()">
-        <i class="fas fa-phone-alt"></i> LIGAR / WPP
-    </button>
+            <button id="btnLigar" class="btn-purple" onclick="ligarCliente()" style="display:none;">
+                <i class="fas fa-phone-alt"></i> LIGAR / WPP
+            </button>
 
-    <button id="btnFinalizar" class="btn-success acao-full" onclick="finalizarAgora()" style="display:none;">
-        <i class="fas fa-check-double"></i> ✅ FINALIZAR CORRIDA
-    </button>
-</div>
+            <button id="btnFinalizar" class="btn-success acao-full" onclick="finalizarAgora()" style="display:none;">
+                <i class="fas fa-check-double"></i> ✅ FINALIZAR CORRIDA
+            </button>
+        </div>
 
-<!-- === BARRA INFERIOR COM BOTÕES REDONDINHOS === -->
-<div class="barra-inferior" id="barra" style="display:none;">
-    <!-- BOTÃO ONLINE/OFFLINE NA ESQUERDA -->
-    <button id="btnOnline" class="btn-success" onclick="ficarOnline()">
-        <i class="fas fa-power-off"></i>
-    </button>
-    <button id="btnOffline" class="btn-danger" onclick="ficarOffline()" style="display:none;">
-        <i class="fas fa-power-off"></i>
-    </button>
-
-    <!-- BOTÃO SAIR NA DIREITA -->
-    <button id="btnSair" class="btn-danger" onclick="sair()">
-        <i class="fas fa-door-open"></i>
-    </button>
-</div>
-
-
-        
+        <button class="btn-danger" style="margin-top:2px; background:transparent; border:1px solid var(--perigo); color:var(--perigo);" onclick="sair()">
+            <i class="fas fa-door-open"></i> SAIR
+        </button>
+    </div>
 
     <!-- SONS ✅ TROCADOS PARA SEU SERVIDOR (rotabrasil-v1cf.onrender.com) -->
     <audio id="somAlerta" preload="auto">
