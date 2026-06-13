@@ -80,39 +80,90 @@
         .linha { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--borda); font-size: 15px; }
         .valor-grande { font-size: 26px; font-weight: 800; color: var(--sucesso); }
         .grupo-botoes { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
-        
-        /* === BARRA INFERIOR === */
+      /* === ÁREA DE AÇÕES DAS CORRIDAS === */
+.acoes {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 15px;
+    margin-bottom: 80px; /* Espaço para a barra inferior */
+}
+
+.etapa {
+    background: var(--card);
+    color: white;
+    padding: 15px;
+    border-radius: 12px;
+    text-align: center;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+/* ESTILO DOS BOTÕES DA ÁREA DE AÇÕES */
+.btn-primary.acao-full,
+.btn-warning.acao-full,
+.btn-success.acao-full,
+.btn-purple {
+    width: 100%;
+    height: 55px;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.btn-primary.acao-full {
+    background: #3b82f6;
+    color: white;
+}
+
+.btn-warning.acao-full {
+    background: #f59e0b;
+    color: white;
+}
+
+.btn-success.acao-full {
+    background: #22c55e;
+    color: white;
+}
+
+.btn-purple {
+    background: #8b5cf6;
+    color: white;
+    width: 100%;
+}
+
+/* === BARRA INFERIOR COM BOTÕES REDONDINHOS === */
 .barra-inferior {
     position: absolute; bottom: 0; left: 0; right: 0; 
-    padding: 10px 20px; /* Ajustei o padding para caber melhor */
+    padding: 10px 20px;
     background: var(--card); 
     border-top: 1px solid var(--borda);
     z-index: 300;
     display: flex;
-    justify-content: space-between; /* UM DO LADO ESQUERDO, OUTRO DO DIREITO */
+    justify-content: space-between;
     align-items: center;
 }
 
-/* ==============================================
-✅ BOTÕES PEQUENOS, REDONDINHOS E UM DE CADA LADO
-============================================== */
 .barra-inferior #btnOnline,
 .barra-inferior #btnOffline {
-    width: 60px !important; /* BOTÕES PEQUENINHOS E REDONDOS */
+    width: 60px !important;
     height: 60px !important;
-    border-radius: 50% !important; /* DEIXA TOTALMENTE REDONDO */
-    font-size: 0 !important; /* TIRA O TEXTO, SÓ ÍCONE */
+    border-radius: 50% !important;
+    font-size: 0 !important;
     padding: 0 !important;
     border: none !important;
 }
 
-/* ÍCONES CENTRALIZADOS NO BOTÃO */
 .barra-inferior #btnOnline i,
 .barra-inferior #btnOffline i {
-    font-size: 24px !important; /* TAMANHO DO ÍCONE */
+    font-size: 24px !important;
 }
 
-/* CORES */
 .barra-inferior #btnOnline {
     background-color: #22c55e !important;
     color: white !important;
@@ -123,23 +174,24 @@
     color: white !important;
 }
 
-/* ==============================================
-✅ BOTÃO SAIR TAMBÉM PEQUENO E NA DIREITA
-============================================== */
-.barra-inferior .btn-danger[onclick="sair()"] {
+/* BOTÃO SAIR NA BARRA INFERIOR */
+.barra-inferior #btnSair {
     width: 60px !important;
     height: 60px !important;
-    border-radius: 50% !important; /* TOTALMENTE REDONDO */
+    border-radius: 50% !important;
     background: transparent !important;
     border: 1px solid var(--perigo) !important;
     color: var(--perigo) !important;
-    font-size: 0 !important; /* TIRA O TEXTO, SÓ ÍCONE */
+    font-size: 0 !important;
     padding: 0 !important;
 }
 
-.barra-inferior .btn-danger[onclick="sair()"] i {
-    font-size: 24px !important; /* ÍCONE GRANDE E VISÍVEL */
+.barra-inferior #btnSair i {
+    font-size: 24px !important;
 }
+  
+        
+
 
 
 
