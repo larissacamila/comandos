@@ -144,6 +144,54 @@
     padding:12px 18px;
     border-radius:10px;
 }
+.card-chegada {
+
+    position: absolute;
+
+    left: 50%;
+    bottom: 230px;
+
+    transform: translateX(-50%);
+
+    width: 90%;
+    max-width: 350px;
+
+    background: var(--card);
+
+    border: 2px solid var(--sucesso);
+
+    border-radius: 16px;
+
+    padding: 20px;
+
+    text-align: center;
+
+    z-index: 300;
+
+    display: none;
+
+    box-shadow: 0 0 20px rgba(
+        0,0,0,0.4
+    );
+
+}
+
+.card-chegada img {
+
+    width: 90px;
+    height: 90px;
+
+    object-fit: cover;
+
+    border-radius: 50%;
+
+    border: 3px solid
+        var(--sucesso);
+
+    margin-bottom: 10px;
+
+}
+        
         @keyframes tremer { from { transform: translate(-50%, -50%) scale(1); } to { transform: translate(-50%, -50%) scale(1.03); } }
         .alerta-cancelamento h2 { margin-bottom: 10px; font-size: 22px; }
 
@@ -805,6 +853,8 @@ envioLocalizacaoInterval = setInterval(() => {
                 return mostrarErro("Você PRECISA ir buscar o passageiro ANTES de iniciar!");
             }
 
+           document.getElementById('cardPassageiroChegada').style.display = 'none';
+            
             estado.viagemIniciada = true;
 
             const destino = (corrida.destino_lat && corrida.destino_lng) 
@@ -1172,6 +1222,31 @@ async function cancelarCorridaMotorista() {
     }
 
 }
+  function chegouAoPassageiro() {
+
+    document.getElementById(
+        'fotoChegada'
+    ).src =
+        corrida.foto_passageiro ||
+        '/static/imagens/passageiro-padrao.png';
+
+    document.getElementById(
+        'nomeChegada'
+    ).textContent =
+        corrida.passageiro_nome ||
+        'Passageiro';
+
+    document.getElementById(
+        'cardPassageiroChegada'
+    ).style.display = 'block';
+
+    falar(
+        `Você chegou ao passageiro ${
+            corrida.passageiro_nome
+        }`
+    );
+
+}      
         
      </script>
 
