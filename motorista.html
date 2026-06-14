@@ -836,10 +836,10 @@ envioLocalizacaoInterval = setInterval(() => {
 
             atualizarEtapa(2);
             document.getElementById('btnIrPassageiro').style.display = 'none'; 
-            document.getElementById('btnIniciarViagem').style.display = 'flex';
+            //document.getElementById('btnIniciarViagem').style.display = 'flex';
             falar("Você está indo ao passageiro");
             document.getElementById('fotoPassageiro').style.display = 'block';document.getElementById('areaInfoPassageiro').style.display = 'block';
-            
+            chegouAoPassageiro();
             
         }
 
@@ -848,7 +848,7 @@ envioLocalizacaoInterval = setInterval(() => {
         // ==============================================
         function iniciarViagem() {
             
-            chegouAoPassageiro();
+            
             if(!estado.aceito || !estado.pegouPassageiro) {
                 return mostrarErro("Você PRECISA ir buscar o passageiro ANTES de iniciar!");
             }
