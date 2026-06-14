@@ -105,6 +105,45 @@
             box-shadow: 0 0 30px rgba(245, 63, 63, 0.5); display: none;
             animation: tremer 0.5s ease infinite alternate;
         }
+    .modal-carteira{
+    position:fixed;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%);
+    width:90%;
+    max-width:380px;
+
+    background:#1e293b;
+
+    border:1px solid #334155;
+    border-radius:16px;
+
+    padding:20px;
+
+    color:white;
+
+    display:none;
+
+    z-index:99999;
+
+    box-shadow:0 0 30px rgba(0,0,0,0.5);
+}
+
+.modal-carteira h2{
+    margin-bottom:15px;
+}
+
+.modal-carteira p{
+    margin-bottom:12px;
+}
+
+.btn-carteira{
+    background:#16a34a;
+    color:white;
+    border:none;
+    padding:12px 18px;
+    border-radius:10px;
+}
         @keyframes tremer { from { transform: translate(-50%, -50%) scale(1); } to { transform: translate(-50%, -50%) scale(1.03); } }
         .alerta-cancelamento h2 { margin-bottom: 10px; font-size: 22px; }
 
@@ -207,7 +246,9 @@
     <div class="barra-inferior" id="barra" style="display:none;">
         <button id="btnOnline" class="btn-success" onclick="ficarOnline()"><i class="fas fa-power-off"></i> FICAR ONLINE</button>
         <button id="btnOffline" class="btn-danger" onclick="ficarOffline()" style="display:none;"><i class="fas fa-power-off"></i> FICAR OFFLINE</button>
-
+       <button class="btn-carteira" onclick="abrirCarteiraMotorista()">
+    💵 Carteira
+</button>
         <!-- 🟡 ÁREA DE AÇÕES -->
         <div id="areaAcoes" class="acoes">
             <div id="etapaTexto" class="etapa etapa1">📦 Corrida Aceita! Vá ao passageiro</div>
@@ -246,7 +287,31 @@
     
     <audio id="somDinheiro" preload="auto">
         <source src="https://rotabrasil-v1cf.onrender.com/static/sounds/dinheiro.mp3" type="audio/mpeg">
-    
+    <div id="painelCarteiraMotorista" class="modal-carteira">
+
+    <h2>💵 Carteira do Motorista</h2>
+
+    <p>
+        Saldo disponível:
+        <strong id="saldoMotorista">
+            R$ 0,00
+        </strong>
+    </p>
+
+    <button class="btn-warning">
+        🏦 Solicitar Saque
+    </button>
+
+    <button class="btn-primary">
+        📜 Histórico
+    </button>
+
+    <button class="btn-danger"
+        onclick="fecharCarteiraMotorista()">
+        ❌ Fechar
+    </button>
+
+</div>
 
     <script>
         // ==============================================
@@ -914,6 +979,35 @@ envioLocalizacaoInterval = setInterval(() => {
                 return e.returnValue;
             }
         });
+        async function abrirCarteiraMotorista(){
+
+    document.getElementById(
+        "painelCarteiraMotorista"
+    ).style.display = "block";
+
+    const resposta = await fetch(
+        `${API_URL}/carteira/saldo`,
+        {
+            headers:{
+                Authorization:`Bearer ${token}`
+            }
+        }
+    );
+
+    const dados = await resposta.json();
+
+    document.getElementById(
+        "saldoMotorista"
+    ).textContent =
+        `R$ ${dados.saldo.toFixed(2)}`;
+}
+
+function fecharCarteiraMotorista(){
+
+    document.getElementById(
+        "painelCarteiraMotorista"
+    ).style.display = "none";
+}
 
      </script>
 
