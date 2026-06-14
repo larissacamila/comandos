@@ -319,6 +319,7 @@
         //Temporizador de chamada
         let timerCorrida = null;
         let segundosCorrida = 15;
+        const som = document.getElementById('somAlerta');
         function iniciarTemporizadorCorrida() {
 
             segundosCorrida = 15;
@@ -334,7 +335,7 @@
             if (segundosCorrida <= 0) {
 
             clearInterval(timerCorrida);
-
+            pararSomChamada();
             recusarCorrida();
 
              }
@@ -611,7 +612,7 @@
             estado.viagemIniciada = false;
 
             const som = document.getElementById('somAlerta');
-            som.currentTime = 0; som.volume = 1; som.play();
+            //som.currentTime = 0; som.volume = 1; som.play();
             falar("Nova corrida recebida! Valor R$ " + parseFloat(dados.valor).toFixed(2).replace('.', ','));
 
             document.getElementById('cPassageiro').textContent = dados.passageiro_nome || "Cliente";
@@ -625,6 +626,9 @@
             clearInterval(timerCorrida);
 
             iniciarTemporizadorCorrida();
+            
+
+             iniciarSomChamada();
         });
 
         // ==============================================
@@ -633,6 +637,7 @@
         async function aceitarCorrida() {
             console.log("🟡 TENTANDO ACEITAR...");
             clearInterval(timerCorrida);
+            pararSomChamada()
              
             if(!corrida) {
                 mostrarErro("Nenhuma corrida recebida!");
@@ -729,6 +734,7 @@ envioLocalizacaoInterval = setInterval(() => {
             document.getElementById('cardCorrida').style.display = 'none';
             corrida = null;
             clearInterval(timerCorrida);
+            pararSomChamada();
             falar("Corrida recusada");
         }
 
@@ -1051,7 +1057,32 @@ function fecharCarteiraMotorista(){
         "painelCarteiraMotorista"
     ).style.display = "none";
 }
+function iniciarSomChamada() {
 
+    som.currentTime = 0;
+
+    som.loop = true;
+
+    som.play().catch(err => {
+        console.log(
+            "Erro ao tocar som:",
+            err
+        );
+    });
+
+}
+        function pararSomChamada() {
+
+    som.pause();
+
+    som.currentTime = 0;
+
+    som.loop = false;
+
+}
+
+
+        
      </script>
 
 </body>
