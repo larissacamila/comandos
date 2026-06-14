@@ -167,7 +167,33 @@
         }
     </style>
 </head>
+    
 <body>
+    <div id="painelCarteiraMotorista" class="modal-carteira">
+
+    <h2>💵 Carteira do Motorista</h2>
+
+    <p>
+        Saldo disponível:
+        <strong id="saldoMotorista">
+            R$ 0,00
+        </strong>
+    </p>
+
+    <button class="btn-warning">
+        🏦 Solicitar Saque
+    </button>
+
+    <button class="btn-primary">
+        📜 Histórico
+    </button>
+
+    <button class="btn-danger"
+        onclick="fecharCarteiraMotorista()">
+        ❌ Fechar
+    </button>
+
+</div>
 
     <!-- ⚠️ AVISO DE ERRO FLUTUANTE -->
     <div id="avisoErro" class="erro-tela"></div>
@@ -286,32 +312,8 @@
         <source src="https://rotabrasil-v1cf.onrender.com/static/sounds/sucesso.mp3" type="audio/mpeg">
     
     <audio id="somDinheiro" preload="auto">
-        <source src="https://rotabrasil-v1cf.onrender.com/static/sounds/dinheiro.mp3" type="audio/mpeg">
-    <div id="painelCarteiraMotorista" class="modal-carteira">
-
-    <h2>💵 Carteira do Motorista</h2>
-
-    <p>
-        Saldo disponível:
-        <strong id="saldoMotorista">
-            R$ 0,00
-        </strong>
-    </p>
-
-    <button class="btn-warning">
-        🏦 Solicitar Saque
-    </button>
-
-    <button class="btn-primary">
-        📜 Histórico
-    </button>
-
-    <button class="btn-danger"
-        onclick="fecharCarteiraMotorista()">
-        ❌ Fechar
-    </button>
-
-</div>
+    <source src="https://rotabrasil-v1cf.onrender.com/static/sounds/dinheiro.mp3" type="audio/mpeg">
+    
 
     <script>
         // ==============================================
