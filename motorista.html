@@ -824,9 +824,8 @@ envioLocalizacaoInterval = setInterval(() => {
         // ==============================================
         function irAoPassageiro() {
             if(!estado.aceito) return mostrarErro("Aceite a corrida primeiro!");
-
+            estado.pegouPassageiro = true;
             
-            chegouAoPassageiro();
             const destino = (corrida.origem_lat && corrida.origem_lng) 
                 ? `${corrida.origem_lat},${corrida.origem_lng}` 
                 : corrida.origem;
@@ -848,6 +847,8 @@ envioLocalizacaoInterval = setInterval(() => {
         // 🟢 PASSO 2: INICIAR VIAGEM ✅ URL GOOGLE DIRECTIONS CORRETA
         // ==============================================
         function iniciarViagem() {
+            
+            chegouAoPassageiro();
             if(!estado.aceito || !estado.pegouPassageiro) {
                 return mostrarErro("Você PRECISA ir buscar o passageiro ANTES de iniciar!");
             }
@@ -1239,7 +1240,7 @@ async function cancelarCorridaMotorista() {
     document.getElementById(
         'cardPassageiroChegada'
     ).style.display = 'block';
-    estado.pegouPassageiro = true;       
+           
 
     falar(
         `Você chegou ao passageiro ${
