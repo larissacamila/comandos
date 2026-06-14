@@ -839,6 +839,7 @@ envioLocalizacaoInterval = setInterval(() => {
             //document.getElementById('btnIniciarViagem').style.display = 'flex';
             falar("Você está indo ao passageiro");
             document.getElementById('fotoPassageiro').style.display = 'block';document.getElementById('areaInfoPassageiro').style.display = 'block';
+            document.getElementById('cardPassageiroChegada').style.display = 'block';
             chegouAoPassageiro();
             
         }
@@ -1223,30 +1224,24 @@ async function cancelarCorridaMotorista() {
 }
         function chegouAoPassageiro() {
 
-    if (!corrida) return;
+    if (!corrida) {
+        console.log("Sem corrida ainda");
+        return;
+    }
 
-    document.getElementById(
-        'fotoChegada'
-    ).src =
-        corrida.foto_passageiro ||
-        '/static/imagens/passageiro-padrao.png';
+    const card = document.getElementById('cardPassageiroChegada');
 
-    document.getElementById(
-        'nomeChegada'
-    ).textContent =
-        corrida.passageiro_nome ||
-        'Passageiro';
+    document.getElementById('fotoChegada').src =
+        corrida.foto_passageiro || '/static/imagens/passageiro-padrao.png';
 
-    document.getElementById(
-        'cardPassageiroChegada'
-    ).style.display = 'block';
-           
+    document.getElementById('nomeChegada').textContent =
+        corrida.passageiro_nome || 'Passageiro';
 
-    falar(
-        `Você chegou ao passageiro ${
-            corrida.passageiro_nome || 'cliente'
-        }.`
-    );
+    card.style.display = 'block';
+
+    console.log("CARD ABRIU");
+
+    falar(`Você chegou ao passageiro ${corrida.passageiro_nome || 'cliente'}`);
 }
   
      </script>
