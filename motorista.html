@@ -728,7 +728,7 @@ envioLocalizacaoInterval = setInterval(() => {
         function recusarCorrida() {
             document.getElementById('cardCorrida').style.display = 'none';
             corrida = null;
-            
+            clearInterval(timerCorrida);
             falar("Corrida recusada");
         }
 
