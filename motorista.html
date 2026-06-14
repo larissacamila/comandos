@@ -872,7 +872,7 @@ envioLocalizacaoInterval = setInterval(() => {
 
             socket.emit('viagem_iniciada', {corrida_id: corrida.corrida_id || corrida.id});
             falar(`Olá ${corrida.passageiro_nome},bem-vindo ao Rota Brasil.`);
-);
+
             falar("Viagem iniciada! Siga até o destino");
             alert("🟢 VIAGEM INICIADA COM SUCESSO!");
         }
