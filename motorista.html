@@ -316,6 +316,41 @@
     
 
     <script>
+        //Temporizador de chamada
+        let timerCorrida = null;
+        let segundosCorrida = 15;
+        function iniciarTemporizadorCorrida() {
+
+            segundosCorrida = 15;
+
+            atualizarTextoBotao();
+
+            timerCorrida = setInterval(() => {
+
+            segundosCorrida--;
+
+            atualizarTextoBotao();
+
+            if (segundosCorrida <= 0) {
+
+            clearInterval(timerCorrida);
+
+            recusarCorrida();
+
+             }
+
+             }, 1000);
+
+            }
+
+            function atualizarTextoBotao() {
+
+             document.querySelector(
+            '#cardCorrida .btn-danger'
+             ).innerHTML =
+        `❌ RECUSAR (${segundosCorrida}s)`;
+
+         }
         // ==============================================
         // ⚙️ CONFIGURAÇÕES E VARIAVEIS ✅ URL BASE CORRETA DO SEU SERVIDOR
         // ==============================================
@@ -586,6 +621,10 @@
             document.getElementById('cValor').textContent = `R$ ${parseFloat(dados.valor || 0).toFixed(2)}`;
             
             document.getElementById('cardCorrida').style.display = 'block';
+            //tempo inicio
+            clearInterval(timerCorrida);
+
+            iniciarTemporizadorCorrida();
         });
 
         // ==============================================
@@ -593,7 +632,8 @@
         // ==============================================
         async function aceitarCorrida() {
             console.log("🟡 TENTANDO ACEITAR...");
-
+            clearInterval(timerCorrida);
+             
             if(!corrida) {
                 mostrarErro("Nenhuma corrida recebida!");
                 return;
@@ -688,6 +728,7 @@ envioLocalizacaoInterval = setInterval(() => {
         function recusarCorrida() {
             document.getElementById('cardCorrida').style.display = 'none';
             corrida = null;
+            
             falar("Corrida recusada");
         }
 
