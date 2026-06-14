@@ -1222,7 +1222,9 @@ async function cancelarCorridaMotorista() {
     }
 
 }
-  function chegouAoPassageiro() {
+        function chegouAoPassageiro() {
+
+    if (!corrida) return;
 
     document.getElementById(
         'fotoChegada'
@@ -1242,12 +1244,11 @@ async function cancelarCorridaMotorista() {
 
     falar(
         `Você chegou ao passageiro ${
-            corrida.passageiro_nome
-        }`
+            corrida.passageiro_nome || 'cliente'
+        }.`
     );
-
-}      
-        
+}
+  
      </script>
 
 </body>
