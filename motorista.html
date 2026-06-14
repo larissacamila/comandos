@@ -840,25 +840,8 @@ envioLocalizacaoInterval = setInterval(() => {
             document.getElementById('btnIniciarViagem').style.display = 'flex';
             falar("Você está indo ao passageiro");
             document.getElementById('fotoPassageiro').style.display = 'block';document.getElementById('areaInfoPassageiro').style.display = 'block';
-            function irAoPassageiro() {
-            if(!estado.aceito) return mostrarErro("Aceite a corrida primeiro!");
-
-            estado.pegouPassageiro = true;
-
-            const destino = (corrida.origem_lat && corrida.origem_lng) 
-                ? `${corrida.origem_lat},${corrida.origem_lng}` 
-                : corrida.origem;
-
-            // ✅ URL Google Directions CORRETA
-            document.getElementById('mapaFrame').src = `https://www.google.com/maps/embed/v1/directions?key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8&origin=${posicaoAtual.lat},${posicaoAtual.lng}&destination=${destino}&mode=driving`;
-            window.open(`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(destino)}&travelmode=driving`, '_blank');
-
-            atualizarEtapa(2);
-            document.getElementById('btnIrPassageiro').style.display = 'none'; 
-            document.getElementById('btnIniciarViagem').style.display = 'flex';
-            falar("Você está indo ao passageiro");
-            document.getElementById('fotoPassageiro').style.display = 'block';document.getElementById('areaInfoPassageiro').style.display = 'block';
             chegouAoPassageiro();
+            
         }
 
         // ==============================================
