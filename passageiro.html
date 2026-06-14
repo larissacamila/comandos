@@ -590,6 +590,7 @@
                 const destino = document.getElementById('destino').value;
                 if(!destino || destino.length < 5) {
                     alert("⚠️ Digite um Destino antes de chamar!");
+                    falar("⚠️ Digite um Destino antes de chamar!");
                     return;
                 }
                 chamarCorrida();
@@ -662,7 +663,7 @@
                     localStorage.setItem("user_passageiro", JSON.stringify(passageiro));
                     document.getElementById("loginCard").style.display = "none";
                     document.getElementById("dashboard").style.display = "block";
-                    falar(`Olá ${passageiro.nome}!`);
+                    falar(`Olá ${passageiro.nome}, seja bem-vindo ao Rota Brasil.`);
                     carregarAvaliacoes();
                 } else { 
                     alert("❌ " + (data.erro || "Dados inválidos ou senha incorreta")); 
