@@ -826,7 +826,7 @@ envioLocalizacaoInterval = setInterval(() => {
             if(!estado.aceito) return mostrarErro("Aceite a corrida primeiro!");
 
             estado.pegouPassageiro = true;
-
+            chegouAoPassageiro();
             const destino = (corrida.origem_lat && corrida.origem_lng) 
                 ? `${corrida.origem_lat},${corrida.origem_lng}` 
                 : corrida.origem;
@@ -840,7 +840,7 @@ envioLocalizacaoInterval = setInterval(() => {
             document.getElementById('btnIniciarViagem').style.display = 'flex';
             falar("Você está indo ao passageiro");
             document.getElementById('fotoPassageiro').style.display = 'block';document.getElementById('areaInfoPassageiro').style.display = 'block';
-            chegouAoPassageiro();
+            
             
         }
 
