@@ -299,6 +299,14 @@
         <button class="btn-danger" style="margin-top:2px; background:transparent; border:1px solid var(--perigo); color:var(--perigo);" onclick="sair()">
             <i class="fas fa-door-open"></i> SAIR
         </button>
+        <button
+    id="btnCancelarCorrida"
+    class="btn-danger acao-full"
+    onclick="cancelarCorridaMotorista()"
+    style="display:none;">
+    <i class="fas fa-times"></i>
+    ❌ CANCELAR CORRIDA
+    </button>
     </div>
 
     <!-- SONS ✅ TROCADOS PARA SEU SERVIDOR (rotabrasil-v1cf.onrender.com) -->
@@ -659,6 +667,7 @@
             console.log("Corrida ID:", corridaId);
             console.log("Motorista ID:", usuario.id);
             console.log("Token:", token.substring(0,15)+"...");
+            document.getElementById('btnCancelarCorrida').style.display = 'flex';
 
             try {
                 // ✅ ROTA EXATA: /aceitar_corrida/<corridaId>
@@ -1081,7 +1090,56 @@ function iniciarSomChamada() {
 
 }
 
+async function cancelarCorridaMotorista() {
 
+    if (!corrida) return;
+
+    const confirmar = confirm(
+        "Deseja realmente cancelar a corrida?"
+    );
+
+    if (!confirmar) return;
+
+    const corridaId =
+        corrida.corrida_id || corrida.id;
+
+    try {
+
+        await fetch(
+            `${API_URL}/cancelar_corrida_motorista/${corridaId}`,
+            {
+                method: 'POST',
+                headers: {
+                    Authorization:
+                        `Bearer ${token}`,
+                    'Content-Type':
+                        'application/json'
+                }
+            }
+        );
+
+        socket.emit(
+            'corrida_cancelada_motorista',
+            {
+                corrida_id: corridaId
+            }
+        );
+
+        limparTudo();
+
+        falar(
+            "Corrida cancelada."
+        );
+
+    } catch(e) {
+
+        mostrarErro(
+            "Erro ao cancelar."
+        );
+
+    }
+
+}
         
      </script>
 
