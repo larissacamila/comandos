@@ -767,6 +767,10 @@ envioLocalizacaoInterval = setInterval(() => {
             document.getElementById('btnIrPassageiro').style.display = 'none'; 
             document.getElementById('btnIniciarViagem').style.display = 'flex';
             falar("Você está indo ao passageiro");
+            document.getElementById('fotoPassageiro').style.display = 'block';document.getElementById('areaInfoPassageiro').style.display = 'block';
+            //foto
+            document.getElementById('fotoPassageiro').style.display = 'block';
+
         }
 
         // ==============================================
@@ -790,6 +794,7 @@ envioLocalizacaoInterval = setInterval(() => {
             atualizarEtapa(3);
             document.getElementById('btnIniciarViagem').style.display = 'none'; 
             document.getElementById('btnFinalizar').style.display = 'flex';   
+            document.getElementById('fotoPassageiro').style.display = 'none';
 
             socket.emit('viagem_iniciada', {corrida_id: corrida.corrida_id || corrida.id});
             falar("Viagem iniciada! Siga até o destino");
