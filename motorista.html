@@ -839,8 +839,10 @@ envioLocalizacaoInterval = setInterval(() => {
             //document.getElementById('btnIniciarViagem').style.display = 'flex';
             falar("Você está indo ao passageiro");
             document.getElementById('fotoPassageiro').style.display = 'block';document.getElementById('areaInfoPassageiro').style.display = 'block';
-            document.getElementById('cardPassageiroChegada').style.display = 'block';
+            
             chegouAoPassageiro();
+            document.getElementById('cardPassageiroChegada').style.display = 'block';
+            
             
         }
 
@@ -853,9 +855,8 @@ envioLocalizacaoInterval = setInterval(() => {
             if(!estado.aceito || !estado.pegouPassageiro) {
                 return mostrarErro("Você PRECISA ir buscar o passageiro ANTES de iniciar!");
             }
-
-           
             estado.viagemIniciada = true;
+            
 
             const destino = (corrida.destino_lat && corrida.destino_lng) 
                 ? `${corrida.destino_lat},${corrida.destino_lng}` 
