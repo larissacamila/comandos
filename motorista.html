@@ -166,7 +166,7 @@
 
     text-align: center;
 
-    z-index: 400;
+    z-index: 300;
 
     display: none;
 
@@ -242,7 +242,7 @@
     </button>
 
 </div>
-    <div id="cardPassageiroChegada" class="card-chegada" style="display:none;">
+    <div id="cardPassageiroChegada" class="card-chegada">
 
     <img
         id="fotoChegada"
@@ -266,10 +266,6 @@
     </button>
 
 </div>
-    <button id="btnIrPassageiro" class="btn-primary acao-full" onclick="irAoPassageiro(); document.getElementById('cardPassageiroChegada').style.display='block'">
-    <i class="fas fa-location-arrow"></i> 📍 IR ATÉ PASSAGEIRO
-</button>
-
 
     <!-- ⚠️ AVISO DE ERRO FLUTUANTE -->
     <div id="avisoErro" class="erro-tela"></div>
@@ -827,51 +823,38 @@ envioLocalizacaoInterval = setInterval(() => {
         // 📍 PASSO 1: IR ATÉ PASSAGEIRO ✅ URL GOOGLE DIRECTIONS CORRETA
         // ==============================================
         function irAoPassageiro() {
-    if(!estado.aceito) {
-        mostrarErro("Aceite a corrida primeiro!");
-        return;
-    }
+            if(!estado.aceito) return mostrarErro("Aceite a corrida primeiro!");
 
-    // FORÇA O ESTADO A SER ATUALIZADO
-    estado.pegouPassageiro = true;
-    estado.aceito = true; // Garante que o estado está correto
+            estado.pegouPassageiro = true;
 
-    // Define o destino da corrida
-    const destino = (corrida?.origem_lat && corrida?.origem_lng) 
-        ? `${corrida.origem_lat},${corrida.origem_lng}` 
-        : corrida?.origem || "São Paulo, SP";
+            const destino = (corrida.origem_lat && corrida.origem_lng) 
+                ? `${corrida.origem_lat},${corrida.origem_lng}` 
+                : corrida.origem;
 
-    // Atualiza o mapa
-    document.getElementById('mapaFrame').src = `https://www.google.com/maps/embed/v1/directions?key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8&origin=${posicaoAtual.lat},${posicaoAtual.lng}&destination=${destino}&mode=driving`;
-    window.open(`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(destino)}&travelmode=driving`, '_blank');
+            // ✅ URL Google Directions CORRETA
+            document.getElementById('mapaFrame').src = `https://www.google.com/maps/embed/v1/directions?key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8&origin=${posicaoAtual.lat},${posicaoAtual.lng}&destination=${destino}&mode=driving`;
+            window.open(`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(destino)}&travelmode=driving`, '_blank');
 
-    // PREENCHE E FORÇA O CARD A APARECER
-    document.getElementById('fotoChegada').src = corrida?.foto_passageiro || '/static/imagens/passageiro-padrao.png';
-    document.getElementById('nomeChegada').textContent = corrida?.passageiro_nome || 'Passageiro';
-    
-    // ✅ LINHA QUE VAI RESOLVER TUDO!
-    document.getElementById('cardPassageiroChegada').style.display = 'block';
-    document.getElementById('cardPassageiroChegada').style.zIndex = '9999';
-    document.getElementById('cardPassageiroChegada').style.position = 'fixed';
-    document.getElementById('cardPassageiroChegada').style.bottom = '20px';
-    document.getElementById('cardPassageiroChegada').style.left = '50%';
-    document.getElementById('cardPassageiroChegada').style.transform = 'translateX(-50%)';
-
-    console.log("🔹 Card de embarque FORÇADO a aparecer!");
-    falar("Chegou hora do embarque!");
-}
+            atualizarEtapa(2);
+            document.getElementById('btnIrPassageiro').style.display = 'none'; 
+            document.getElementById('btnIniciarViagem').style.display = 'flex';
+            falar("Você está indo ao passageiro");
+            document.getElementById('fotoPassageiro').style.display = 'block';document.getElementById('areaInfoPassageiro').style.display = 'block';
+            chegouAoPassageiro();
+            
+        }
 
         // ==============================================
         // 🟢 PASSO 2: INICIAR VIAGEM ✅ URL GOOGLE DIRECTIONS CORRETA
         // ==============================================
         function iniciarViagem() {
-            
-            
             if(!estado.aceito || !estado.pegouPassageiro) {
                 return mostrarErro("Você PRECISA ir buscar o passageiro ANTES de iniciar!");
             }
-            estado.viagemIniciada = true;
+
+           document.getElementById('cardPassageiroChegada').style.display = 'none';
             
+            estado.viagemIniciada = true;
 
             const destino = (corrida.destino_lat && corrida.destino_lng) 
                 ? `${corrida.destino_lat},${corrida.destino_lng}` 
@@ -889,8 +872,6 @@ envioLocalizacaoInterval = setInterval(() => {
             socket.emit('viagem_iniciada', {corrida_id: corrida.corrida_id || corrida.id});
             falar(`Olá ${corrida.passageiro_nome}, bem-vindo ao Rota Brasil. Viagem iniciada! Siga até o destino.`);
             alert("🟢 VIAGEM INICIADA COM SUCESSO!");
-            document.getElementById('cardPassageiroChegada').style.display = 'none';
-            
         }
 
         // ==============================================
@@ -1240,24 +1221,29 @@ async function cancelarCorridaMotorista() {
 }
         function chegouAoPassageiro() {
 
-    if (!corrida) {
-        console.log("Sem corrida ainda");
-        return;
-    }
+    if (!corrida) return;
 
-    const card = document.getElementById('cardPassageiroChegada');
+    document.getElementById(
+        'fotoChegada'
+    ).src =
+        corrida.foto_passageiro ||
+        '/static/imagens/passageiro-padrao.png';
 
-    document.getElementById('fotoChegada').src =
-        corrida.foto_passageiro || '/static/imagens/passageiro-padrao.png';
+    document.getElementById(
+        'nomeChegada'
+    ).textContent =
+        corrida.passageiro_nome ||
+        'Passageiro';
 
-    document.getElementById('nomeChegada').textContent =
-        corrida.passageiro_nome || 'Passageiro';
+    document.getElementById(
+        'cardPassageiroChegada'
+    ).style.display = 'block';
 
-    card.style.display = 'block';
-
-    console.log("CARD ABRIU");
-
-    falar(`Você chegou ao passageiro ${corrida.passageiro_nome || 'cliente'}`);
+    falar(
+        `Você chegou ao passageiro ${
+            corrida.passageiro_nome || 'cliente'
+        }.`
+    );
 }
   
      </script>
