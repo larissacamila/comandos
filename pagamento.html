@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pagamento - App de Mobilidade</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            max-width: 500px;
+            width: 100%;
+            padding: 30px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            color: #333;
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .ride-details {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        .ride-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .ride-row:last-child {
+            border-bottom: none;
+        }
+
+        .ride-label {
+            color: #6c757d;
+            font-weight: 500;
+        }
+
+        .ride-value {
+            color: #212529;
+            font-weight: 600;
+        }
+
+        .total {
+            font-size: 18px;
+            font-weight: bold;
+            color: #28a745;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 2px solid #dee2e6;
+        }
+
+        #walletBrick_container {
+            margin-top: 20px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+        }
+
+        .back-button {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+            color: #007bff;
+            text-decoration: none;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚗 Finalizar Corrida</h1>
+            <p>Confirme os dados e escolha a forma de pagamento</p>
+        </div>
+
+        <div class="ride-details" id="rideDetails">
+            <div class="ride-row">
+                <span class="ride-label">📍 Origem:</span>
+                <span class="ride-value" id="origin">Carregando...</span>
+            </div>
+            <div class="ride-row">
+                <span class="ride-label">🏁 Destino:</span>
+                <span class="ride-value" id="destination">Carregando...</span>
+            </div>
+            <div class="ride-row">
+                <span class="ride-label">👤 Passageiro:</span>
+                <span class="ride-value" id="passenger">Carregando...</span>
+            </div>
+            <div class="ride-row">
+                <span class="ride-label">📅 Data:</span>
+                <span class="ride-value" id="date">Carregando...</span>
+            </div>
+            <div class="ride-row total">
+                <span class="ride-label">💰 Valor Total:</span>
+                <span class="ride-value" id="amount">R$ --,--</span>
+            </div>
+        </div>
+
+        <!-- Container onde o botão do Mercado Pago será renderizado -->
+        <div id="walletBrick_container"></div>
+
+        <a href="#" class="back-button" onclick="history.back()">← Voltar</a>
+    </div>
+
+    <!-- SDK do Mercado Pago -->
+    <script src="https://sdk.mercadopago.com/js/v2"></script>
+    
+    <!-- Seu JavaScript -->
+    <script src="script.js"></script>
+</body>
+</html>
