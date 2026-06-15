@@ -232,6 +232,32 @@
             box-shadow: 0 4px 12px rgba(0,0,0,0.3);
             font-weight: 600;
         }
+        .online-animado {
+    color: var(--sucesso);
+    animation: pulsarOnline 1.5s infinite;
+}
+
+.online-animado i {
+    text-shadow: 0 0 10px #00B42A,
+                 0 0 20px #00B42A;
+}
+
+@keyframes pulsarOnline {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+
+    50% {
+        transform: scale(1.08);
+        opacity: 0.8;
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
     </style>
 </head>
     
@@ -681,7 +707,7 @@
                 });
                 document.getElementById('btnOnline').style.display = 'none';
                 document.getElementById('btnOffline').style.display = 'block';
-                document.getElementById('statusMotorista').className = 'status-bolinha online';
+                document.getElementById('statusMotorista').className ='status-bolinha online online-animado';
                 document.getElementById('statusMotorista').innerHTML = `<i class="fas fa-circle"></i> <span>Online</span>`;
                 socket.emit('motorista_online', {id: usuario.id, nome: usuario.nome});
                 falar("Você está online, recebendo corridas");
