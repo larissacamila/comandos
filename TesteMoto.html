@@ -703,7 +703,7 @@
                 document.getElementById('statusMotorista').innerHTML = `<i class="fas fa-circle"></i> <span>Offline</span>`;
                 socket.emit('motorista_offline', {id: usuario.id});
                 falar("Você está offline");
-                
+                mostrarZonasDinamicas(true);
                 if(envioLocalizacaoInterval) clearInterval(envioLocalizacaoInterval);
             } catch(e) {}
         }
@@ -723,7 +723,7 @@
             const som = document.getElementById('somAlerta');
             //som.currentTime = 0; som.volume = 1; som.play();
             falar("Nova corrida recebida! Valor R$ " + parseFloat(dados.valor).toFixed(2).replace('.', ','));
-
+            mostrarZonasDinamicas(false);
             document.getElementById('cPassageiro').textContent = dados.passageiro_nome || "Cliente";
             document.getElementById('cTelefone').textContent = dados.passageiro_telefone || "Não informado";
             document.getElementById('cOrigem').textContent = dados.origem;
