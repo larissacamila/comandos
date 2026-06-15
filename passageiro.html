@@ -462,11 +462,11 @@
             R$ 0,00
         </strong>
     </p>
-
-    <button class="btn-success">
-        ➕ Adicionar Saldo
-    </button>
-
+    <button
+    class="btn-success"
+    onclick="adicionarSaldo()">
+    💰 Adicionar saldo
+</button>
     <button class="btn-primary">
         📜 Histórico
     </button>
@@ -1058,6 +1058,39 @@ function fecharCarteira(){
     document.getElementById(
         "painelCarteira"
     ).style.display = "none";
+}
+async function adicionarSaldo() {
+
+    const valor = prompt(
+        "Digite o valor da recarga:"
+    );
+
+    if (!valor) return;
+
+    const resposta = await fetch(
+        `${API}/pix/criar`,
+        {
+            method: "POST",
+            headers: {
+                Authorization:
+                    `Bearer ${token}`,
+                "Content-Type":
+                    "application/json"
+            },
+            body: JSON.stringify({
+                valor: parseFloat(valor)
+            })
+        }
+    );
+
+    const dados = await resposta.json();
+
+    alert(
+        "PIX Copia e Cola:\n\n" +
+        dados.point_of_interaction
+            .transaction_data
+            .qr_code
+    );
 }
 
         
