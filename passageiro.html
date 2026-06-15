@@ -462,11 +462,15 @@
             R$ 0,00
         </strong>
     </p>
-    <button
-    class="btn-success"
-    onclick="adicionarSaldo()">
-    💰 Adicionar saldo
-</button>
+    <button class="btn-success"
+    onclick="adicionarSaldoPix()">
+    ⚡ Adicionar via PIX
+    </button>
+
+    <button class="btn-primary"
+    onclick="adicionarSaldoCartao()">
+    💳 Adicionar via Cartão
+    </button>
     <button class="btn-primary">
         📜 Histórico
     </button>
@@ -1059,7 +1063,7 @@ function fecharCarteira(){
         "painelCarteira"
     ).style.display = "none";
 }
-async function adicionarSaldo() {
+async function adicionarSaldoPix() {
 
     const valor = prompt(
         "Digite o valor da recarga:"
