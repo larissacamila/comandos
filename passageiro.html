@@ -1068,21 +1068,23 @@ async function adicionarSaldo() {
 
     if (!valor) return;
 
-    const resposta = await fetch(
-        `${API}/checkout/criar`,
-        {
-            method: "POST",
-            headers: {
-                Authorization:
-                    `Bearer ${token}`,
-                "Content-Type":
-                    "application/json"
-            },
-            body: JSON.stringify({
-                valor: parseFloat(valor)
-            })
-        }
-    );
+    alert("Enviando para o servidor...");
+
+const resposta = await fetch(
+    `${API}/checkout/criar`,
+    {
+        method: "POST",
+        headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            valor: parseFloat(valor)
+        })
+    }
+);
+
+alert("Servidor respondeu!");
 
     const dados = await resposta.json();
 
