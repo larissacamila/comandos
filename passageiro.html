@@ -1085,12 +1085,12 @@ const resposta = await fetch(
 );
 
 alert("Servidor respondeu!");
+const dados = await resposta.json();
 
-    const dados = await resposta.json();
+console.log(dados);
 
-    window.open(
-        dados.link,
-        "_blank"
+alert(JSON.stringify(dados));
+    
     );
 }
 
