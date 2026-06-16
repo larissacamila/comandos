@@ -1068,39 +1068,64 @@ async function adicionarSaldo() {
 
     if (!valor) return;
 
-    alert("Enviando para o servidor...");
+    try {
 
-const resposta = await fetch(
-    `${API}/checkout/criar`,
-    {
-        method: "POST",
-        headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-            valor: parseFloat(valor)
-        })
+        alert(
+            "Enviando para o servidor..."
+        );
+
+        const resposta = await fetch(
+            `${API}/checkout/criar`,
+            {
+                method: "POST",
+                headers: {
+                    Authorization:
+                        `Bearer ${token}`,
+                    "Content-Type":
+                        "application/json"
+                },
+                body: JSON.stringify({
+                    valor: parseFloat(valor)
+                })
+            }
+        );
+
+        alert(
+            "Servidor respondeu!"
+        );
+
+        const dados =
+            await resposta.json();
+
+        console.log(dados);
+
+        alert(
+            JSON.stringify(dados)
+        );
+
+        if (dados.link) {
+
+            window.location.href =
+                dados.link;
+
+        } else {
+
+            alert(
+                "Link do Mercado Pago não retornado."
+            );
+
+        }
+
+    } catch (erro) {
+
+        console.error(erro);
+
+        alert(
+            "Erro: " +
+            erro.message
+        );
+
     }
-);
-
-alert("Servidor respondeu!");
-
-const dados = await resposta.json();
-
-console.log(dados);
-
-alert(JSON.stringify(dados));
-
-if (dados.link) {
-
-    window.location.href = dados.link;
-
-} else {
-
-    alert(
-        "Link do Mercado Pago não retornado."
-    );
 
 }
         
