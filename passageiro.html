@@ -1085,15 +1085,24 @@ const resposta = await fetch(
 );
 
 alert("Servidor respondeu!");
+
 const dados = await resposta.json();
 
 console.log(dados);
 
 alert(JSON.stringify(dados));
-    
-    );
-}
 
+if (dados.link) {
+
+    window.location.href = dados.link;
+
+} else {
+
+    alert(
+        "Link do Mercado Pago não retornado."
+    );
+
+}
         
 
     </script>
