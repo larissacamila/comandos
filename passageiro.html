@@ -1062,71 +1062,48 @@ function fecharCarteira(){
 }
 async function adicionarSaldo() {
 
-    const valor = prompt(
-        "Digite o valor:"
-    );
+    const valor = prompt("Digite o valor:");
 
-    if (!valor) return;
+    if (!valor || isNaN(valor) || parseFloat(valor) <= 0) {
+        alert("Valor inválido");
+        return;
+    }
 
     try {
 
-        alert(
-            "Enviando para o servidor..."
-        );
+        alert("Enviando para o servidor...");
 
-        const resposta = await fetch(
-            `${API}/checkout/criar`,
-            {
-                method: "POST",
-                headers: {
-                    Authorization:
-                        `Bearer ${token}`,
-                    "Content-Type":
-                        "application/json"
-                },
-                body: JSON.stringify({
-                    valor: parseFloat(valor)
-                })
-            }
-        );
+        const resposta = await fetch(`${API}/checkout/criar`, {
+            method: "POST",
+            headers: {
+                "Authorization": `Bearer ${token}`,
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                valor: parseFloat(valor)
+            })
+        });
 
-        alert(
-            "Servidor respondeu!"
-        );
+        if (!resposta.ok) {
+            const erroTexto = await resposta.text();
+            throw new Error(erroTexto);
+        }
 
-        const dados =
-            await resposta.json();
+        const dados = await resposta.json();
 
-        console.log(dados);
-
-        alert(
-            JSON.stringify(dados)
-        );
+        console.log("Resposta:", dados);
 
         if (dados.link) {
-
-            window.location.href =
-                dados.link;
-
+            window.location.href = dados.link;
         } else {
-
-            alert(
-                "Link do Mercado Pago não retornado."
-            );
-
+            alert("Link do pagamento não foi retornado pelo servidor");
+            console.log(dados);
         }
 
     } catch (erro) {
-
         console.error(erro);
-
-        alert(
-            "Erro: " +
-            erro.message
-        );
-
+        alert("Erro: " + erro.message);
     }
-
 }
         
 
