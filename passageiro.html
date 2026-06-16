@@ -462,14 +462,11 @@
             R$ 0,00
         </strong>
     </p>
-    <button class="btn-success"
-    onclick="adicionarSaldoPix()">
-    ⚡ Adicionar via PIX
-    </button>
+    
 
     <button class="btn-primary"
-    onclick="adicionarSaldoCartao()">
-    💳 Adicionar via Cartão
+    onclick="adicionarSaldo()">
+    Cartão 💳 Pix
     </button>
     <button class="btn-primary">
         📜 Histórico
@@ -1063,76 +1060,36 @@ function fecharCarteira(){
         "painelCarteira"
     ).style.display = "none";
 }
-async function adicionarSaldoPix() {
+async function adicionarSaldo() {
 
     const valor = prompt(
-        "Digite o valor da recarga:"
+        "Digite o valor:"
     );
 
     if (!valor) return;
 
-    const valorNumerico = parseFloat(valor);
-
-    if (isNaN(valorNumerico) || valorNumerico <= 0) {
-        alert("Digite um valor válido.");
-        return;
-    }
-
-    try {
-
-        const resposta = await fetch(
-            `${API}/pix/criar`,
-            {
-                method: "POST",
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    valor: valorNumerico
-                })
-            }
-        );
-
-        const dados = await resposta.json();
-
-        if (!resposta.ok) {
-            alert(
-                dados.erro ||
-                "Erro ao gerar PIX."
-            );
-            return;
+    const resposta = await fetch(
+        `${API}/checkout/criar`,
+        {
+            method: "POST",
+            headers: {
+                Authorization:
+                    `Bearer ${token}`,
+                "Content-Type":
+                    "application/json"
+            },
+            body: JSON.stringify({
+                valor: parseFloat(valor)
+            })
         }
+    );
 
-        const qrCode = dados
-            .point_of_interaction
-            .transaction_data
-            .qr_code;
+    const dados = await resposta.json();
 
-        navigator.clipboard.writeText(
-            qrCode
-        );
-
-        alert(
-            "✅ PIX gerado com sucesso!\n\n" +
-            "O código PIX foi copiado para a área de transferência."
-        );
-
-        console.log(
-            "PIX:",
-            qrCode
-        );
-
-    } catch (erro) {
-
-        console.error(erro);
-
-        alert(
-            "Erro de conexão com o servidor."
-        );
-
-    }
-
+    window.open(
+        dados.link,
+        "_blank"
+    );
 }
 
         
