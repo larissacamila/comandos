@@ -313,6 +313,20 @@
     padding:12px 18px;
     border-radius:10px;
 }
+    menu {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    max-width: 420px; 
+    background: rgba(15, 23, 42, 0.95);
+    backdrop-filter: blur(10px);
+    display: flex;
+    justify-content: space-around;
+    padding: 12px 0;
+    border-top: 1px solid #334155;
+    z-index: 100;
+    box-sizing: border-box;
+}  
     </style>
 </head>
 <body>
@@ -1106,7 +1120,15 @@ async function adicionarSaldo() {
     }
 }
         
-
-    </script>
+  </script>
+    <div class="menu">
+    <a href="/"><div>🏠<br>Início</div></a>
+    <a href="/"><div>🔙<br>voltar</div></a>
+    <a href="/matches"><div>💬<br>Chat</div></a>
+    <a href="/matches"><div>❤️<br>Curtidas</div></a>
+    <a href="/logout"><div>🏃<br>Sair</div></a>
+</div>
+    
 </body>
+    
 </html>
