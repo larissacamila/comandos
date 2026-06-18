@@ -313,6 +313,21 @@
     padding:12px 18px;
     border-radius:10px;
 }
+
+.loading-indicator {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border: 2px solid var(--cor-texto-secundario);
+    border-top: 2px solid var(--cor-primaria);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
     </style>
 </head>
 <body>
@@ -401,8 +416,8 @@
         <div id="cardValor" class="card-preco" style="display: none;">
             <h4>Resumo da Viagem Estimada</h4>
             <div class="detalhes-preco">
-                <p>Distância: <strong id="txtDistancia">0.0 km</strong></p>
-                <p>Tempo Estimado: <strong id="txtTempo">0 min</strong></p>
+                <p>Distância: <strong id="txtDistancia">Calculando...</strong></p>
+                <p>Tempo Estimado: <strong id="txtTempo">Calculando...</strong></p>
                 <p class="preco-final">Valor: <span id="txtValor">R$ 0,00</span></p>
             </div>
             <button id="btnChamar" class="btn-sucesso-grande" onclick="chamarCorrida()">
@@ -509,6 +524,7 @@
         let lonOrigem = null;
         let latDestino = null;
         let lonDestino = null;
+        let calculandoValor = false;
 
         socket.on("connect", () => {
             console.log("✅ Passageiro Conectado ao Sistema! 🇧🇷");
@@ -684,18 +700,47 @@
                 return; 
             }
             
-            // Buscar coordenadas para origem e destino
-            try {
-                const geoOrigem = await geocodeAddress(origem);
-                const geoDestino = await geocodeAddress(destino);
-                
-                latOrigem = geoOrigem.lat;
-                lonOrigem = geoOrigem.lng;
-                latDestino = geoDestino.lat;
-                lonDestino = geoDestino.lng;
-            } catch (error) {
-                alert("⚠️ Não foi possível encontrar as coordenadas dos endereços.");
-                return;
+            // Se ainda não temos as coordenadas, busca agora
+            if (!latOrigem || !lonOrigem || !latDestino || !lonDestino) {
+                try {
+                    const geoOrigem = await geocodeAddress(origem);
+                    const geoDestino = await geocodeAddress(destino);
+                    latOrigem = geoOrigem.lat;
+                    lonOrigem = geoOrigem.lng;
+                    latDestino = geoDestino.lat;
+                    lonDestino = geoDestino.lng;
+                } catch (error) {
+                    alert("⚠️ Não foi possível encontrar as coordenadas dos endereços.");
+                    return;
+                }
+            }
+
+            // Se o valor ainda não foi calculado, calcula agora
+            if (valorFinal === 0) {
+                try {
+                    const response = await fetch("/calcular_corrida", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({
+                            lat_origem: latOrigem,
+                            lon_origem: lonOrigem,
+                            lat_destino: latDestino,
+                            lon_destino: lonDestino
+                        })
+                    });
+                    const dados = await response.json();
+                    valorFinal = dados.valor || 0;
+                    distancia = dados.distancia || 0;
+                    document.getElementById('txtDistancia').innerText = `${distancia} km`;
+                    document.getElementById('txtTempo').innerText = `${Math.round(distancia * 3)} min`;
+                    document.getElementById('txtValor').innerText = `R$ ${valorFinal.toFixed(2)}`;
+                } catch (error) {
+                    console.error("Erro ao calcular valor:", error);
+                    alert("Erro ao calcular o valor da corrida");
+                    return;
+                }
             }
 
             const btn = document.getElementById('btnChamar');
@@ -707,30 +752,6 @@
             const fotoEnvio = passageiro?.foto_perfil || "";
             
             try {
-                // Primeiro, calcular o valor da corrida usando a API
-                const response = await fetch("/calcular_corrida", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({
-                        lat_origem: latOrigem,
-                        lon_origem: lonOrigem,
-                        lat_destino: latDestino,
-                        lon_destino: lonDestino
-                    })
-                });
-                
-                const dados = await response.json();
-                console.log("Valor:", dados.valor);
-                
-                // Usar o valor retornado pela API
-                valorFinal = dados.valor || 0;
-                
-                // Atualizar o card de valor com os dados da API
-                document.getElementById('txtValor').innerText = `R$ ${valorFinal.toFixed(2)}`;
-                
-                // Agora chamar a corrida com o valor calculado
                 const res = await fetch(`${API}/nova_corrida`, {
                     method: "POST",
                     headers: {
@@ -841,7 +862,16 @@
             const d = document.getElementById('destino').value.trim();
             if(!o || !d || o.length < 5 || d.length < 5) return;
             
+            if (calculandoValor) return;
+            calculandoValor = true;
+            
             try {
+                // Mostra loading no card de valor
+                document.getElementById('cardValor').style.display = 'block';
+                document.getElementById('txtDistancia').innerHTML = `<span class="loading-indicator"></span> Calculando...`;
+                document.getElementById('txtTempo').innerHTML = `<span class="loading-indicator"></span> Calculando...`;
+                document.getElementById('txtValor').innerText = `R$ 0,00`;
+                
                 // Geocodificar origem e destino
                 const geoOrigem = await geocodeAddress(o);
                 const geoDestino = await geocodeAddress(d);
@@ -851,7 +881,7 @@
                 latDestino = geoDestino.lat;
                 lonDestino = geoDestino.lng;
                 
-                // Calcular distância em km
+                // Calcular distância em km usando a fórmula de Haversine
                 distancia = calcularDistancia(latOrigem, lonOrigem, latDestino, lonDestino);
                 distancia = parseFloat(distancia.toFixed(1));
                 
@@ -870,9 +900,13 @@
                 });
                 
                 const dados = await response.json();
-                console.log("Valor:", dados.valor);
+                console.log("Valor calculado pela API:", dados);
                 
+                // Usar os dados da API
                 valorFinal = dados.valor || 0;
+                if (dados.distancia) {
+                    distancia = dados.distancia;
+                }
                 
                 document.getElementById('txtDistancia').innerText = `${distancia} km`;
                 document.getElementById('txtTempo').innerText = `${Math.round(distancia * 3)} min`;
@@ -880,13 +914,12 @@
                 document.getElementById('cardValor').style.display = 'block';
             } catch (error) {
                 console.error("Erro ao calcular valor:", error);
-                // Fallback para cálculo local
-                distancia = parseFloat((Math.random() * 10 + 2).toFixed(1));
-                valorFinal = 4.50 + (distancia * 1.25);
-                document.getElementById('txtDistancia').innerText = `${distancia} km`;
-                document.getElementById('txtTempo').innerText = `${Math.round(distancia * 3)} min`;
-                document.getElementById('txtValor').innerText = `R$ ${valorFinal.toFixed(2)}`;
-                document.getElementById('cardValor').style.display = 'block';
+                document.getElementById('txtDistancia').innerText = "Erro ao calcular";
+                document.getElementById('txtTempo').innerText = "Erro ao calcular";
+                document.getElementById('txtValor').innerText = `R$ 0,00`;
+                // Mantém o card visível com mensagem de erro
+            } finally {
+                calculandoValor = false;
             }
         }
 
