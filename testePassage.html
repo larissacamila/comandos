@@ -773,25 +773,18 @@
             });
         }
 
-    function calcularValor() {
-            fetch("/calcular_corrida", {
-    method: "POST",
-    headers: {
-        "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-        lat_origem,
-        lon_origem,
-        lat_destino,
-        lon_destino
-    })
-})
-.then(r => r.json())
-.then(dados => {
-    console.log("Valor:", dados.valor);
-});
-
+        function calcularValor() {
+            const o = document.getElementById('origem').value.trim();
+            const d = document.getElementById('destino').value.trim();
+            if(!o || !d || o.length < 5 || d.length < 5) return;
+            distancia = parseFloat((Math.random() * 10 + 2).toFixed(1));
+            valorFinal = 4.50 + (distancia * 1.25);
+            document.getElementById('txtDistancia').innerText = `${distancia} km`;
+            document.getElementById('txtTempo').innerText = `${Math.round(distancia * 3)} min`;
+            document.getElementById('txtValor').innerText = `R$ ${valorFinal.toFixed(2)}`;
+            document.getElementById('cardValor').style.display = 'block';
         }
+
         async function cancelarCorrida() {
             if(!corridaAtual) { resetarInterfaceAposCancelamento(); return; }
             const id = corridaAtual.id || corridaAtual.corrida_id;
