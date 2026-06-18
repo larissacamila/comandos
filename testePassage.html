@@ -505,6 +505,10 @@
         let notaAvaliacao = 0;
         let corridaIdAvaliacao = null;
         let motoristaIdAvaliacao = null;
+        let latOrigem = null;
+        let lonOrigem = null;
+        let latDestino = null;
+        let lonDestino = null;
 
         socket.on("connect", () => {
             console.log("✅ Passageiro Conectado ao Sistema! 🇧🇷");
@@ -602,9 +606,9 @@
             if(!navigator.geolocation) { alert("GPS não suportado"); return; }
             falar("Buscando sua localização...");
             navigator.geolocation.getCurrentPosition(pos => {
-                const lat = pos.coords.latitude;
-                const lng = pos.coords.longitude;
-                document.getElementById('origem').value = `${lat},${lng}`;
+                latOrigem = pos.coords.latitude;
+                lonOrigem = pos.coords.longitude;
+                document.getElementById('origem').value = `${latOrigem},${lonOrigem}`;
                 estadoLocalizacao = 1;
                 document.getElementById('btnLocalizacao').className = "btn-success";
                 document.getElementById('txtBtnLocalizacao').innerHTML = `<i class="fas fa-check"></i> 🚗 Entrar Buscando Motorista`;
@@ -679,13 +683,54 @@
                 alert("⚠️ Coloque endereços completos de origem e destino!"); 
                 return; 
             }
-            const btn = document.getElementById('btnChamar');
-                btn.disabled = true; 
-                btn.classList.add('btn-blocked');
-                btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> ⏳ BUSCANDO MOTORISTA...`;
-            falar("Procurando motoristas próximos...");
-            const fotoEnvio = passageiro?.foto_perfil || "";
+            
+            // Buscar coordenadas para origem e destino
             try {
+                const geoOrigem = await geocodeAddress(origem);
+                const geoDestino = await geocodeAddress(destino);
+                
+                latOrigem = geoOrigem.lat;
+                lonOrigem = geoOrigem.lng;
+                latDestino = geoDestino.lat;
+                lonDestino = geoDestino.lng;
+            } catch (error) {
+                alert("⚠️ Não foi possível encontrar as coordenadas dos endereços.");
+                return;
+            }
+
+            const btn = document.getElementById('btnChamar');
+            btn.disabled = true; 
+            btn.classList.add('btn-blocked');
+            btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> ⏳ BUSCANDO MOTORISTA...`;
+            falar("Procurando motoristas próximos...");
+            
+            const fotoEnvio = passageiro?.foto_perfil || "";
+            
+            try {
+                // Primeiro, calcular o valor da corrida usando a API
+                const response = await fetch("/calcular_corrida", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        lat_origem: latOrigem,
+                        lon_origem: lonOrigem,
+                        lat_destino: latDestino,
+                        lon_destino: lonDestino
+                    })
+                });
+                
+                const dados = await response.json();
+                console.log("Valor:", dados.valor);
+                
+                // Usar o valor retornado pela API
+                valorFinal = dados.valor || 0;
+                
+                // Atualizar o card de valor com os dados da API
+                document.getElementById('txtValor').innerText = `R$ ${valorFinal.toFixed(2)}`;
+                
+                // Agora chamar a corrida com o valor calculado
                 const res = await fetch(`${API}/nova_corrida`, {
                     method: "POST",
                     headers: {
@@ -696,7 +741,7 @@
                         origem: origem, 
                         destino: destino, 
                         valor: valorFinal,
-                        distancia: `${distancia.toFixed(1)} km`,
+                        distancia: distancia ? `${distancia.toFixed(1)} km` : "Calculando...",
                         foto_perfil: fotoEnvio
                     })
                 });
@@ -716,6 +761,24 @@
                     btn.innerHTML = `<i class="fas fa-rocket"></i> 🚀 CHAMAR ROTA BRASIL`;
                 }
             }
+        }
+
+        // Função para geocodificar endereço
+        function geocodeAddress(address) {
+            return new Promise((resolve, reject) => {
+                const geocoder = new google.maps.Geocoder();
+                geocoder.geocode({ address: address }, (results, status) => {
+                    if (status === 'OK' && results[0]) {
+                        const location = results[0].geometry.location;
+                        resolve({
+                            lat: location.lat(),
+                            lng: location.lng()
+                        });
+                    } else {
+                        reject(new Error('Geocoding failed: ' + status));
+                    }
+                });
+            });
         }
 
         function mostrarStatusBuscando() {
@@ -773,16 +836,58 @@
             });
         }
 
-        function calcularValor() {
+        async function calcularValor() {
             const o = document.getElementById('origem').value.trim();
             const d = document.getElementById('destino').value.trim();
             if(!o || !d || o.length < 5 || d.length < 5) return;
-            distancia = parseFloat((Math.random() * 10 + 2).toFixed(1));
-            valorFinal = 4.50 + (distancia * 1.25);
-            document.getElementById('txtDistancia').innerText = `${distancia} km`;
-            document.getElementById('txtTempo').innerText = `${Math.round(distancia * 3)} min`;
-            document.getElementById('txtValor').innerText = `R$ ${valorFinal.toFixed(2)}`;
-            document.getElementById('cardValor').style.display = 'block';
+            
+            try {
+                // Geocodificar origem e destino
+                const geoOrigem = await geocodeAddress(o);
+                const geoDestino = await geocodeAddress(d);
+                
+                latOrigem = geoOrigem.lat;
+                lonOrigem = geoOrigem.lng;
+                latDestino = geoDestino.lat;
+                lonDestino = geoDestino.lng;
+                
+                // Calcular distância em km
+                distancia = calcularDistancia(latOrigem, lonOrigem, latDestino, lonDestino);
+                distancia = parseFloat(distancia.toFixed(1));
+                
+                // Fazer a requisição para calcular o valor da corrida
+                const response = await fetch("/calcular_corrida", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        lat_origem: latOrigem,
+                        lon_origem: lonOrigem,
+                        lat_destino: latDestino,
+                        lon_destino: lonDestino
+                    })
+                });
+                
+                const dados = await response.json();
+                console.log("Valor:", dados.valor);
+                
+                valorFinal = dados.valor || 0;
+                
+                document.getElementById('txtDistancia').innerText = `${distancia} km`;
+                document.getElementById('txtTempo').innerText = `${Math.round(distancia * 3)} min`;
+                document.getElementById('txtValor').innerText = `R$ ${valorFinal.toFixed(2)}`;
+                document.getElementById('cardValor').style.display = 'block';
+            } catch (error) {
+                console.error("Erro ao calcular valor:", error);
+                // Fallback para cálculo local
+                distancia = parseFloat((Math.random() * 10 + 2).toFixed(1));
+                valorFinal = 4.50 + (distancia * 1.25);
+                document.getElementById('txtDistancia').innerText = `${distancia} km`;
+                document.getElementById('txtTempo').innerText = `${Math.round(distancia * 3)} min`;
+                document.getElementById('txtValor').innerText = `R$ ${valorFinal.toFixed(2)}`;
+                document.getElementById('cardValor').style.display = 'block';
+            }
         }
 
         async function cancelarCorrida() {
