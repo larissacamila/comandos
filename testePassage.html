@@ -466,7 +466,7 @@
         }
 
         // ============================================================
-        // 🔥 FUNÇÃO DE GEOCODIFICAÇÃO - A MAIS IMPORTANTE
+        // 🔥 FUNÇÃO DE GEOCODIFICAÇÃO - SIMPLES E DIRETA
         // ============================================================
 
         function geocodeAddress(address) {
@@ -486,49 +486,46 @@
                 }
                 
                 // Tenta geocodificar com o Google
-                const tentativas = [
-                    address,
-                    address + ', Brasil',
-                    address + ', São Paulo',
-                    address + ', São Paulo - SP',
-                    address + ', Brazil'
-                ];
-                
-                let tentativaAtual = 0;
-                
-                function tentarGeocode() {
-                    if (tentativaAtual >= tentativas.length) {
-                        reject(new Error(`❌ Não foi possível encontrar: "${address}"`));
+                geocoder.geocode({ 
+                    address: address,
+                    region: 'BR'
+                }, (results, status) => {
+                    console.log(`📊 Status geocoding: ${status}`);
+                    
+                    if (status === 'OK' && results && results.length > 0) {
+                        const location = results[0].geometry.location;
+                        const resultado = {
+                            lat: location.lat(),
+                            lng: location.lng(),
+                            formatted_address: results[0].formatted_address
+                        };
+                        console.log("✅ Encontrado:", resultado);
+                        resolve(resultado);
                         return;
                     }
                     
-                    const endereco = tentativas[tentativaAtual];
-                    console.log(`📌 Tentativa ${tentativaAtual + 1}: "${endereco}"`);
-                    
+                    // Tenta com "Brasil" no final
                     geocoder.geocode({ 
-                        address: endereco,
+                        address: address + ', Brasil',
                         region: 'BR'
-                    }, (results, status) => {
-                        console.log(`📊 Status: ${status}`);
+                    }, (results2, status2) => {
+                        console.log(`📊 Status geocoding (com Brasil): ${status2}`);
                         
-                        if (status === 'OK' && results && results.length > 0) {
-                            const location = results[0].geometry.location;
+                        if (status2 === 'OK' && results2 && results2.length > 0) {
+                            const location = results2[0].geometry.location;
                             const resultado = {
                                 lat: location.lat(),
                                 lng: location.lng(),
-                                formatted_address: results[0].formatted_address
+                                formatted_address: results2[0].formatted_address
                             };
-                            console.log("✅ Encontrado:", resultado);
+                            console.log("✅ Encontrado (com Brasil):", resultado);
                             resolve(resultado);
                             return;
                         }
                         
-                        tentativaAtual++;
-                        tentarGeocode();
+                        reject(new Error(`❌ Não foi possível encontrar: "${address}"`));
                     });
-                }
-                
-                tentarGeocode();
+                });
             });
         }
 
@@ -554,32 +551,22 @@
                         const item = document.createElement('div');
                         item.className = 'suggestion-item';
                         item.innerHTML = `<i class="fas fa-map-marker-alt"></i> ${place.description}`;
-                        item.onclick = () => {
+                        item.onclick = async () => {
                             document.getElementById(tipo).value = place.description;
                             divSug.style.display = 'none';
-                            // 🔥 CHAMA O CÁLCULO
-                            calcularValor();
+                            await calcularValor();
                         };
                         divSug.appendChild(item);
                     });
                     divSug.style.display = 'block';
                 } else { 
                     divSug.style.display = 'none';
-                    // Se não tem sugestões e o texto é grande, tenta geocodificar direto
-                    if (texto.length > 5) {
-                        console.log("🔄 Sem sugestões, tentando geocodificar diretamente...");
-                        // Aguarda um pouco antes de tentar
-                        clearTimeout(window.geocodeTimeout);
-                        window.geocodeTimeout = setTimeout(() => {
-                            calcularValor();
-                        }, 500);
-                    }
                 }
             });
         }
 
         // ============================================================
-        // 🔥 FUNÇÃO DE CÁLCULO - A QUE FAZ TUDO FUNCIONAR
+        // 🔥 FUNÇÃO DE CÁLCULO - A MAIS IMPORTANTE
         // ============================================================
 
         async function calcularValor() {
@@ -662,7 +649,7 @@
                 document.getElementById('txtDistancia').innerText = "Erro";
                 document.getElementById('txtTempo').innerText = "Erro";
                 document.getElementById('txtValor').innerText = `R$ 0,00`;
-                alert("❌ Erro ao calcular: " + error.message + "\n\nTente digitar o endereço completo (ex: Rua Alba, São Paulo - SP)");
+                alert("❌ Erro ao calcular: " + error.message + "\n\n💡 Dica: Digite o endereço completo com cidade e estado.\nExemplo: 'Rua Alba, São Paulo - SP'");
             } finally {
                 calculandoValor = false;
             }
