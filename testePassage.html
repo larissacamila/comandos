@@ -343,7 +343,7 @@
         let markerMotorista = null;
         let rotaLinha = null;
         let autocompleteService = new google.maps.places.AutocompleteService();
-        let geocoder = new google.maps.Geocoder();
+        let placesService = new google.maps.places.PlacesService(document.createElement('div'));
         let distancia = 0;
         let valorFinal = 0;
         let estadoLocalizacao = 0;
@@ -466,71 +466,36 @@
         }
 
         // ============================================================
-        // 🔥 FUNÇÃO DE GEOCODIFICAÇÃO - SIMPLES E DIRETA
+        // 🔥 FUNÇÃO PARA OBTER COORDENADAS DO PLACE_ID
         // ============================================================
 
-        function geocodeAddress(address) {
+        function getPlaceDetails(placeId) {
             return new Promise((resolve, reject) => {
-                console.log("🔍 Geocodificando:", address);
+                console.log("📍 Buscando detalhes do place_id:", placeId);
                 
-                // Verifica se já é coordenada
-                const coordsMatch = address.match(/(-?\d+\.\d+)\s*[,;]\s*(-?\d+\.\d+)/);
-                if (coordsMatch) {
-                    const lat = parseFloat(coordsMatch[1]);
-                    const lng = parseFloat(coordsMatch[2]);
-                    if (lat >= -90 && lat <= 90 && lng >= -180 && lng <= 180) {
-                        console.log("✅ Coordenadas diretas:", { lat, lng });
-                        resolve({ lat, lng, formatted_address: address });
-                        return;
-                    }
-                }
-                
-                // Tenta geocodificar com o Google
-                geocoder.geocode({ 
-                    address: address,
-                    region: 'BR'
-                }, (results, status) => {
-                    console.log(`📊 Status geocoding: ${status}`);
+                placesService.getDetails({
+                    placeId: placeId,
+                    fields: ['geometry', 'formatted_address', 'name']
+                }, (place, status) => {
+                    console.log("📊 Status Place Details:", status);
                     
-                    if (status === 'OK' && results && results.length > 0) {
-                        const location = results[0].geometry.location;
+                    if (status === 'OK' && place && place.geometry) {
                         const resultado = {
-                            lat: location.lat(),
-                            lng: location.lng(),
-                            formatted_address: results[0].formatted_address
+                            lat: place.geometry.location.lat(),
+                            lng: place.geometry.location.lng(),
+                            formatted_address: place.formatted_address || place.name
                         };
-                        console.log("✅ Encontrado:", resultado);
+                        console.log("✅ Detalhes obtidos:", resultado);
                         resolve(resultado);
-                        return;
+                    } else {
+                        reject(new Error(`Falha ao obter detalhes: ${status}`));
                     }
-                    
-                    // Tenta com "Brasil" no final
-                    geocoder.geocode({ 
-                        address: address + ', Brasil',
-                        region: 'BR'
-                    }, (results2, status2) => {
-                        console.log(`📊 Status geocoding (com Brasil): ${status2}`);
-                        
-                        if (status2 === 'OK' && results2 && results2.length > 0) {
-                            const location = results2[0].geometry.location;
-                            const resultado = {
-                                lat: location.lat(),
-                                lng: location.lng(),
-                                formatted_address: results2[0].formatted_address
-                            };
-                            console.log("✅ Encontrado (com Brasil):", resultado);
-                            resolve(resultado);
-                            return;
-                        }
-                        
-                        reject(new Error(`❌ Não foi possível encontrar: "${address}"`));
-                    });
                 });
             });
         }
 
         // ============================================================
-        // FUNÇÃO DE BUSCA DE ENDEREÇOS
+        // FUNÇÃO DE BUSCA DE ENDEREÇOS MELHORADA
         // ============================================================
 
         function buscarEndereco(texto, tipo) {
@@ -540,33 +505,69 @@
                 return; 
             }
             
+            console.log(`🔍 Buscando sugestões para ${tipo}:`, texto);
+            
             autocompleteService.getPlacePredictions({ 
                 input: texto, 
                 language: 'pt-BR', 
                 componentRestrictions: {country: 'br'}
             }, (res, status) => {
+                console.log(`📊 Status autocomplete ${tipo}:`, status);
+                
                 if(status === 'OK' && res && res.length > 0) {
                     divSug.innerHTML = '';
                     res.forEach(place => {
                         const item = document.createElement('div');
                         item.className = 'suggestion-item';
                         item.innerHTML = `<i class="fas fa-map-marker-alt"></i> ${place.description}`;
+                        
                         item.onclick = async () => {
+                            console.log(`📍 Selecionado ${tipo}:`, place.description);
                             document.getElementById(tipo).value = place.description;
                             divSug.style.display = 'none';
-                            await calcularValor();
+                            
+                            try {
+                                // 🔥 OBTÉM AS COORDENADAS DO PLACE_ID
+                                const coordenadas = await getPlaceDetails(place.place_id);
+                                console.log(`✅ Coordenadas obtidas:`, coordenadas);
+                                
+                                if (tipo === 'origem') {
+                                    latOrigem = coordenadas.lat;
+                                    lonOrigem = coordenadas.lng;
+                                    if (coordenadas.formatted_address) {
+                                        document.getElementById('origem').value = coordenadas.formatted_address;
+                                    }
+                                } else {
+                                    latDestino = coordenadas.lat;
+                                    lonDestino = coordenadas.lng;
+                                    if (coordenadas.formatted_address) {
+                                        document.getElementById('destino').value = coordenadas.formatted_address;
+                                    }
+                                }
+                                
+                                // Verifica se já tem os dois endereços
+                                const origem = document.getElementById('origem').value.trim();
+                                const destino = document.getElementById('destino').value.trim();
+                                if (origem && destino && origem.length > 3 && destino.length > 3) {
+                                    await calcularValor();
+                                }
+                            } catch (error) {
+                                console.error(`❌ Erro ao obter coordenadas:`, error);
+                                alert(`❌ Não foi possível encontrar: "${place.description}"\nTente selecionar novamente.`);
+                            }
                         };
                         divSug.appendChild(item);
                     });
                     divSug.style.display = 'block';
                 } else { 
+                    console.log(`⚠️ Sem sugestões para ${tipo}`);
                     divSug.style.display = 'none';
                 }
             });
         }
 
         // ============================================================
-        // 🔥 FUNÇÃO DE CÁLCULO - A MAIS IMPORTANTE
+        // 🔥 FUNÇÃO DE CÁLCULO
         // ============================================================
 
         async function calcularValor() {
@@ -582,6 +583,59 @@
                 return;
             }
             
+            // Se não tem coordenadas, tenta geocodificar com o Google
+            if (!latOrigem || !lonOrigem) {
+                try {
+                    console.log("📍 Tentando geocodificar ORIGEM:", o);
+                    const geocoder = new google.maps.Geocoder();
+                    const result = await new Promise((resolve, reject) => {
+                        geocoder.geocode({ address: o, region: 'BR' }, (results, status) => {
+                            if (status === 'OK' && results && results.length > 0) {
+                                resolve(results[0]);
+                            } else {
+                                reject(new Error(`Geocoding falhou: ${status}`));
+                            }
+                        });
+                    });
+                    latOrigem = result.geometry.location.lat();
+                    lonOrigem = result.geometry.location.lng();
+                    if (result.formatted_address) {
+                        document.getElementById('origem').value = result.formatted_address;
+                    }
+                    console.log("✅ ORIGEM geocodificada:", { lat: latOrigem, lng: lonOrigem });
+                } catch (error) {
+                    console.error("❌ Erro ao geocodificar ORIGEM:", error);
+                    alert(`❌ Não foi possível encontrar a origem: "${o}"\n\n💡 Dica: Selecione um endereço das sugestões que aparecem.`);
+                    return;
+                }
+            }
+            
+            if (!latDestino || !lonDestino) {
+                try {
+                    console.log("📍 Tentando geocodificar DESTINO:", d);
+                    const geocoder = new google.maps.Geocoder();
+                    const result = await new Promise((resolve, reject) => {
+                        geocoder.geocode({ address: d, region: 'BR' }, (results, status) => {
+                            if (status === 'OK' && results && results.length > 0) {
+                                resolve(results[0]);
+                            } else {
+                                reject(new Error(`Geocoding falhou: ${status}`));
+                            }
+                        });
+                    });
+                    latDestino = result.geometry.location.lat();
+                    lonDestino = result.geometry.location.lng();
+                    if (result.formatted_address) {
+                        document.getElementById('destino').value = result.formatted_address;
+                    }
+                    console.log("✅ DESTINO geocodificado:", { lat: latDestino, lng: lonDestino });
+                } catch (error) {
+                    console.error("❌ Erro ao geocodificar DESTINO:", error);
+                    alert(`❌ Não foi possível encontrar o destino: "${d}"\n\n💡 Dica: Selecione um endereço das sugestões que aparecem.`);
+                    return;
+                }
+            }
+            
             if (calculandoValor) {
                 console.log("⏳ Já está calculando...");
                 return;
@@ -591,33 +645,18 @@
             try {
                 // Mostra loading
                 document.getElementById('cardValor').style.display = 'block';
-                document.getElementById('txtDistancia').innerHTML = `<span class="loading-indicator"></span> Buscando endereços...`;
-                document.getElementById('txtTempo').innerHTML = `<span class="loading-indicator"></span> Aguarde...`;
+                document.getElementById('txtDistancia').innerHTML = `<span class="loading-indicator"></span> Calculando rota...`;
+                document.getElementById('txtTempo').innerHTML = `<span class="loading-indicator"></span> Calculando...`;
                 document.getElementById('txtValor').innerText = `R$ 0,00`;
                 
-                // 🔥 GEOCODIFICA ORIGEM
-                console.log("📍 Geocodificando ORIGEM:", o);
-                const geoOrigem = await geocodeAddress(o);
-                latOrigem = geoOrigem.lat;
-                lonOrigem = geoOrigem.lng;
-                if (geoOrigem.formatted_address) {
-                    document.getElementById('origem').value = geoOrigem.formatted_address;
-                }
-                console.log("✅ ORIGEM encontrada:", { lat: latOrigem, lng: lonOrigem });
+                console.log("📌 Coordenadas FINAIS:", {
+                    lat_origem: latOrigem,
+                    lon_origem: lonOrigem,
+                    lat_destino: latDestino,
+                    lon_destino: lonDestino
+                });
                 
-                // 🔥 GEOCODIFICA DESTINO
-                console.log("📍 Geocodificando DESTINO:", d);
-                const geoDestino = await geocodeAddress(d);
-                latDestino = geoDestino.lat;
-                lonDestino = geoDestino.lng;
-                if (geoDestino.formatted_address) {
-                    document.getElementById('destino').value = geoDestino.formatted_address;
-                }
-                console.log("✅ DESTINO encontrado:", { lat: latDestino, lng: lonDestino });
-                
-                // 🔥 CHAMA A API DE CÁLCULO
-                document.getElementById('txtDistancia').innerHTML = `<span class="loading-indicator"></span> Calculando rota...`;
-                
+                // Chama a API de cálculo
                 const response = await fetch(`${API}/calcular_corrida`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
@@ -649,7 +688,7 @@
                 document.getElementById('txtDistancia').innerText = "Erro";
                 document.getElementById('txtTempo').innerText = "Erro";
                 document.getElementById('txtValor').innerText = `R$ 0,00`;
-                alert("❌ Erro ao calcular: " + error.message + "\n\n💡 Dica: Digite o endereço completo com cidade e estado.\nExemplo: 'Rua Alba, São Paulo - SP'");
+                alert("❌ Erro ao calcular: " + error.message);
             } finally {
                 calculandoValor = false;
             }
@@ -763,22 +802,11 @@
                 return; 
             }
             
-            // Se não tem coordenadas, tenta geocodificar agora
             if (!latOrigem || !lonOrigem || !latDestino || !lonDestino) {
-                try {
-                    const geoOrigem = await geocodeAddress(origem);
-                    const geoDestino = await geocodeAddress(destino);
-                    latOrigem = geoOrigem.lat;
-                    lonOrigem = geoOrigem.lng;
-                    latDestino = geoDestino.lat;
-                    lonDestino = geoDestino.lng;
-                } catch (error) {
-                    alert("⚠️ Não foi possível encontrar as coordenadas dos endereços.");
-                    return;
-                }
+                alert("⚠️ Endereços não foram encontrados. Selecione um endereço das sugestões.");
+                return;
             }
 
-            // Se o valor não foi calculado, calcula agora
             if (valorFinal === 0) {
                 try {
                     const response = await fetch(`${API}/calcular_corrida`, {
