@@ -190,6 +190,7 @@
             cursor: pointer;
             border-bottom: 1px solid var(--cor-borda);
             font-size: 14px;
+            color: var(--cor-texto-principal);
         }
 
         .suggestion-item:hover {
@@ -274,45 +275,53 @@
 
         @keyframes pulse { 0% { opacity: 0.5; } 50% { opacity: 1; } 100% { opacity: 0.5; } }
 
-    .modal-carteira{
-    position:fixed;
-    top:50%;
-    left:50%;
-    transform:translate(-50%,-50%);
-    width:90%;
-    max-width:380px;
+        .modal-carteira{
+            position:fixed;
+            top:50%;
+            left:50%;
+            transform:translate(-50%,-50%);
+            width:90%;
+            max-width:380px;
+            background:#1e293b;
+            border:1px solid #334155;
+            border-radius:16px;
+            padding:20px;
+            color:white;
+            display:none;
+            z-index:99999;
+            box-shadow:0 0 30px rgba(0,0,0,0.5);
+        }
 
-    background:#1e293b;
+        .modal-carteira h2{
+            margin-bottom:15px;
+        }
 
-    border:1px solid #334155;
-    border-radius:16px;
+        .modal-carteira p{
+            margin-bottom:12px;
+        }
 
-    padding:20px;
+        .btn-carteira{
+            background:#16a34a;
+            color:white;
+            border:none;
+            padding:12px 18px;
+            border-radius:10px;
+        }
 
-    color:white;
+        .loading-indicator {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid var(--cor-texto-secundario);
+            border-top: 2px solid var(--cor-primaria);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
 
-    display:none;
-
-    z-index:99999;
-
-    box-shadow:0 0 30px rgba(0,0,0,0.5);
-}
-
-.modal-carteira h2{
-    margin-bottom:15px;
-}
-
-.modal-carteira p{
-    margin-bottom:12px;
-}
-
-.btn-carteira{
-    background:#16a34a;
-    color:white;
-    border:none;
-    padding:12px 18px;
-    border-radius:10px;
-}
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body>
@@ -373,9 +382,7 @@
             <span>Sua Nota atual:</span>
             <span class="nota-num">5.0</span>
             <span class="estrelas"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></span>
-            <button class="btn-carteira" onclick="abrirCarteira()">
-           💰 Carteira
-            </button>
+            <button class="btn-carteira" onclick="abrirCarteira()">💰 Carteira</button>
         </div>
 
         <div class="card-solicitacao">
@@ -383,13 +390,13 @@
             
             <div class="grupo-busca">
                 <label><i class="fas fa-map-marker-alt" style="color: var(--cor-perigo);"></i> Local de Origem</label>
-                <input type="text" id="origem" placeholder="Endereço de partida..." oninput="buscarEndereco(this.value, 'origem')">
+                <input type="text" id="origem" placeholder="Digite o endereço de partida..." oninput="buscarEndereco(this.value, 'origem')">
                 <div id="sugestoes_origem" class="caixa-sugestoes"></div>
             </div>
 
             <div class="grupo-busca">
                 <label><i class="fas fa-flag-checkered" style="color: var(--cor-sucesso);"></i> Destino Final</label>
-                <input type="text" id="destino" placeholder="Para onde vai?..." oninput="buscarEndereco(this.value, 'destino')">
+                <input type="text" id="destino" placeholder="Para onde você quer ir?..." oninput="buscarEndereco(this.value, 'destino')">
                 <div id="sugestoes_destino" class="caixa-sugestoes"></div>
             </div>
 
@@ -401,8 +408,8 @@
         <div id="cardValor" class="card-preco" style="display: none;">
             <h4>Resumo da Viagem Estimada</h4>
             <div class="detalhes-preco">
-                <p>Distância: <strong id="txtDistancia">0.0 km</strong></p>
-                <p>Tempo Estimado: <strong id="txtTempo">0 min</strong></p>
+                <p>Distância: <strong id="txtDistancia">Calculando...</strong></p>
+                <p>Tempo Estimado: <strong id="txtTempo">Calculando...</strong></p>
                 <p class="preco-final">Valor: <span id="txtValor">R$ 0,00</span></p>
             </div>
             <button id="btnChamar" class="btn-sucesso-grande" onclick="chamarCorrida()">
@@ -445,38 +452,15 @@
             </div>
         </div>
     </div>
+
     <div id="painelCarteira" class="modal-carteira">
-
-    <h2>💰 Minha Carteira</h2>
-
-    <p>
-        Saldo disponível:
-        <strong id="saldoCarteira">
-            R$ 0,00
-        </strong>
-    </p>
-
-    <p>
-        Saldo bloqueado:
-        <strong id="saldoBloqueado">
-            R$ 0,00
-        </strong>
-    </p>
-    
-
-    <button class="btn-primary"
-    onclick="adicionarSaldo()">
-    Cartão 💳 Pix
-    </button>
-    <button class="btn-primary">
-        📜 Histórico
-    </button>
-
-    <button class="btn-danger" onclick="fecharCarteira()">
-        ❌ Fechar
-    </button>
-
-</div>
+        <h2>💰 Minha Carteira</h2>
+        <p>Saldo disponível: <strong id="saldoCarteira">R$ 0,00</strong></p>
+        <p>Saldo bloqueado: <strong id="saldoBloqueado">R$ 0,00</strong></p>
+        <button class="btn-primary" onclick="adicionarSaldo()">Cartão 💳 Pix</button>
+        <button class="btn-primary">📜 Histórico</button>
+        <button class="btn-danger" onclick="fecharCarteira()">❌ Fechar</button>
+    </div>
 
     <script>
         const API = "https://rotabrasil-5jcp.onrender.com";
@@ -501,10 +485,17 @@
         let distancia = 0;
         let valorFinal = 0;
         let estadoLocalizacao = 0; 
-        let atualizacaoRota = null;
         let notaAvaliacao = 0;
         let corridaIdAvaliacao = null;
         let motoristaIdAvaliacao = null;
+        let latOrigem = null;
+        let lonOrigem = null;
+        let latDestino = null;
+        let lonDestino = null;
+        let calculandoValor = false;
+        let geocoder = new google.maps.Geocoder();
+
+        // ==================== SOCKET EVENTS ====================
 
         socket.on("connect", () => {
             console.log("✅ Passageiro Conectado ao Sistema! 🇧🇷");
@@ -570,6 +561,8 @@
             abrirAvaliacao(idCorridaVerificar, idDoMotorista, nomeDoMotorista);
         });
 
+        // ==================== FUNÇÕES AUXILIARES ====================
+
         function falar(texto) {
             if (!window.speechSynthesis) return;
             const msg = new SpeechSynthesisUtterance(texto);
@@ -602,15 +595,267 @@
             if(!navigator.geolocation) { alert("GPS não suportado"); return; }
             falar("Buscando sua localização...");
             navigator.geolocation.getCurrentPosition(pos => {
-                const lat = pos.coords.latitude;
-                const lng = pos.coords.longitude;
-                document.getElementById('origem').value = `${lat},${lng}`;
+                latOrigem = pos.coords.latitude;
+                lonOrigem = pos.coords.longitude;
+                document.getElementById('origem').value = `${latOrigem},${lonOrigem}`;
                 estadoLocalizacao = 1;
                 document.getElementById('btnLocalizacao').className = "btn-success";
                 document.getElementById('txtBtnLocalizacao').innerHTML = `<i class="fas fa-check"></i> 🚗 Entrar Buscando Motorista`;
                 calcularValor();
             }, err => { alert("⚠️ Ative o GPS nas configurações!"); }, {enableHighAccuracy: true});
         }
+
+        // ==================== FUNÇÃO DE GEOCODIFICAÇÃO ====================
+
+        function geocodeAddress(address) {
+            return new Promise((resolve, reject) => {
+                console.log("🔍 Geocodificando:", address);
+                
+                // Verifica se já é coordenada
+                const coordsMatch = address.match(/(-?\d+\.\d+)\s*[,;]\s*(-?\d+\.\d+)/);
+                if (coordsMatch) {
+                    const lat = parseFloat(coordsMatch[1]);
+                    const lng = parseFloat(coordsMatch[2]);
+                    if (lat >= -90 && lat <= 90 && lng >= -180 && lng <= 180) {
+                        resolve({ lat, lng });
+                        return;
+                    }
+                }
+                
+                // Tenta várias combinações automaticamente
+                const tentativas = [
+                    address,
+                    address + ', Brasil',
+                    address + ', São Paulo',
+                    address + ', São Paulo - SP',
+                    address + ', SP',
+                    address + ', Brazil'
+                ];
+                
+                let tentativaAtual = 0;
+                
+                function tentarGeocode() {
+                    if (tentativaAtual >= tentativas.length) {
+                        reject(new Error(`❌ Não foi possível encontrar: "${address}"`));
+                        return;
+                    }
+                    
+                    const enderecoParaBuscar = tentativas[tentativaAtual];
+                    console.log(`📌 Tentativa ${tentativaAtual + 1}: "${enderecoParaBuscar}"`);
+                    
+                    geocoder.geocode({ 
+                        address: enderecoParaBuscar,
+                        region: 'BR'
+                    }, (results, status) => {
+                        console.log(`📊 Status: ${status}`);
+                        
+                        if (status === 'OK' && results && results.length > 0) {
+                            const location = results[0].geometry.location;
+                            resolve({
+                                lat: location.lat(),
+                                lng: location.lng(),
+                                formatted_address: results[0].formatted_address
+                            });
+                            return;
+                        }
+                        
+                        tentativaAtual++;
+                        tentarGeocode();
+                    });
+                }
+                
+                tentarGeocode();
+            });
+        }
+
+        // ==================== FUNÇÃO DE BUSCA DE ENDEREÇOS ====================
+
+        function buscarEndereco(texto, tipo) {
+            const divSug = document.getElementById(`sugestoes_${tipo}`);
+            
+            if(!texto || texto.length < 2) { 
+                divSug.style.display = 'none'; 
+                return; 
+            }
+            
+            console.log(`🔍 Buscando sugestões para ${tipo}:`, texto);
+            
+            autocompleteService.getPlacePredictions({ 
+                input: texto, 
+                language: 'pt-BR', 
+                componentRestrictions: {country: 'br'}
+            }, (res, status) => {
+                console.log(`📊 Status autocomplete ${tipo}:`, status);
+                
+                if(status === 'OK' && res && res.length > 0) {
+                    divSug.innerHTML = '';
+                    
+                    res.slice(0, 8).forEach(place => {
+                        const item = document.createElement('div');
+                        item.className = 'suggestion-item';
+                        item.innerHTML = `<i class="fas fa-map-marker-alt"></i> ${place.description}`;
+                        
+                        item.onclick = async () => {
+                            console.log(`📍 Selecionado ${tipo}:`, place.description);
+                            document.getElementById(tipo).value = place.description;
+                            divSug.style.display = 'none';
+                            
+                            try {
+                                const coordenadas = await geocodeAddress(place.description);
+                                console.log(`✅ Coordenadas:`, coordenadas);
+                                
+                                if (tipo === 'origem') {
+                                    latOrigem = coordenadas.lat;
+                                    lonOrigem = coordenadas.lng;
+                                    if (coordenadas.formatted_address) {
+                                        document.getElementById('origem').value = coordenadas.formatted_address;
+                                    }
+                                } else {
+                                    latDestino = coordenadas.lat;
+                                    lonDestino = coordenadas.lng;
+                                    if (coordenadas.formatted_address) {
+                                        document.getElementById('destino').value = coordenadas.formatted_address;
+                                    }
+                                }
+                                
+                                const origem = document.getElementById('origem').value.trim();
+                                const destino = document.getElementById('destino').value.trim();
+                                if (origem && destino && origem.length > 3 && destino.length > 3) {
+                                    await calcularValor();
+                                }
+                            } catch (error) {
+                                console.error(`❌ Erro:`, error);
+                            }
+                        };
+                        divSug.appendChild(item);
+                    });
+                    divSug.style.display = 'block';
+                } else {
+                    console.log(`⚠️ Sem sugestões para ${tipo}`);
+                    divSug.style.display = 'none';
+                    
+                    if (texto.length > 3) {
+                        tryGeocodeDirect(texto, tipo);
+                    }
+                }
+            });
+        }
+
+        // ==================== GEOCODIFICAÇÃO DIRETA ====================
+
+        async function tryGeocodeDirect(texto, tipo) {
+            try {
+                console.log(`🔍 Busca direta para: "${texto}"`);
+                const coordenadas = await geocodeAddress(texto);
+                console.log(`✅ Encontrado:`, coordenadas);
+                
+                if (tipo === 'origem') {
+                    latOrigem = coordenadas.lat;
+                    lonOrigem = coordenadas.lng;
+                    if (coordenadas.formatted_address) {
+                        document.getElementById('origem').value = coordenadas.formatted_address;
+                    }
+                } else {
+                    latDestino = coordenadas.lat;
+                    lonDestino = coordenadas.lng;
+                    if (coordenadas.formatted_address) {
+                        document.getElementById('destino').value = coordenadas.formatted_address;
+                    }
+                }
+                
+                const origem = document.getElementById('origem').value.trim();
+                const destino = document.getElementById('destino').value.trim();
+                if (origem && destino && origem.length > 3 && destino.length > 3) {
+                    await calcularValor();
+                }
+            } catch (error) {
+                console.error(`❌ Não encontrou:`, error.message);
+            }
+        }
+
+        // ==================== FUNÇÃO DE CÁLCULO ====================
+
+        async function calcularValor() {
+            console.log("🚀 CALCULANDO...");
+            
+            const o = document.getElementById('origem').value.trim();
+            const d = document.getElementById('destino').value.trim();
+            
+            if(!o || !d || o.length < 3 || d.length < 3) {
+                alert("⚠️ Digite endereços válidos para origem e destino!");
+                return;
+            }
+            
+            if (!latOrigem || !lonOrigem) {
+                try {
+                    const coords = await geocodeAddress(o);
+                    latOrigem = coords.lat;
+                    lonOrigem = coords.lng;
+                    if (coords.formatted_address) {
+                        document.getElementById('origem').value = coords.formatted_address;
+                    }
+                } catch (error) {
+                    alert(`❌ Não encontrei: "${o}"\nTente ser mais específico.`);
+                    return;
+                }
+            }
+            
+            if (!latDestino || !lonDestino) {
+                try {
+                    const coords = await geocodeAddress(d);
+                    latDestino = coords.lat;
+                    lonDestino = coords.lng;
+                    if (coords.formatted_address) {
+                        document.getElementById('destino').value = coords.formatted_address;
+                    }
+                } catch (error) {
+                    alert(`❌ Não encontrei: "${d}"\nTente ser mais específico.`);
+                    return;
+                }
+            }
+            
+            if (calculandoValor) return;
+            calculandoValor = true;
+            
+            try {
+                document.getElementById('cardValor').style.display = 'block';
+                document.getElementById('txtDistancia').innerHTML = `<span class="loading-indicator"></span> Calculando...`;
+                document.getElementById('txtTempo').innerHTML = `<span class="loading-indicator"></span> Calculando...`;
+                document.getElementById('txtValor').innerText = `R$ 0,00`;
+                
+                const response = await fetch(`${API}/calcular_corrida`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        lat_origem: latOrigem,
+                        lon_origem: lonOrigem,
+                        lat_destino: latDestino,
+                        lon_destino: lonDestino
+                    })
+                });
+                
+                const dados = await response.json();
+                console.log("📊 Resposta:", dados);
+                
+                if (dados.erro) throw new Error(dados.erro);
+                
+                document.getElementById('txtDistancia').innerText = `${dados.distancia} km`;
+                document.getElementById('txtTempo').innerText = `${dados.tempo} min`;
+                document.getElementById('txtValor').innerText = `R$ ${dados.valor.toFixed(2)}`;
+                document.getElementById('cardValor').style.display = 'block';
+                
+                valorFinal = dados.valor;
+                distancia = dados.distancia;
+                
+            } catch (error) {
+                console.error("❌ ERRO:", error);
+                alert("Erro ao calcular: " + error.message);
+            } finally {
+                calculandoValor = false;
+            }
+        }
+
+        // ==================== FUNÇÕES DE AUTENTICAÇÃO ====================
 
         async function registerPassageiro() {
             try {
@@ -672,19 +917,95 @@
             } catch(e) { alert("Erro de conexão — verifique sua internet"); }
         }
 
+        function alternarTelaAutenticacao(isCadastro) {
+            const titulo = document.getElementById("tituloAutenticacao");
+            const btn = document.getElementById("btnAcaoPrincipal");
+            const textoAlt = document.getElementById("textoAlternar");
+            const gFoto = document.getElementById("grupoFoto");
+            const gNome = document.getElementById("grupoNome");
+            const gTel = document.getElementById("grupoTelefone");
+
+            if(isCadastro) {
+                titulo.innerText = "Criar Conta na Rota Brasil"; 
+                btn.innerText = "Finalizar Cadastro";
+                btn.setAttribute("onclick", "registerPassageiro()");
+                textoAlt.innerHTML = `Já tem conta? <a href="#" onclick="alternarTelaAutenticacao(false)">Logar</a>`;
+                gFoto.style.display="block"; 
+                gNome.style.display="block"; 
+                gTel.style.display="block";
+            } else {
+                titulo.innerText = "🇧🇷 Rota Brasil - Passageiro"; 
+                btn.innerText = "Entrar no Aplicativo";
+                btn.setAttribute("onclick", "login()");
+                textoAlt.innerHTML = `Não tem uma conta? <a href="#" onclick="alternarTelaAutenticacao(true)">Cadastre-se aqui</a>`;
+                gFoto.style.display="none"; 
+                gNome.style.display="none"; 
+                gTel.style.display="none";
+            }
+        }
+
+        function logoutPassageiro() { 
+            localStorage.clear(); 
+            window.location.reload(); 
+        }
+
+        // ==================== FUNÇÕES DA CORRIDA ====================
+
         async function chamarCorrida() {
             const origem = document.getElementById('origem').value.trim();
             const destino = document.getElementById('destino').value.trim();
-            if(!origem || !destino || origem.length < 5 || destino.length < 5) { 
-                alert("⚠️ Coloque endereços completos de origem e destino!"); 
+            if(!origem || !destino || origem.length < 3 || destino.length < 3) { 
+                alert("⚠️ Digite endereços válidos para origem e destino!"); 
                 return; 
             }
+            
+            if (!latOrigem || !lonOrigem || !latDestino || !lonDestino) {
+                try {
+                    const geoOrigem = await geocodeAddress(origem);
+                    const geoDestino = await geocodeAddress(destino);
+                    latOrigem = geoOrigem.lat;
+                    lonOrigem = geoOrigem.lng;
+                    latDestino = geoDestino.lat;
+                    lonDestino = geoDestino.lng;
+                } catch (error) {
+                    alert("⚠️ Não foi possível encontrar as coordenadas dos endereços.");
+                    return;
+                }
+            }
+
+            if (valorFinal === 0) {
+                try {
+                    const response = await fetch(`${API}/calcular_corrida`, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({
+                            lat_origem: latOrigem,
+                            lon_origem: lonOrigem,
+                            lat_destino: latDestino,
+                            lon_destino: lonDestino
+                        })
+                    });
+                    const dados = await response.json();
+                    valorFinal = dados.valor || 0;
+                    distancia = dados.distancia || 0;
+                    document.getElementById('txtDistancia').innerText = `${distancia} km`;
+                    document.getElementById('txtTempo').innerText = `${Math.round(distancia * 3)} min`;
+                    document.getElementById('txtValor').innerText = `R$ ${valorFinal.toFixed(2)}`;
+                } catch (error) {
+                    console.error("Erro ao calcular valor:", error);
+                    alert("Erro ao calcular o valor da corrida");
+                    return;
+                }
+            }
+
             const btn = document.getElementById('btnChamar');
-                btn.disabled = true; 
-                btn.classList.add('btn-blocked');
-                btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> ⏳ BUSCANDO MOTORISTA...`;
+            btn.disabled = true; 
+            btn.classList.add('btn-blocked');
+            btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> ⏳ BUSCANDO MOTORISTA...`;
             falar("Procurando motoristas próximos...");
+            
             const fotoEnvio = passageiro?.foto_perfil || "";
+            
             try {
                 const res = await fetch(`${API}/nova_corrida`, {
                     method: "POST",
@@ -696,7 +1017,7 @@
                         origem: origem, 
                         destino: destino, 
                         valor: valorFinal,
-                        distancia: `${distancia.toFixed(1)} km`,
+                        distancia: distancia ? `${distancia.toFixed(1)} km` : "Calculando...",
                         foto_perfil: fotoEnvio
                     })
                 });
@@ -747,44 +1068,6 @@
                 </div>`;
         }
 
-        function buscarEndereco(texto, tipo) {
-            const divSug = document.getElementById(`sugestoes_${tipo}`);
-            if(!texto || texto.length < 3) { divSug.style.display = 'none'; return; }
-            autocompleteService.getPlacePredictions({ 
-                input: texto, 
-                language: 'pt-BR', 
-                componentRestrictions: {country: 'br'}
-            }, (res, status) => {
-                if(status === 'OK' && res) {
-                    divSug.innerHTML = '';
-                    res.forEach(place => {
-                        const item = document.createElement('div');
-                        item.className = 'suggestion-item';
-                        item.innerHTML = `<i class="fas fa-map-marker-alt"></i> ${place.description}`;
-                        item.onclick = () => {
-                            document.getElementById(tipo).value = place.description;
-                            divSug.style.display = 'none';
-                            calcularValor();
-                        };
-                        divSug.appendChild(item);
-                    });
-                    divSug.style.display = 'block';
-                } else { divSug.style.display = 'none'; }
-            });
-        }
-
-        function calcularValor() {
-            const o = document.getElementById('origem').value.trim();
-            const d = document.getElementById('destino').value.trim();
-            if(!o || !d || o.length < 5 || d.length < 5) return;
-            distancia = parseFloat((Math.random() * 10 + 2).toFixed(1));
-            valorFinal = 4.50 + (distancia * 1.25);
-            document.getElementById('txtDistancia').innerText = `${distancia} km`;
-            document.getElementById('txtTempo').innerText = `${Math.round(distancia * 3)} min`;
-            document.getElementById('txtValor').innerText = `R$ ${valorFinal.toFixed(2)}`;
-            document.getElementById('cardValor').style.display = 'block';
-        }
-
         async function cancelarCorrida() {
             if(!corridaAtual) { resetarInterfaceAposCancelamento(); return; }
             const id = corridaAtual.id || corridaAtual.corrida_id;
@@ -819,24 +1102,7 @@
             }
         }
 
-        async function carregarAvaliacoes() {
-            if (!passageiro || !token) return;
-            try {
-                const res = await fetch(`${API}/avaliacoes?usuario_id=${passageiro.id}`, { 
-                    headers: { "Authorization": `Bearer ${token}` } 
-                });
-                const dados = await res.json();
-                const divLista = document.getElementById("listaAvaliacoes");
-                if (res.ok && dados.avaliacoes && dados.avaliacoes.length > 0) {
-                    divLista.innerHTML = "";
-                    dados.avaliacoes.forEach(av => {
-                        divLista.innerHTML += `<div class="avaliacao-item"><div class="item-topo"><span>👤 ${av.nome_avaliador || 'Motorista'}</span><span>${'⭐'.repeat(av.nota)}</span></div><div style="font-size:13px; color:var(--cor-texto-secundario); margin-top:4px;">${av.comentario || 'Sem comentários.'}</div></div>`;
-                    });
-                } else {
-                    divLista.innerHTML = `<p style="text-align:center; font-size:13px; color:var(--cor-texto-secundario);">Nenhuma avaliação recente.</p>`;
-                }
-            } catch(e) {}
-        }
+        // ==================== FUNÇÕES DO MAPA ====================
 
         function inicializarMapaRastreamento() {
             if (!mapa) {
@@ -892,6 +1158,27 @@
             return R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)));
         }
 
+        // ==================== FUNÇÕES DE AVALIAÇÃO ====================
+
+        async function carregarAvaliacoes() {
+            if (!passageiro || !token) return;
+            try {
+                const res = await fetch(`${API}/avaliacoes?usuario_id=${passageiro.id}`, { 
+                    headers: { "Authorization": `Bearer ${token}` } 
+                });
+                const dados = await res.json();
+                const divLista = document.getElementById("listaAvaliacoes");
+                if (res.ok && dados.avaliacoes && dados.avaliacoes.length > 0) {
+                    divLista.innerHTML = "";
+                    dados.avaliacoes.forEach(av => {
+                        divLista.innerHTML += `<div class="avaliacao-item"><div class="item-topo"><span>👤 ${av.nome_avaliador || 'Motorista'}</span><span>${'⭐'.repeat(av.nota)}</span></div><div style="font-size:13px; color:var(--cor-texto-secundario); margin-top:4px;">${av.comentario || 'Sem comentários.'}</div></div>`;
+                    });
+                } else {
+                    divLista.innerHTML = `<p style="text-align:center; font-size:13px; color:var(--cor-texto-secundario);">Nenhuma avaliação recente.</p>`;
+                }
+            } catch(e) {}
+        }
+
         function abrirAvaliacao(cId, mId, nome) {
             notaAvaliacao = 0; 
             corridaIdAvaliacao = cId; 
@@ -942,37 +1229,86 @@
             fecharAvaliacao();
         }
 
-        function alternarTelaAutenticacao(isCadastro) {
-            const titulo = document.getElementById("tituloAutenticacao");
-            const btn = document.getElementById("btnAcaoPrincipal");
-            const textoAlt = document.getElementById("textoAlternar");
-            const gFoto = document.getElementById("grupoFoto");
-            const gNome = document.getElementById("grupoNome");
-            const gTel = document.getElementById("grupoTelefone");
+        function limparTelaCorrida() {
+            corridaAtual = null;
+            if (typeof envioLocalizacaoInterval !== "undefined" && envioLocalizacaoInterval) {
+                clearInterval(envioLocalizacaoInterval);
+                envioLocalizacaoInterval = null;
+            }
+            const elCorrida = document.getElementById("corridaAtiva");
+            if (elCorrida) elCorrida.style.display = "none";
+            const elMapa = document.getElementById("mapa");
+            if (elMapa) elMapa.innerHTML = "";
+            const elStatus = document.getElementById("statusCorrida");
+            if (elStatus) elStatus.textContent = "Nenhuma corrida em andamento";
+            const lista = document.getElementById("listaCorridas");
+            if (lista) lista.innerHTML = "";
+            const cardMotorista = document.getElementById("cardMotorista");
+            if (cardMotorista) {
+                cardMotorista.style.display = "none";
+                cardMotorista.innerHTML = "";
+            }
+            const nomeMotorista = document.getElementById("nomeMotoristaInfo");
+            const carroMotorista = document.getElementById("carroMotoristaInfo");
+            const placaMotorista = document.getElementById("placaMotoristaInfo");
+            const fotoMotorista = document.getElementById("fotoMotoristaInfo");
+            if (nomeMotorista) nomeMotorista.textContent = "";
+            if (carroMotorista) carroMotorista.textContent = "";
+            if (placaMotorista) placaMotorista.textContent = "";
+            if (fotoMotorista) fotoMotorista.src = "";
+            resetarInterfaceAposCancelamento();
+        }
 
-            if(isCadastro) {
-                titulo.innerText = "Criar Conta na Rota Brasil"; 
-                btn.innerText = "Finalizar Cadastro";
-                btn.setAttribute("onclick", "registerPassageiro()");
-                textoAlt.innerHTML = `Já tem conta? <a href="#" onclick="alternarTelaAutenticacao(false)">Logar</a>`;
-                gFoto.style.display="block"; 
-                gNome.style.display="block"; 
-                gTel.style.display="block";
-            } else {
-                titulo.innerText = "🇧🇷 Rota Brasil - Passageiro"; 
-                btn.innerText = "Entrar no Aplicativo";
-                btn.setAttribute("onclick", "login()");
-                textoAlt.innerHTML = `Não tem uma conta? <a href="#" onclick="alternarTelaAutenticacao(true)">Cadastre-se aqui</a>`;
-                gFoto.style.display="none"; 
-                gNome.style.display="none"; 
-                gTel.style.display="none";
+        // ==================== FUNÇÕES DA CARTEIRA ====================
+
+        async function abrirCarteira() {
+            document.getElementById("painelCarteira").style.display = "block";
+            const resposta = await fetch(`${API}/carteira/saldo`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            const dados = await resposta.json();
+            document.getElementById("saldoCarteira").textContent = `R$ ${dados.saldo.toFixed(2)}`;
+            document.getElementById("saldoBloqueado").textContent = `R$ ${dados.bloqueado.toFixed(2)}`;
+        }
+
+        function fecharCarteira() {
+            document.getElementById("painelCarteira").style.display = "none";
+        }
+
+        async function adicionarSaldo() {
+            const valor = prompt("Digite o valor:");
+            if (!valor || isNaN(valor) || parseFloat(valor) <= 0) {
+                alert("Valor inválido");
+                return;
+            }
+            try {
+                const resposta = await fetch(`${API}/checkout/criar`, {
+                    method: "POST",
+                    headers: {
+                        "Authorization": `Bearer ${token}`,
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ valor: parseFloat(valor) })
+                });
+                if (!resposta.ok) {
+                    const erroTexto = await resposta.text();
+                    throw new Error(erroTexto);
+                }
+                const dados = await resposta.json();
+                console.log("Resposta:", dados);
+                if (dados.link) {
+                    window.location.href = dados.link;
+                } else {
+                    alert("Link do pagamento não foi retornado pelo servidor");
+                    console.log(dados);
+                }
+            } catch (erro) {
+                console.error(erro);
+                alert("Erro: " + erro.message);
             }
         }
 
-        function logoutPassageiro() { 
-            localStorage.clear(); 
-            window.location.reload(); 
-        }
+        // ==================== INICIALIZAÇÃO ====================
 
         window.onload = () => {
             const tS = localStorage.getItem("token_passageiro");
@@ -985,128 +1321,6 @@
                 carregarAvaliacoes();
             }
         };
-        
-function limparTelaCorrida() {
-    corridaAtual = null;
-
-    // Para recebimento de localização
-    if (typeof envioLocalizacaoInterval !== "undefined" && envioLocalizacaoInterval) {
-        clearInterval(envioLocalizacaoInterval);
-        envioLocalizacaoInterval = null;
-    }
-
-    // Oculta/limpa blocos principais
-    const elCorrida = document.getElementById("corridaAtiva");
-    if (elCorrida) elCorrida.style.display = "none";
-
-    const elMapa = document.getElementById("mapa");
-    if (elMapa) elMapa.innerHTML = "";
-
-    const elStatus = document.getElementById("statusCorrida");
-    if (elStatus) elStatus.textContent = "Nenhuma corrida em andamento";
-
-    const lista = document.getElementById("listaCorridas");
-    if (lista) lista.innerHTML = "";
-
-    // 🚗 LIMPAR CARD DO MOTORISTA — O QUE ESTAVA FALTANDO
-    const cardMotorista = document.getElementById("cardMotorista");
-    if (cardMotorista) {
-        cardMotorista.style.display = "none";
-        cardMotorista.innerHTML = ""; // apaga todo o conteúdo interno
-    }
-
-    // Se houver campos individuais, zere também:
-    const nomeMotorista = document.getElementById("nomeMotoristaInfo");
-    const carroMotorista = document.getElementById("carroMotoristaInfo");
-    const placaMotorista = document.getElementById("placaMotoristaInfo");
-    const fotoMotorista = document.getElementById("fotoMotoristaInfo");
-
-    if (nomeMotorista) nomeMotorista.textContent = "";
-    if (carroMotorista) carroMotorista.textContent = "";
-    if (placaMotorista) placaMotorista.textContent = "";
-    if (fotoMotorista) fotoMotorista.src = "";
-    resetarInterfaceAposCancelamento();
-}
-async function abrirCarteira() {
-
-    document.getElementById(
-        "painelCarteira"
-    ).style.display = "block";
-
-    const resposta = await fetch(
-        `${API}/carteira/saldo`,
-        {
-            headers:{
-                Authorization:`Bearer ${token}`
-            }
-        }
-    );
-
-    const dados = await resposta.json();
-
-    document.getElementById(
-        "saldoCarteira"
-    ).textContent =
-        `R$ ${dados.saldo.toFixed(2)}`;
-
-    document.getElementById(
-        "saldoBloqueado"
-    ).textContent =
-        `R$ ${dados.bloqueado.toFixed(2)}`;
-}
-
-function fecharCarteira(){
-    document.getElementById(
-        "painelCarteira"
-    ).style.display = "none";
-}
-async function adicionarSaldo() {
-
-    const valor = prompt("Digite o valor:");
-
-    if (!valor || isNaN(valor) || parseFloat(valor) <= 0) {
-        alert("Valor inválido");
-        return;
-    }
-
-    try {
-
-        alert("Enviando para o servidor...");
-
-        const resposta = await fetch(`${API}/checkout/criar`, {
-            method: "POST",
-            headers: {
-                "Authorization": `Bearer ${token}`,
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                valor: parseFloat(valor)
-            })
-        });
-
-        if (!resposta.ok) {
-            const erroTexto = await resposta.text();
-            throw new Error(erroTexto);
-        }
-
-        const dados = await resposta.json();
-
-        console.log("Resposta:", dados);
-
-        if (dados.link) {
-            window.location.href = dados.link;
-        } else {
-            alert("Link do pagamento não foi retornado pelo servidor");
-            console.log(dados);
-        }
-
-    } catch (erro) {
-        console.error(erro);
-        alert("Erro: " + erro.message);
-    }
-}
-        
-
     </script>
 </body>
 </html>
