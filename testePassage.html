@@ -857,33 +857,9 @@
             });
         }
 
-    async function calcularValor() {
-    const o = document.getElementById('origem').value.trim();
-    const d = document.getElementById('destino').value.trim();
-    if(!o || !d || o.length < 5 || d.length < 5) return;
-    
-    if (calculandoValor) return;
-    calculandoValor = true;
-    
+    .    async function calcularValor() {
     try {
-        // Mostra loading
-        document.getElementById('cardValor').style.display = 'block';
-        document.getElementById('txtDistancia').innerHTML = `<span class="loading-indicator"></span> Calculando...`;
-        document.getElementById('txtTempo').innerHTML = `<span class="loading-indicator"></span> Calculando...`;
-        document.getElementById('txtValor').innerText = `R$ 0,00`;
-        
-        // Geocodificar endereços
-        const geoOrigem = await geocodeAddress(o);
-        const geoDestino = await geocodeAddress(d);
-        
-        latOrigem = geoOrigem.lat;
-        lonOrigem = geoOrigem.lng;
-        latDestino = geoDestino.lat;
-        lonDestino = geoDestino.lng;
-        
-        // ✅ URL CORRETA - Use a URL do seu servidor no Render
-        const API_URL = "https://rotabrasil-5jcp.onrender.com"; // SUBSTITUA PELA URL DO SEU SERVIDOR
-        // Ou se for local: const API_URL = "http://localhost:5000";
+        const API_URL = "https://seu-servidor.render.com"; // URL DO SEU SERVIDOR
         
         const response = await fetch(`${API_URL}/calcular_corrida`, {
             method: "POST",
@@ -898,7 +874,7 @@
             })
         });
         
-        // Verifica se a resposta é JSON
+        // ✅ Verifica se a resposta é JSON
         const contentType = response.headers.get("content-type");
         if (!contentType || !contentType.includes("application/json")) {
             const text = await response.text();
@@ -907,31 +883,21 @@
         }
         
         const dados = await response.json();
-        console.log("📊 Resposta da API:", dados);
+        console.log("📊 Dados recebidos:", dados);
         
-        // Verifica se houve erro
         if (dados.erro) {
             throw new Error(dados.erro);
         }
         
-        // Atualiza a interface com os dados
+        // Atualiza a interface
         document.getElementById('txtDistancia').innerText = `${dados.distancia} km`;
         document.getElementById('txtTempo').innerText = `${dados.tempo} min`;
         document.getElementById('txtValor').innerText = `R$ ${dados.valor.toFixed(2)}`;
         document.getElementById('cardValor').style.display = 'block';
         
-        // Armazena o valor para usar na chamada da corrida
-        valorFinal = dados.valor;
-        distancia = dados.distancia;
-        
     } catch (error) {
-        console.error("❌ Erro ao calcular valor:", error);
-        document.getElementById('txtDistancia').innerText = "Erro ao calcular";
-        document.getElementById('txtTempo').innerText = "Erro ao calcular";
-        document.getElementById('txtValor').innerText = `R$ 0,00`;
-        alert("Erro ao calcular a corrida: " + error.message);
-    } finally {
-        calculandoValor = false;
+        console.error("❌ Erro:", error);
+        alert("Erro ao calcular: " + error.message);
     }
 }
         async function cancelarCorrida() {
