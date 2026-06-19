@@ -886,7 +886,7 @@
                 distancia = parseFloat(distancia.toFixed(1));
                 
                 // Fazer a requisição para calcular o valor da corrida
-                const response = await fetch("/calcular_corrida", {
+                const response = await fetch("https://rotabrasil-5jcp.onrender.com/calcular_corrida", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json"
