@@ -524,8 +524,6 @@ let lonOrigem = null;
 let latDestino = null;
 let lonDestino = null;
 let calculandoValor = false;
-let lugarOrigem = null;
-let lugarDestino = null;
 
 // ==================== SOCKET EVENTS ====================
 
@@ -637,7 +635,7 @@ function usarLocalizacaoAtual() {
     }, err => { alert("⚠️ Ative o GPS nas configurações!"); }, {enableHighAccuracy: true});
 }
 
-// ==================== FUNÇÃO DE GEOCODIFICAÇÃO MELHORADA ====================
+// ==================== FUNÇÃO DE GEOCODIFICAÇÃO ====================
 
 function geocodeAddress(address) {
     return new Promise((resolve, reject) => {
@@ -713,6 +711,13 @@ function buscarEndereco(texto, tipo) {
     
     console.log(`🔍 Buscando sugestões para ${tipo}:`, texto);
     
+    // Verifica se o autocompleteService está disponível
+    if (!autocompleteService) {
+        console.error("❌ AutocompleteService não disponível!");
+        divSug.style.display = 'none';
+        return;
+    }
+    
     autocompleteService.getPlacePredictions({ 
         input: texto, 
         language: 'pt-BR', 
@@ -743,15 +748,12 @@ function buscarEndereco(texto, tipo) {
                         if (tipo === 'origem') {
                             latOrigem = coordenadas.lat;
                             lonOrigem = coordenadas.lng;
-                            lugarOrigem = place;
-                            // Atualiza o campo com o endereço formatado
                             if (coordenadas.formatted_address) {
                                 document.getElementById('origem').value = coordenadas.formatted_address;
                             }
                         } else {
                             latDestino = coordenadas.lat;
                             lonDestino = coordenadas.lng;
-                            lugarDestino = place;
                             if (coordenadas.formatted_address) {
                                 document.getElementById('destino').value = coordenadas.formatted_address;
                             }
@@ -761,7 +763,6 @@ function buscarEndereco(texto, tipo) {
                         const origem = document.getElementById('origem').value.trim();
                         const destino = document.getElementById('destino').value.trim();
                         if (origem && destino && origem.length > 5 && destino.length > 5) {
-                            // Se já tem os dois, chama o cálculo
                             await calcularValor();
                         }
                     } catch (error) {
@@ -775,8 +776,48 @@ function buscarEndereco(texto, tipo) {
         } else {
             console.log(`⚠️ Nenhuma sugestão para ${tipo}:`, status);
             divSug.style.display = 'none';
+            
+            // Se não tem sugestões, tenta geocodificar diretamente
+            if (texto.length > 5) {
+                console.log("🔄 Tentando geocodificar diretamente...");
+                tryGeocodeDirect(texto, tipo);
+            }
         }
     });
+}
+
+// ==================== FUNÇÃO DE GEOCODIFICAÇÃO DIRETA ====================
+
+async function tryGeocodeDirect(texto, tipo) {
+    try {
+        console.log(`🔍 Tentando geocodificar diretamente: ${texto}`);
+        const coordenadas = await geocodeAddress(texto);
+        console.log(`✅ Geocodificado diretamente:`, coordenadas);
+        
+        if (tipo === 'origem') {
+            latOrigem = coordenadas.lat;
+            lonOrigem = coordenadas.lng;
+            if (coordenadas.formatted_address) {
+                document.getElementById('origem').value = coordenadas.formatted_address;
+            }
+        } else {
+            latDestino = coordenadas.lat;
+            lonDestino = coordenadas.lng;
+            if (coordenadas.formatted_address) {
+                document.getElementById('destino').value = coordenadas.formatted_address;
+            }
+        }
+        
+        // Verifica se já tem os dois endereços
+        const origem = document.getElementById('origem').value.trim();
+        const destino = document.getElementById('destino').value.trim();
+        if (origem && destino && origem.length > 5 && destino.length > 5) {
+            await calcularValor();
+        }
+    } catch (error) {
+        console.error(`❌ Erro ao geocodificar diretamente:`, error);
+        // Não mostra alerta aqui, apenas loga o erro
+    }
 }
 
 // ==================== FUNÇÃO DE CÁLCULO ====================
@@ -789,8 +830,8 @@ async function calcularValor() {
     
     console.log("📝 Endereços:", { origem: o, destino: d });
     
-    if(!o || !d || o.length < 5 || d.length < 5) {
-        alert("⚠️ Selecione um endereço válido nas sugestões!");
+    if(!o || !d || o.length < 3 || d.length < 3) {
+        alert("⚠️ Digite endereços válidos para origem e destino!");
         return;
     }
     
@@ -806,7 +847,7 @@ async function calcularValor() {
             }
             console.log("✅ Origem geocodificada:", { latOrigem, lonOrigem });
         } catch (error) {
-            alert(`❌ Não foi possível encontrar a origem: "${o}"\nTente selecionar um endereço das sugestões.`);
+            alert(`❌ Não foi possível encontrar a origem: "${o}"\n\n💡 Dica: Tente digitar o endereço completo com cidade e estado.\nExemplo: "Av Paulista, 1000, São Paulo, SP"`);
             return;
         }
     }
@@ -822,7 +863,7 @@ async function calcularValor() {
             }
             console.log("✅ Destino geocodificado:", { latDestino, lonDestino });
         } catch (error) {
-            alert(`❌ Não foi possível encontrar o destino: "${d}"\nTente selecionar um endereço das sugestões.`);
+            alert(`❌ Não foi possível encontrar o destino: "${d}"\n\n💡 Dica: Tente digitar o endereço completo com cidade e estado.\nExemplo: "Av Paulista, 1000, São Paulo, SP"`);
             return;
         }
     }
@@ -1003,8 +1044,8 @@ function logoutPassageiro() {
 async function chamarCorrida() {
     const origem = document.getElementById('origem').value.trim();
     const destino = document.getElementById('destino').value.trim();
-    if(!origem || !destino || origem.length < 5 || destino.length < 5) { 
-        alert("⚠️ Coloque endereços completos de origem e destino!"); 
+    if(!origem || !destino || origem.length < 3 || destino.length < 3) { 
+        alert("⚠️ Digite endereços válidos para origem e destino!"); 
         return; 
     }
     
@@ -1374,9 +1415,8 @@ window.onload = () => {
         carregarAvaliacoes();
     }
 };
-            
 
-          
+       
 
     </script>
 </body>
