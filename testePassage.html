@@ -1016,118 +1016,210 @@ async function calcularValor() {
                 </div>`;
         }
 
-        function buscarEndereco(texto, tipo) {
-            const divSug = document.getElementById(`sugestoes_${tipo}`);
-            if(!texto || texto.length < 3) { divSug.style.display = 'none'; return; }
-            autocompleteService.getPlacePredictions({ 
-                input: texto, 
-                language: 'pt-BR', 
-                componentRestrictions: {country: 'br'}
-            }, (res, status) => {
-                if(status === 'OK' && res) {
-                    divSug.innerHTML = '';
-                    res.forEach(place => {
-                        const item = document.createElement('div');
-                        item.className = 'suggestion-item';
-                        item.innerHTML = `<i class="fas fa-map-marker-alt"></i> ${place.description}`;
-                        item.onclick = () => {
-                            document.getElementById(tipo).value = place.description;
-                            divSug.style.display = 'none';
-                            calcularValor();
-                        };
-                        divSug.appendChild(item);
-                    });
-                    divSug.style.display = 'block';
-                } else { divSug.style.display = 'none'; }
-            });
-        }
+    // Variáveis para armazenar os lugares selecionados
+let lugarOrigem = null;
+let lugarDestino = null;
 
+// Função melhorada de busca de endereços
+function buscarEndereco(texto, tipo) {
+    const divSug = document.getElementById(`sugestoes_${tipo}`);
+    
+    if(!texto || texto.length < 3) { 
+        divSug.style.display = 'none'; 
+        return; 
+    }
+    
+    console.log(`🔍 Buscando sugestões para ${tipo}:`, texto);
+    
+    autocompleteService.getPlacePredictions({ 
+        input: texto, 
+        language: 'pt-BR', 
+        componentRestrictions: {country: 'br'}
+    }, (res, status) => {
+        console.log(`📊 Status autocomplete ${tipo}:`, status);
+        
+        if(status === 'OK' && res && res.length > 0) {
+            divSug.innerHTML = '';
+            
+            res.forEach(place => {
+                const item = document.createElement('div');
+                item.className = 'suggestion-item';
+                item.innerHTML = `<i class="fas fa-map-marker-alt"></i> ${place.description}`;
+                
+                item.onclick = () => {
+                    console.log(`📍 Selecionado ${tipo}:`, place.description);
+                    
+                    // Preenche o campo com o endereço completo
+                    document.getElementById(tipo).value = place.description;
+                    divSug.style.display = 'none';
+                    
+                    // Armazena o place_id para obter coordenadas depois
+                    if (tipo === 'origem') {
+                        lugarOrigem = place;
+                    } else {
+                        lugarDestino = place;
+                    }
+                    
+                    // Tenta calcular quando ambos os campos estiverem preenchidos
+                    const origem = document.getElementById('origem').value.trim();
+                    const destino = document.getElementById('destino').value.trim();
+                    if (origem && destino && origem.length > 5 && destino.length > 5) {
+                        calcularValor();
+                    }
+                };
+                divSug.appendChild(item);
+            });
+            divSug.style.display = 'block';
+        } else {
+            console.log(`⚠️ Nenhuma sugestão para ${tipo}:`, status);
+            divSug.style.display = 'none';
+        }
+    });
+}    
+// Função para obter coordenadas de um place_id
+function getPlaceDetails(placeId) {
+    return new Promise((resolve, reject) => {
+        const service = new google.maps.places.PlacesService(document.createElement('div'));
+        service.getDetails({
+            placeId: placeId,
+            fields: ['geometry', 'formatted_address']
+        }, (place, status) => {
+            console.log("📊 Place Details Status:", status);
+            if (status === 'OK' && place && place.geometry) {
+                resolve({
+                    lat: place.geometry.location.lat(),
+                    lng: place.geometry.location.lng(),
+                    formatted_address: place.formatted_address || place.name
+                });
+            } else {
+                reject(new Error(`Falha ao obter detalhes: ${status}`));
+            }
+        });
+    });
+}
+    
     async function calcularValor() {
+    console.log("🚀 INICIANDO calcularValor()");
+    
     const o = document.getElementById('origem').value.trim();
     const d = document.getElementById('destino').value.trim();
     
+    console.log("📝 Endereços:", { origem: o, destino: d });
+    
     if(!o || !d || o.length < 5 || d.length < 5) {
-        console.log("⚠️ Endereços incompletos");
+        alert("⚠️ Selecione um endereço válido nas sugestões!");
         return;
     }
     
-    if (calculandoValor) return;
+    if (calculandoValor) {
+        console.log("⏳ Já está calculando...");
+        return;
+    }
     calculandoValor = true;
     
     try {
         // Mostra loading
         document.getElementById('cardValor').style.display = 'block';
-        document.getElementById('txtDistancia').innerHTML = `<span class="loading-indicator"></span> Calculando...`;
-        document.getElementById('txtTempo').innerHTML = `<span class="loading-indicator"></span> Calculando...`;
+        document.getElementById('txtDistancia').innerHTML = `<span class="loading-indicator"></span> Buscando endereços...`;
+        document.getElementById('txtTempo').innerHTML = `<span class="loading-indicator"></span> Aguarde...`;
         document.getElementById('txtValor').innerText = `R$ 0,00`;
         
-        // 🔥 PASSO 1: Geocodificar os endereços para obter coordenadas
-        console.log("📍 Geocodificando origem:", o);
-        const geoOrigem = await geocodeAddress(o);
-        console.log("📍 Geocodificando destino:", d);
-        const geoDestino = await geocodeAddress(d);
+        let geoOrigem, geoDestino;
+        
+        // Tenta obter coordenadas do lugar selecionado
+        if (lugarOrigem) {
+            try {
+                console.log("📍 Obtendo detalhes da origem:", lugarOrigem.place_id);
+                geoOrigem = await getPlaceDetails(lugarOrigem.place_id);
+                console.log("✅ Detalhes origem:", geoOrigem);
+            } catch (error) {
+                console.error("❌ Erro ao obter detalhes da origem:", error);
+                geoOrigem = await geocodeAddress(o);
+            }
+        } else {
+            geoOrigem = await geocodeAddress(o);
+        }
+        
+        if (lugarDestino) {
+            try {
+                console.log("📍 Obtendo detalhes do destino:", lugarDestino.place_id);
+                geoDestino = await getPlaceDetails(lugarDestino.place_id);
+                console.log("✅ Detalhes destino:", geoDestino);
+            } catch (error) {
+                console.error("❌ Erro ao obter detalhes do destino:", error);
+                geoDestino = await geocodeAddress(d);
+            }
+        } else {
+            geoDestino = await geocodeAddress(d);
+        }
         
         latOrigem = geoOrigem.lat;
         lonOrigem = geoOrigem.lng;
         latDestino = geoDestino.lat;
         lonDestino = geoDestino.lng;
         
-        console.log("📌 Coordenadas obtidas:", {
-            origem: { lat: latOrigem, lng: lonOrigem },
-            destino: { lat: latDestino, lng: lonDestino }
+        console.log("📌 Coordenadas FINAIS:", {
+            lat_origem: latOrigem,
+            lon_origem: lonOrigem,
+            lat_destino: latDestino,
+            lon_destino: lonDestino
         });
         
-        // 🔥 PASSO 2: Chamar a API de cálculo
-        const API_URL = "https://rotabrasil-5jcp.onrender.com";
+        // Atualiza os campos com endereços formatados
+        if (geoOrigem.formatted_address) {
+            document.getElementById('origem').value = geoOrigem.formatted_address;
+        }
+        if (geoDestino.formatted_address) {
+            document.getElementById('destino').value = geoDestino.formatted_address;
+        }
         
-        const response = await fetch(`${API_URL}/calcular_corrida`, {
+        // Chamar a API
+        document.getElementById('txtDistancia').innerHTML = `<span class="loading-indicator"></span> Calculando rota...`;
+        
+        const API_URL = "https://rotabrasil-5jcp.onrender.com";
+        const endpoint = `${API_URL}/calcular_corrida`;
+        
+        const body = {
+            lat_origem: latOrigem,
+            lon_origem: lonOrigem,
+            lat_destino: latDestino,
+            lon_destino: lonDestino
+        };
+        
+        console.log("📤 Enviando para API:", body);
+        
+        const response = await fetch(endpoint, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify({
-                lat_origem: latOrigem,
-                lon_origem: lonOrigem,
-                lat_destino: latDestino,
-                lon_destino: lonDestino
-            })
+            body: JSON.stringify(body)
         });
         
-        console.log("📊 Status da resposta:", response.status);
-        
-        // Verifica se a resposta é JSON
-        const contentType = response.headers.get("content-type");
-        if (!contentType || !contentType.includes("application/json")) {
-            const text = await response.text();
-            console.error("❌ Resposta não é JSON:", text);
-            throw new Error("Servidor retornou resposta inválida");
-        }
-        
         const dados = await response.json();
-        console.log("📊 Dados recebidos da API:", dados);
+        console.log("📊 Dados recebidos:", dados);
         
         if (dados.erro) {
             throw new Error(dados.erro);
         }
         
-        // 🔥 PASSO 3: Atualizar a interface
+        // Atualizar interface
         document.getElementById('txtDistancia').innerText = `${dados.distancia} km`;
         document.getElementById('txtTempo').innerText = `${dados.tempo} min`;
         document.getElementById('txtValor').innerText = `R$ ${dados.valor.toFixed(2)}`;
         document.getElementById('cardValor').style.display = 'block';
         
-        // Armazena os valores para usar depois
         valorFinal = dados.valor;
         distancia = dados.distancia;
         
-        console.log("✅ Cálculo finalizado com sucesso!");
+        console.log("✅ Cálculo finalizado!");
         
     } catch (error) {
-        console.error("❌ Erro ao calcular valor:", error);
-        document.getElementById('txtDistancia').innerText = "Erro ao calcular";
-        document.getElementById('txtTempo').innerText = "Erro ao calcular";
+        console.error("❌ ERRO:", error);
+        document.getElementById('txtDistancia').innerText = "Erro";
+        document.getElementById('txtTempo').innerText = "Erro";
         document.getElementById('txtValor').innerText = `R$ 0,00`;
-        alert("Erro ao calcular a corrida: " + error.message);
+        alert("Erro ao calcular: " + error.message + "\n\nTente selecionar um endereço das sugestões.");
     } finally {
         calculandoValor = false;
     }
