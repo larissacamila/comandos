@@ -785,23 +785,208 @@
         }
 
         // Função para geocodificar endereço
-        function geocodeAddress(address) {
-            return new Promise((resolve, reject) => {
-                const geocoder = new google.maps.Geocoder();
-                geocoder.geocode({ address: address }, (results, status) => {
-                    if (status === 'OK' && results[0]) {
-                        const location = results[0].geometry.location;
+        // Função melhorada para geocodificar endereço com fallback
+function geocodeAddress(address) {
+    return new Promise((resolve, reject) => {
+        console.log("🔍 Geocodificando:", address);
+        
+        // Se o endereço já for coordenadas (ex: "-23.5505,-46.6333")
+        if (address.includes(',') && !isNaN(address.split(',')[0].trim())) {
+            const parts = address.split(',');
+            const lat = parseFloat(parts[0].trim());
+            const lng = parseFloat(parts[1].trim());
+            console.log("✅ Coordenadas diretas:", { lat, lng });
+            resolve({ lat, lng });
+            return;
+        }
+        
+        const geocoder = new google.maps.Geocoder();
+        
+        // Tenta com o endereço completo
+        geocoder.geocode({ 
+            address: address + ', Brasil', 
+            region: 'BR' 
+        }, (results, status) => {
+            console.log("📊 Status geocoding:", status);
+            
+            if (status === 'OK' && results && results.length > 0) {
+                const location = results[0].geometry.location;
+                console.log("✅ Geocodificado com sucesso:", {
+                    lat: location.lat(),
+                    lng: location.lng(),
+                    endereco: results[0].formatted_address
+                });
+                resolve({
+                    lat: location.lat(),
+                    lng: location.lng(),
+                    formatted_address: results[0].formatted_address
+                });
+            } else {
+                // Tenta novamente sem o "Brasil"
+                geocoder.geocode({ address: address }, (results2, status2) => {
+                    console.log("📊 Status geocoding (tentativa 2):", status2);
+                    
+                    if (status2 === 'OK' && results2 && results2.length > 0) {
+                        const location = results2[0].geometry.location;
+                        console.log("✅ Geocodificado (tentativa 2):", {
+                            lat: location.lat(),
+                            lng: location.lng()
+                        });
                         resolve({
                             lat: location.lat(),
                             lng: location.lng()
                         });
                     } else {
-                        reject(new Error('Geocoding failed: ' + status));
+                        console.error("❌ Falha ao geocodificar:", address);
+                        reject(new Error(`Não foi possível encontrar coordenadas para: ${address}`));
                     }
                 });
-            });
-        }
+            }
+        });
+    });
+}
 
+// Função principal de cálculo com melhor tratamento de erros
+async function calcularValor() {
+    console.log("🚀 INICIANDO calcularValor()");
+    
+    const o = document.getElementById('origem').value.trim();
+    const d = document.getElementById('destino').value.trim();
+    
+    console.log("📝 Endereços:", { origem: o, destino: d });
+    
+    if(!o || !d || o.length < 3 || d.length < 3) {
+        console.log("⚠️ Endereços incompletos");
+        alert("⚠️ Digite endereços válidos para origem e destino!");
+        return;
+    }
+    
+    if (calculandoValor) {
+        console.log("⏳ Já está calculando...");
+        return;
+    }
+    calculandoValor = true;
+    
+    try {
+        // Mostra loading
+        document.getElementById('cardValor').style.display = 'block';
+        document.getElementById('txtDistancia').innerHTML = `<span class="loading-indicator"></span> Buscando endereços...`;
+        document.getElementById('txtTempo').innerHTML = `<span class="loading-indicator"></span> Aguarde...`;
+        document.getElementById('txtValor').innerText = `R$ 0,00`;
+        
+        // PASSO 1: Geocodificar os endereços
+        console.log("📍 Geocodificando origem...");
+        let geoOrigem, geoDestino;
+        
+        try {
+            geoOrigem = await geocodeAddress(o);
+            console.log("✅ Origem encontrada:", geoOrigem);
+        } catch (error) {
+            console.error("❌ Erro na origem:", error);
+            alert(`Não foi possível encontrar o endereço de origem: "${o}"\nTente ser mais específico.`);
+            document.getElementById('cardValor').style.display = 'none';
+            return;
+        }
+        
+        try {
+            console.log("📍 Geocodificando destino...");
+            geoDestino = await geocodeAddress(d);
+            console.log("✅ Destino encontrado:", geoDestino);
+        } catch (error) {
+            console.error("❌ Erro no destino:", error);
+            alert(`Não foi possível encontrar o endereço de destino: "${d}"\nTente ser mais específico.`);
+            document.getElementById('cardValor').style.display = 'none';
+            return;
+        }
+        
+        // Atualiza os campos com endereços formatados se disponíveis
+        if (geoOrigem.formatted_address) {
+            document.getElementById('origem').value = geoOrigem.formatted_address;
+        }
+        if (geoDestino.formatted_address) {
+            document.getElementById('destino').value = geoDestino.formatted_address;
+        }
+        
+        latOrigem = geoOrigem.lat;
+        lonOrigem = geoOrigem.lng;
+        latDestino = geoDestino.lat;
+        lonDestino = geoDestino.lng;
+        
+        console.log("📌 Coordenadas FINAIS:", {
+            lat_origem: latOrigem,
+            lon_origem: lonOrigem,
+            lat_destino: latDestino,
+            lon_destino: lonDestino
+        });
+        
+        // PASSO 2: Chamar a API
+        document.getElementById('txtDistancia').innerHTML = `<span class="loading-indicator"></span> Calculando rota...`;
+        document.getElementById('txtTempo').innerHTML = `<span class="loading-indicator"></span> Calculando...`;
+        
+        const API_URL = "https://rotabrasil-5jcp.onrender.com";
+        const endpoint = `${API_URL}/calcular_corrida`;
+        
+        const body = {
+            lat_origem: latOrigem,
+            lon_origem: lonOrigem,
+            lat_destino: latDestino,
+            lon_destino: lonDestino
+        };
+        
+        console.log("📤 Enviando para API:", body);
+        
+        const response = await fetch(endpoint, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(body)
+        });
+        
+        console.log("📊 Status da resposta:", response.status);
+        
+        // Verifica se a resposta é JSON
+        const contentType = response.headers.get("content-type");
+        if (!contentType || !contentType.includes("application/json")) {
+            const text = await response.text();
+            console.error("❌ Resposta NÃO é JSON:", text);
+            throw new Error("Servidor retornou resposta inválida");
+        }
+        
+        const dados = await response.json();
+        console.log("📊 Dados recebidos:", dados);
+        
+        if (dados.erro) {
+            throw new Error(dados.erro);
+        }
+        
+        // PASSO 3: Atualizar a interface
+        document.getElementById('txtDistancia').innerText = `${dados.distancia} km`;
+        document.getElementById('txtTempo').innerText = `${dados.tempo} min`;
+        document.getElementById('txtValor').innerText = `R$ ${dados.valor.toFixed(2)}`;
+        document.getElementById('cardValor').style.display = 'block';
+        
+        valorFinal = dados.valor;
+        distancia = dados.distancia;
+        
+        console.log("✅ Cálculo finalizado!", {
+            distancia: dados.distancia,
+            valor: dados.valor,
+            tempo: dados.tempo,
+            fonte: dados.fonte
+        });
+        
+    } catch (error) {
+        console.error("❌ ERRO ao calcular valor:", error);
+        document.getElementById('txtDistancia').innerText = "Erro";
+        document.getElementById('txtTempo').innerText = "Erro";
+        document.getElementById('txtValor').innerText = `R$ 0,00`;
+        alert("Erro ao calcular: " + error.message);
+    } finally {
+        calculandoValor = false;
+        console.log("🏁 FINALIZOU calcularValor()");
+    }
+}
         function mostrarStatusBuscando() {
             document.getElementById('cardValor').style.display = 'none';
             document.getElementById('cardStatus').style.display = 'block';
