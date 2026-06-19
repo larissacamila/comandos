@@ -857,9 +857,43 @@
             });
         }
 
-    .    async function calcularValor() {
+    .   async function calcularValor() {
+    const o = document.getElementById('origem').value.trim();
+    const d = document.getElementById('destino').value.trim();
+    
+    if(!o || !d || o.length < 5 || d.length < 5) {
+        console.log("⚠️ Endereços incompletos");
+        return;
+    }
+    
+    if (calculandoValor) return;
+    calculandoValor = true;
+    
     try {
-        const API_URL = "https://rotabrasil-5jcp.onrender.com"; // URL DO SEU SERVIDOR
+        // Mostra loading
+        document.getElementById('cardValor').style.display = 'block';
+        document.getElementById('txtDistancia').innerHTML = `<span class="loading-indicator"></span> Calculando...`;
+        document.getElementById('txtTempo').innerHTML = `<span class="loading-indicator"></span> Calculando...`;
+        document.getElementById('txtValor').innerText = `R$ 0,00`;
+        
+        // 🔥 PASSO 1: Geocodificar os endereços para obter coordenadas
+        console.log("📍 Geocodificando origem:", o);
+        const geoOrigem = await geocodeAddress(o);
+        console.log("📍 Geocodificando destino:", d);
+        const geoDestino = await geocodeAddress(d);
+        
+        latOrigem = geoOrigem.lat;
+        lonOrigem = geoOrigem.lng;
+        latDestino = geoDestino.lat;
+        lonDestino = geoDestino.lng;
+        
+        console.log("📌 Coordenadas obtidas:", {
+            origem: { lat: latOrigem, lng: lonOrigem },
+            destino: { lat: latDestino, lng: lonDestino }
+        });
+        
+        // 🔥 PASSO 2: Chamar a API de cálculo
+        const API_URL = "https://rotabrasil-5jcp.onrender.com";
         
         const response = await fetch(`${API_URL}/calcular_corrida`, {
             method: "POST",
@@ -874,32 +908,46 @@
             })
         });
         
-        // ✅ Verifica se a resposta é JSON
+        console.log("📊 Status da resposta:", response.status);
+        
+        // Verifica se a resposta é JSON
         const contentType = response.headers.get("content-type");
         if (!contentType || !contentType.includes("application/json")) {
             const text = await response.text();
-            console.error("Resposta não é JSON:", text);
+            console.error("❌ Resposta não é JSON:", text);
             throw new Error("Servidor retornou resposta inválida");
         }
         
         const dados = await response.json();
-        console.log("📊 Dados recebidos:", dados);
+        console.log("📊 Dados recebidos da API:", dados);
         
         if (dados.erro) {
             throw new Error(dados.erro);
         }
         
-        // Atualiza a interface
+        // 🔥 PASSO 3: Atualizar a interface
         document.getElementById('txtDistancia').innerText = `${dados.distancia} km`;
         document.getElementById('txtTempo').innerText = `${dados.tempo} min`;
         document.getElementById('txtValor').innerText = `R$ ${dados.valor.toFixed(2)}`;
         document.getElementById('cardValor').style.display = 'block';
         
+        // Armazena os valores para usar depois
+        valorFinal = dados.valor;
+        distancia = dados.distancia;
+        
+        console.log("✅ Cálculo finalizado com sucesso!");
+        
     } catch (error) {
-        console.error("❌ Erro:", error);
-        alert("Erro ao calcular: " + error.message);
+        console.error("❌ Erro ao calcular valor:", error);
+        document.getElementById('txtDistancia').innerText = "Erro ao calcular";
+        document.getElementById('txtTempo').innerText = "Erro ao calcular";
+        document.getElementById('txtValor').innerText = `R$ 0,00`;
+        alert("Erro ao calcular a corrida: " + error.message);
+    } finally {
+        calculandoValor = false;
     }
 }
+    
         async function cancelarCorrida() {
             if(!corridaAtual) { resetarInterfaceAposCancelamento(); return; }
             const id = corridaAtual.id || corridaAtual.corrida_id;
