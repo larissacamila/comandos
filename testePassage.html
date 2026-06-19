@@ -493,7 +493,8 @@
 
 </div>
 <script>
-const API = "https://rotabrasil-5jcp.onrender.com";
+
+         const API = "https://rotabrasil-5jcp.onrender.com";
 const socket = io(API, {
     transports: ['websocket', 'polling'],
     upgrade: true,
@@ -635,7 +636,7 @@ function usarLocalizacaoAtual() {
     }, err => { alert("⚠️ Ative o GPS nas configurações!"); }, {enableHighAccuracy: true});
 }
 
-// ==================== FUNÇÃO DE GEOCODIFICAÇÃO ====================
+// ==================== FUNÇÃO DE GEOCODIFICAÇÃO MELHORADA ====================
 
 function geocodeAddress(address) {
     return new Promise((resolve, reject) => {
@@ -655,13 +656,13 @@ function geocodeAddress(address) {
         
         const geocoder = new google.maps.Geocoder();
         
-        // Tenta geocodificar com o endereço completo
+        // Tenta com o endereço + Brasil
         geocoder.geocode({ 
-            address: address,
+            address: address + ', Brasil',
             region: 'BR',
             language: 'pt-BR'
         }, (results, status) => {
-            console.log(`📊 Status geocoding: ${status}`);
+            console.log(`📊 Status geocoding (tentativa 1): ${status}`);
             
             if (status === 'OK' && results && results.length > 0) {
                 const location = results[0].geometry.location;
@@ -673,9 +674,9 @@ function geocodeAddress(address) {
                 console.log("✅ Geocodificado com sucesso:", result);
                 resolve(result);
             } else {
-                // Tenta adicionar "Brasil" ao endereço
+                // Tenta sem o "Brasil"
                 geocoder.geocode({ 
-                    address: address + ', Brasil',
+                    address: address,
                     region: 'BR',
                     language: 'pt-BR'
                 }, (results2, status2) => {
@@ -699,11 +700,12 @@ function geocodeAddress(address) {
     });
 }
 
-// ==================== FUNÇÃO DE BUSCA DE ENDEREÇOS ====================
+// ==================== FUNÇÃO DE BUSCA DE ENDEREÇOS (SIMPLIFICADA) ====================
 
 function buscarEndereco(texto, tipo) {
     const divSug = document.getElementById(`sugestoes_${tipo}`);
     
+    // Mostra sugestões apenas se tiver texto suficiente
     if(!texto || texto.length < 3) { 
         divSug.style.display = 'none'; 
         return; 
@@ -711,79 +713,74 @@ function buscarEndereco(texto, tipo) {
     
     console.log(`🔍 Buscando sugestões para ${tipo}:`, texto);
     
-    // Verifica se o autocompleteService está disponível
-    if (!autocompleteService) {
-        console.error("❌ AutocompleteService não disponível!");
-        divSug.style.display = 'none';
-        return;
-    }
-    
-    autocompleteService.getPlacePredictions({ 
-        input: texto, 
-        language: 'pt-BR', 
-        componentRestrictions: {country: 'br'}
-    }, (res, status) => {
-        console.log(`📊 Status autocomplete ${tipo}:`, status);
-        
-        if(status === 'OK' && res && res.length > 0) {
-            divSug.innerHTML = '';
+    try {
+        autocompleteService.getPlacePredictions({ 
+            input: texto, 
+            language: 'pt-BR', 
+            componentRestrictions: {country: 'br'}
+        }, (res, status) => {
+            console.log(`📊 Status autocomplete ${tipo}:`, status);
             
-            res.forEach(place => {
-                const item = document.createElement('div');
-                item.className = 'suggestion-item';
-                item.innerHTML = `<i class="fas fa-map-marker-alt"></i> ${place.description}`;
+            if(status === 'OK' && res && res.length > 0) {
+                divSug.innerHTML = '';
                 
-                item.onclick = async () => {
-                    console.log(`📍 Selecionado ${tipo}:`, place.description);
+                res.slice(0, 5).forEach(place => {
+                    const item = document.createElement('div');
+                    item.className = 'suggestion-item';
+                    item.innerHTML = `<i class="fas fa-map-marker-alt"></i> ${place.description}`;
                     
-                    // Preenche o campo com o endereço
-                    document.getElementById(tipo).value = place.description;
-                    divSug.style.display = 'none';
-                    
-                    // FAZ A GEOCODIFICAÇÃO IMEDIATAMENTE
-                    try {
-                        const coordenadas = await geocodeAddress(place.description);
-                        console.log(`✅ Coordenadas obtidas para ${tipo}:`, coordenadas);
+                    item.onclick = async () => {
+                        console.log(`📍 Selecionado ${tipo}:`, place.description);
+                        document.getElementById(tipo).value = place.description;
+                        divSug.style.display = 'none';
                         
-                        if (tipo === 'origem') {
-                            latOrigem = coordenadas.lat;
-                            lonOrigem = coordenadas.lng;
-                            if (coordenadas.formatted_address) {
-                                document.getElementById('origem').value = coordenadas.formatted_address;
+                        // Geocodifica imediatamente
+                        try {
+                            const coordenadas = await geocodeAddress(place.description);
+                            console.log(`✅ Coordenadas obtidas para ${tipo}:`, coordenadas);
+                            
+                            if (tipo === 'origem') {
+                                latOrigem = coordenadas.lat;
+                                lonOrigem = coordenadas.lng;
+                                if (coordenadas.formatted_address) {
+                                    document.getElementById('origem').value = coordenadas.formatted_address;
+                                }
+                            } else {
+                                latDestino = coordenadas.lat;
+                                lonDestino = coordenadas.lng;
+                                if (coordenadas.formatted_address) {
+                                    document.getElementById('destino').value = coordenadas.formatted_address;
+                                }
                             }
-                        } else {
-                            latDestino = coordenadas.lat;
-                            lonDestino = coordenadas.lng;
-                            if (coordenadas.formatted_address) {
-                                document.getElementById('destino').value = coordenadas.formatted_address;
+                            
+                            // Verifica se já tem os dois endereços
+                            const origem = document.getElementById('origem').value.trim();
+                            const destino = document.getElementById('destino').value.trim();
+                            if (origem && destino && origem.length > 5 && destino.length > 5) {
+                                await calcularValor();
                             }
+                        } catch (error) {
+                            console.error(`❌ Erro ao geocodificar ${tipo}:`, error);
+                            alert(`❌ Não foi possível encontrar o endereço: "${place.description}"\n\n💡 Dica: Tente digitar o endereço completo com cidade e estado.\nExemplo: "Av Paulista, 1000, São Paulo - SP"`);
                         }
-                        
-                        // Verifica se já tem os dois endereços
-                        const origem = document.getElementById('origem').value.trim();
-                        const destino = document.getElementById('destino').value.trim();
-                        if (origem && destino && origem.length > 5 && destino.length > 5) {
-                            await calcularValor();
-                        }
-                    } catch (error) {
-                        console.error(`❌ Erro ao geocodificar ${tipo}:`, error);
-                        alert(`Não foi possível encontrar o endereço: ${place.description}\nTente novamente com um endereço mais específico.`);
-                    }
-                };
-                divSug.appendChild(item);
-            });
-            divSug.style.display = 'block';
-        } else {
-            console.log(`⚠️ Nenhuma sugestão para ${tipo}:`, status);
-            divSug.style.display = 'none';
-            
-            // Se não tem sugestões, tenta geocodificar diretamente
-            if (texto.length > 5) {
-                console.log("🔄 Tentando geocodificar diretamente...");
-                tryGeocodeDirect(texto, tipo);
+                    };
+                    divSug.appendChild(item);
+                });
+                divSug.style.display = 'block';
+            } else {
+                console.log(`⚠️ Nenhuma sugestão para ${tipo}, tentando geocodificar diretamente...`);
+                divSug.style.display = 'none';
+                
+                // Tenta geocodificar diretamente se o texto for longo
+                if (texto.length > 5) {
+                    tryGeocodeDirect(texto, tipo);
+                }
             }
-        }
-    });
+        });
+    } catch (error) {
+        console.error("❌ Erro no autocomplete:", error);
+        divSug.style.display = 'none';
+    }
 }
 
 // ==================== FUNÇÃO DE GEOCODIFICAÇÃO DIRETA ====================
@@ -808,7 +805,6 @@ async function tryGeocodeDirect(texto, tipo) {
             }
         }
         
-        // Verifica se já tem os dois endereços
         const origem = document.getElementById('origem').value.trim();
         const destino = document.getElementById('destino').value.trim();
         if (origem && destino && origem.length > 5 && destino.length > 5) {
@@ -816,7 +812,6 @@ async function tryGeocodeDirect(texto, tipo) {
         }
     } catch (error) {
         console.error(`❌ Erro ao geocodificar diretamente:`, error);
-        // Não mostra alerta aqui, apenas loga o erro
     }
 }
 
@@ -838,7 +833,7 @@ async function calcularValor() {
     // Se as coordenadas ainda não foram obtidas, tenta geocodificar agora
     if (!latOrigem || !lonOrigem) {
         try {
-            console.log("🔄 Geocodificando origem (fallback)...");
+            console.log("🔄 Geocodificando origem...");
             const coords = await geocodeAddress(o);
             latOrigem = coords.lat;
             lonOrigem = coords.lng;
@@ -847,14 +842,14 @@ async function calcularValor() {
             }
             console.log("✅ Origem geocodificada:", { latOrigem, lonOrigem });
         } catch (error) {
-            alert(`❌ Não foi possível encontrar a origem: "${o}"\n\n💡 Dica: Tente digitar o endereço completo com cidade e estado.\nExemplo: "Av Paulista, 1000, São Paulo, SP"`);
+            alert(`❌ Não foi possível encontrar a origem: "${o}"\n\n💡 Dica: Digite o endereço completo com cidade e estado.\nExemplo: "Av Paulista, 1000, São Paulo - SP"`);
             return;
         }
     }
     
     if (!latDestino || !lonDestino) {
         try {
-            console.log("🔄 Geocodificando destino (fallback)...");
+            console.log("🔄 Geocodificando destino...");
             const coords = await geocodeAddress(d);
             latDestino = coords.lat;
             lonDestino = coords.lng;
@@ -863,7 +858,7 @@ async function calcularValor() {
             }
             console.log("✅ Destino geocodificado:", { latDestino, lonDestino });
         } catch (error) {
-            alert(`❌ Não foi possível encontrar o destino: "${d}"\n\n💡 Dica: Tente digitar o endereço completo com cidade e estado.\nExemplo: "Av Paulista, 1000, São Paulo, SP"`);
+            alert(`❌ Não foi possível encontrar o destino: "${d}"\n\n💡 Dica: Digite o endereço completo com cidade e estado.\nExemplo: "Av Paulista, 1000, São Paulo - SP"`);
             return;
         }
     }
@@ -1414,9 +1409,8 @@ window.onload = () => {
         document.getElementById("dashboard").style.display = "block";
         carregarAvaliacoes();
     }
-};
-
-       
+};               
+         
 
     </script>
 </body>
