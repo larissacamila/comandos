@@ -718,7 +718,7 @@
             // Se o valor ainda não foi calculado, calcula agora
             if (valorFinal === 0) {
                 try {
-                    const response = await fetch(`${API}/calcular_corrida", {
+                    const response = await fetch(`${API}/calcular_corrida`, {
                         method: "POST",
                         headers: {
                             "Content-Type": "application/json"
