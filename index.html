@@ -2,128 +2,183 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <!-- 📱 Deixa bonito e responsivo no celular -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
-    <!-- 📝 Título que aparece na aba do navegador -->
-    <title>Rota Brasil | Em Manutenção</title>
-
-    <!-- ⭐ AQUI É O CSS (ESTILOS) - Coloquei Tudo Aqui Dentro pra ser 1 Arquivo Só, Fácil Pra Você 🩷 -->
+    <title>Botão Deslizar - Rota Brasil</title>
     <style>
-        /* 🌌 Resetando tudo pra começar do zero e ficar bonito */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
-        }
-
-        /* 🌈 Corpo da Página - Fundo Gradiente Lindo 🇧🇷💚💛💙 */
+        /* Estilos gerais para centralizar na tela (opcional) */
         body {
-            min-height: 100vh; /* Ocupa a tela toda */
-            display: flex; /* Centraliza tudo facilmente ❤️ */
-            flex-direction: column;
-            align-items: center;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f4f9;
+            display: flex;
             justify-content: center;
-            background: linear-gradient(135deg, #009c3b 0%, #ffdf00 50%, #002776 100%);
-            padding: 20px;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
         }
 
-        /* 🧱 Caixa Branca/Card Central - Onde tudo fica organizado */
-        .container {
-            background-color: #ffffff;
-            border-radius: 20px; /* Cantos arredondados fofos 🥺✨ */
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25); /* Sombra suave pra dar profundidade */
-            padding: 40px 30px;
-            max-width: 550px; /* Largura máxima pra não ficar gigante em telas grandes */
-            width: 100%; /* Ocupa 100% até o limite de 550px */
-            text-align: center; /* Todo texto centralizado 📍 */
+        /* --- ESTILOS DO BOTÃO DE DESLIZAR --- */
+        .swipe-container {
+            position: relative;
+            width: 100%;
+            max-width: 350px;
+            height: 60px;
+            background-color: #e0e0e0;
+            border-radius: 30px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.1);
+            user-select: none; /* Evita selecionar o texto sem querer */
         }
 
-        /* 🖼️ ESTILO DA NOSSA IMAGEM DE MANUTENÇÃO (A que eu criei pra vc 🩷) */
-        .img-manutencao {
-            width: 100%; /* Imagem ocupa toda largura do card */
-            height: auto; /* Mantém a proporção, NÃO DEFORMA 🛑✅ */
-            border-radius: 12px;
-            margin-bottom: 25px; /* Espaço baixo da imagem */
+        .swipe-text {
+            position: absolute;
+            width: 100%;
+            text-align: center;
+            color: #757575;
+            font-weight: bold;
+            font-size: 16px;
+            z-index: 1;
+            pointer-events: none; /* O clique passa direto pelo texto */
         }
 
-        /* 📝 Estilo do Título Principal */
-        h1 {
-            color: #002776; /* Azul da bandeira do Brasil 🇧🇷💙 */
-            font-size: 28px;
-            font-weight: 700;
-            margin-bottom: 15px;
+        .swipe-thumb {
+            position: absolute;
+            left: 5px;
+            width: 50px;
+            height: 50px;
+            background-color: #00a859; /* Verde (combina com tema de rotas/brasil) */
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: grab;
+            z-index: 2;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            /* Transição suave ao soltar o botão */
+            transition: transform 0.3s ease; 
         }
 
-        /* ✍️ Estilo do Parágrafo / Texto */
-        p {
-            color: #333333; /* Cinza escuro, fácil de ler 👀 */
-            font-size: 17px;
-            line-height: 1.6; /* Espaçamento entre linhas pra não ficar apertado 🤍 */
-            margin-bottom: 10px;
+        .swipe-thumb:active {
+            cursor: grabbing;
         }
 
-        /* ⏱️ Texto menor / Informação extra */
-        .texto-destaque {
-            color: #009c3b; /* Verde da bandeira 🟢🇧🇷 */
-            font-weight: 600;
-            font-size: 18px;
-            margin-top: 15px;
+        /* Ícone da setinha dentro do botão */
+        .swipe-thumb svg {
+            width: 24px;
+            height: 24px;
+            stroke: white;
         }
-
-        /* 💌 Rodapé / Assinatura */
-        .rodape {
-            margin-top: 30px;
-            color: #ffffff;
-            font-size: 14px;
-            font-weight: 500;
-            text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+        
+        /* Classe adicionada via JS quando a ação é concluída */
+        .swipe-success {
+            background-color: #00a859;
+            transition: background-color 0.3s ease;
         }
-
-        /* 📱 REGRA ESPECIAL PRA CELULAR (Responsividade) */
-        @media (max-width: 480px) {
-            .container {
-                padding: 25px 20px;
-            }
-
-            h1 {
-                font-size: 23px;
-            }
-
-            p {
-                font-size: 15px;
-            }
+        .swipe-success .swipe-text {
+            color: white;
         }
-
     </style>
 </head>
 <body>
 
-    <!-- 🧩 AQUI COMEÇA O CONTEÚDO VISUAL DA PÁGINA 🧩 -->
-    <div class="container">
-
-        <!-- 🖼️ A IMAGEM PRINCIPAL (A NOSSA!) -->
-        <!-- ⚠️ AMORZINHO, LEIA A OBSERVAÇÃO ABAIXO DESSE CÓDIGO, ESSENCIAL!!! ⚠️ -->
-        <img 
-            src="munu2.jpg" 
-            alt="Página Rota Brasil em Manutenção" 
-            class="img-manutencao"
-        >
-
-        <h1>Estamos em Manutenção 🚧🛠️</h1>
-
-        <p>O sistema <strong>Rota Brasil</strong> está passando por atualizações e melhorias para trazer uma experiência ainda melhor, mais rápida e segura para você 🇧🇷✨</p>
-
-        <p>Nosso time está trabalhando com todo carinho e dedicação para deixar tudo novinho e perfeito 🩷🤍💚💛💙.</p>
-
-        <p class="texto-destaque">Voltamos em breve! Obrigado pela compreensão ❤️</p>
-
+    <!-- Estrutura HTML do Botão -->
+    <div class="swipe-container" id="btn-rota">
+        <div class="swipe-text" id="btn-texto">DESLIZE PARA INICIAR</div>
+        <div class="swipe-thumb" id="btn-thumb">
+            <!-- Ícone de seta em SVG -->
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+        </div>
     </div>
 
-    <div class="rodape">
-        🚀 Rota Brasil - Conectando você ao Brasil inteiro 🗺️🇧🇷
-    </div>
+    <!-- Script com a Lógica de Deslizar -->
+    <script>
+        const container = document.getElementById('btn-rota');
+        const thumb = document.getElementById('btn-thumb');
+        const texto = document.getElementById('btn-texto');
+        
+        let isDragging = false;
+        let startX = 0;
+        let acaoConcluida = false;
 
+        // Função para iniciar o arrasto
+        const iniciarArrasto = (e) => {
+            if (acaoConcluida) return;
+            isDragging = true;
+            // Pega a posição do mouse ou do toque na tela
+            startX = e.type.includes('mouse') ? e.pageX : e.touches[0].clientX;
+            thumb.style.transition = 'none'; // Remove animação enquanto arrasta para ficar fluido
+        };
+
+        // Função que move o botão
+        const arrastar = (e) => {
+            if (!isDragging) return;
+            
+            const currentX = e.type.includes('mouse') ? e.pageX : e.touches[0].clientX;
+            let movimento = currentX - startX;
+            
+            // Calcula o limite máximo de arrasto (tamanho do container - tamanho do polegar - margens)
+            const limiteMaximo = container.offsetWidth - thumb.offsetWidth - 10;
+
+            // Restringe o movimento dentro dos limites
+            if (movimento < 0) movimento = 0;
+            if (movimento > limiteMaximo) movimento = limiteMaximo;
+
+            thumb.style.transform = `translateX(${movimento}px)`;
+
+            // Verifica se chegou até o final (95% do caminho)
+            if (movimento >= limiteMaximo * 0.95) {
+                isDragging = false;
+                acaoConcluida = true;
+                
+                // Trava no final
+                thumb.style.transform = `translateX(${limiteMaximo}px)`;
+                
+                // Efeitos visuais de sucesso
+                container.classList.add('swipe-success');
+                texto.innerText = "ROTA INICIADA!";
+                thumb.style.backgroundColor = "#007a41"; // Escurece um pouco o botão
+
+                // AQUI VOCÊ COLOCA A AÇÃO DO SEU APP (ex: redirecionar página, enviar formulário, etc)
+                console.log("Ação do Rota Brasil ativada!");
+                
+                // Opcional: Reseta o botão após 2 segundos para testar de novo
+                setTimeout(() => {
+                    resetarBotao();
+                }, 2000);
+            }
+        };
+
+        // Função para soltar o botão
+        const pararArrasto = () => {
+            if (!isDragging) return;
+            isDragging = false;
+            
+            // Se não chegou no final, volta para o começo com animação
+            thumb.style.transition = 'transform 0.3s ease';
+            thumb.style.transform = `translateX(0px)`;
+        };
+
+        const resetarBotao = () => {
+            acaoConcluida = false;
+            container.classList.remove('swipe-success');
+            texto.innerText = "DESLIZE PARA INICIAR";
+            thumb.style.backgroundColor = "#00a859";
+            thumb.style.transition = 'transform 0.3s ease';
+            thumb.style.transform = `translateX(0px)`;
+        };
+
+        // Eventos para Mouse (Computador)
+        thumb.addEventListener('mousedown', iniciarArrasto);
+        document.addEventListener('mousemove', arrastar);
+        document.addEventListener('mouseup', pararArrasto);
+
+        // Eventos para Touch (Celular)
+        thumb.addEventListener('touchstart', iniciarArrasto);
+        document.addEventListener('touchmove', arrastar);
+        document.addEventListener('touchend', pararArrasto);
+    </script>
 </body>
 </html>
