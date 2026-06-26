@@ -2,183 +2,41 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Botão Deslizar - Rota Brasil</title>
-    <style>
-        /* Estilos gerais para centralizar na tela (opcional) */
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f4f4f9;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-        }
-
-        /* --- ESTILOS DO BOTÃO DE DESLIZAR --- */
-        .swipe-container {
-            position: relative;
-            width: 100%;
-            max-width: 350px;
-            height: 60px;
-            background-color: #e0e0e0;
-            border-radius: 30px;
-            overflow: hidden;
-            display: flex;
-            align-items: center;
-            box-shadow: inset 0 2px 5px rgba(0,0,0,0.1);
-            user-select: none; /* Evita selecionar o texto sem querer */
-        }
-
-        .swipe-text {
-            position: absolute;
-            width: 100%;
-            text-align: center;
-            color: #757575;
-            font-weight: bold;
-            font-size: 16px;
-            z-index: 1;
-            pointer-events: none; /* O clique passa direto pelo texto */
-        }
-
-        .swipe-thumb {
-            position: absolute;
-            left: 5px;
-            width: 50px;
-            height: 50px;
-            background-color: #00a859; /* Verde (combina com tema de rotas/brasil) */
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            cursor: grab;
-            z-index: 2;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-            /* Transição suave ao soltar o botão */
-            transition: transform 0.3s ease; 
-        }
-
-        .swipe-thumb:active {
-            cursor: grabbing;
-        }
-
-        /* Ícone da setinha dentro do botão */
-        .swipe-thumb svg {
-            width: 24px;
-            height: 24px;
-            stroke: white;
-        }
-        
-        /* Classe adicionada via JS quando a ação é concluída */
-        .swipe-success {
-            background-color: #00a859;
-            transition: background-color 0.3s ease;
-        }
-        .swipe-success .swipe-text {
-            color: white;
-        }
-    </style>
+    <title>Rota Brasil</title>
 </head>
-<body>
+<body style="padding: 20px; font-family: sans-serif;">
 
-    <!-- Estrutura HTML do Botão -->
-    <div class="swipe-container" id="btn-rota">
-        <div class="swipe-text" id="btn-texto">DESLIZE PARA INICIAR</div>
-        <div class="swipe-thumb" id="btn-thumb">
-            <!-- Ícone de seta em SVG -->
-            <svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-                <polyline points="9 18 15 12 9 6"></polyline>
-            </svg>
-        </div>
-    </div>
+    <h2>Painel do Motorista</h2>
 
-    <!-- Script com a Lógica de Deslizar -->
+    <botao-deslizar 
+        id="btn-iniciar" 
+        texto="INICIAR ROTA" 
+        texto-sucesso="ROTA EM ANDAMENTO">
+    </botao-deslizar>
+
+    <botao-deslizar 
+        id="btn-finalizar" 
+        texto="FINALIZAR VIAGEM" 
+        texto-sucesso="VIAGEM ENCERRADA"
+        cor="#d32f2f"> </botao-deslizar>
+
+    <script src="seu-arquivo-componente.js"></script>
+    
     <script>
-        const container = document.getElementById('btn-rota');
-        const thumb = document.getElementById('btn-thumb');
-        const texto = document.getElementById('btn-texto');
-        
-        let isDragging = false;
-        let startX = 0;
-        let acaoConcluida = false;
+        // Como capturar a ação de cada botão no seu aplicativo:
+        const btnIniciar = document.getElementById('btn-iniciar');
+        const btnFinalizar = document.getElementById('btn-finalizar');
 
-        // Função para iniciar o arrasto
-        const iniciarArrasto = (e) => {
-            if (acaoConcluida) return;
-            isDragging = true;
-            // Pega a posição do mouse ou do toque na tela
-            startX = e.type.includes('mouse') ? e.pageX : e.touches[0].clientX;
-            thumb.style.transition = 'none'; // Remove animação enquanto arrasta para ficar fluido
-        };
+        // Escuta o evento 'confirmado' que nós criamos no componente
+        btnIniciar.addEventListener('confirmado', () => {
+            console.log("Ação: Abrindo o mapa e iniciando a rota...");
+            // Coloque o código do seu app aqui!
+        });
 
-        // Função que move o botão
-        const arrastar = (e) => {
-            if (!isDragging) return;
-            
-            const currentX = e.type.includes('mouse') ? e.pageX : e.touches[0].clientX;
-            let movimento = currentX - startX;
-            
-            // Calcula o limite máximo de arrasto (tamanho do container - tamanho do polegar - margens)
-            const limiteMaximo = container.offsetWidth - thumb.offsetWidth - 10;
-
-            // Restringe o movimento dentro dos limites
-            if (movimento < 0) movimento = 0;
-            if (movimento > limiteMaximo) movimento = limiteMaximo;
-
-            thumb.style.transform = `translateX(${movimento}px)`;
-
-            // Verifica se chegou até o final (95% do caminho)
-            if (movimento >= limiteMaximo * 0.95) {
-                isDragging = false;
-                acaoConcluida = true;
-                
-                // Trava no final
-                thumb.style.transform = `translateX(${limiteMaximo}px)`;
-                
-                // Efeitos visuais de sucesso
-                container.classList.add('swipe-success');
-                texto.innerText = "ROTA INICIADA!";
-                thumb.style.backgroundColor = "#007a41"; // Escurece um pouco o botão
-
-                // AQUI VOCÊ COLOCA A AÇÃO DO SEU APP (ex: redirecionar página, enviar formulário, etc)
-                console.log("Ação do Rota Brasil ativada!");
-                
-                // Opcional: Reseta o botão após 2 segundos para testar de novo
-                setTimeout(() => {
-                    resetarBotao();
-                }, 2000);
-            }
-        };
-
-        // Função para soltar o botão
-        const pararArrasto = () => {
-            if (!isDragging) return;
-            isDragging = false;
-            
-            // Se não chegou no final, volta para o começo com animação
-            thumb.style.transition = 'transform 0.3s ease';
-            thumb.style.transform = `translateX(0px)`;
-        };
-
-        const resetarBotao = () => {
-            acaoConcluida = false;
-            container.classList.remove('swipe-success');
-            texto.innerText = "DESLIZE PARA INICIAR";
-            thumb.style.backgroundColor = "#00a859";
-            thumb.style.transition = 'transform 0.3s ease';
-            thumb.style.transform = `translateX(0px)`;
-        };
-
-        // Eventos para Mouse (Computador)
-        thumb.addEventListener('mousedown', iniciarArrasto);
-        document.addEventListener('mousemove', arrastar);
-        document.addEventListener('mouseup', pararArrasto);
-
-        // Eventos para Touch (Celular)
-        thumb.addEventListener('touchstart', iniciarArrasto);
-        document.addEventListener('touchmove', arrastar);
-        document.addEventListener('touchend', pararArrasto);
+        btnFinalizar.addEventListener('confirmado', () => {
+            console.log("Ação: Calculando o valor da corrida e encerrando...");
+            // Coloque o código do seu app aqui!
+        });
     </script>
 </body>
 </html>
