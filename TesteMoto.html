@@ -7,7 +7,7 @@
     <!-- ✅ MANTIDO IGUAL - CDNs CORRETOS -->
     <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
+    <script src="botao_desliza.js"></script>
     <style>
         :root {
             --primaria: #165DFF;
@@ -340,12 +340,12 @@
         Confira a identidade do passageiro antes do embarque.
     </p>
 
-    <button
+    <botao-deslizar
         class="btn-success"
-        onclick="iniciarViagem()"
+        onclick="iniciarViagem2()"
     >
         ✅ PASSAGEIRO EMBARCOU
-    </button>
+    </botao-deslizar>
 
 </div>
 
@@ -443,21 +443,21 @@
         <div id="areaAcoes" class="acoes">
             <div id="etapaTexto" class="etapa etapa1">📦 Corrida Aceita! Vá ao passageiro</div>
 
-            <button id="btnIrPassageiro" class="btn-primary acao-full" onclick="irAoPassageiro()" style="display:none;">
+            <botao-deslizar id="btnIrPassageiro" class="btn-primary acao-full" onclick="irAoPassageiro2()" style="display:none;">
                 <i class="fas fa-location-arrow"></i> 📍 IR ATÉ PASSAGEIRO
-            </button>
+            </botao-deslizar>
 
-            <button id="btnIniciarViagem" class="btn-warning acao-full" onclick="iniciarViagem()" style="display:none;">
+            <botao-deslizar id="btnIniciarViagem" class="btn-warning acao-full" onclick="iniciarViagem2()" style="display:none;">
                 <i class="fas fa-route"></i> 🟢 INICIAR VIAGEM AO DESTINO
-            </button>
+            </botao-deslizar>
 
             <button id="btnLigar" class="btn-purple" onclick="ligarCliente()" style="display:none;">
                 <i class="fas fa-phone-alt"></i> LIGAR / WPP
             </button>
 
-            <button id="btnFinalizar" class="btn-success acao-full" onclick="finalizarAgora()" style="display:none;">
+            <botao-deslizar id="btnFinalizar" class="btn-success acao-full" onclick="finalizarAgora2()" style="display:none;">
                 <i class="fas fa-check-double"></i> ✅ FINALIZAR CORRIDA
-            </button>
+            </botao-deslizar>
         </div>
 
         <button class="btn-danger" style="margin-top:2px; background:transparent; border:1px solid var(--perigo); color:var(--perigo);" onclick="sair()">
@@ -527,7 +527,7 @@
         // ==============================================
         // ⚙️ CONFIGURAÇÕES E VARIAVEIS ✅ URL BASE CORRETA DO SEU SERVIDOR
         // ==============================================
-        const API_URL = "https://rotabrasil-5jcp.onrender.com"; // ✅ SUA URL CERTA
+        const API_URL = "http://192.168.15.148:5000"; // ✅ SUA URL CERTA
         const socket = io(API_URL, { 
             transports: ['websocket', 'polling'], 
             reconnection: true, 
@@ -867,7 +867,7 @@
                     atualizarEtapa(1);
                     document.getElementById('btnIrPassageiro').style.display = 'flex';
                     document.getElementById('btnIniciarViagem').style.display = 'none';
-                    document.getElementById('btnFinalizar').style.display = 'none';
+                    document.getElementById('btnFinalizar_nao_aparecer').style.display = 'none';
 
                     socket.emit('corrida_aceita', {
                         corrida_id: corridaId, 
@@ -1343,7 +1343,24 @@ async function cancelarCorridaMotorista() {
         el.style.display = mostrar ? 'block' : 'none';
     });
 }
+  //==============função botao deslize======
+ btnIniciarViagem.addEventListener('confirmado', () => {
+           iniciarViagem()
+            
+        })
+btnIrPassageiro.addEventListener('confirmado', () => {
+           irAoPassageiro()
+            
+        })
+btnFinalizar.addEventListener('confirmado', () => {
+           finalizarAgora()
+            
+        })
+
+
      </script>
+
+
 
 </body>
 </html>
