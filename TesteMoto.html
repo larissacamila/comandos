@@ -22,8 +22,7 @@
 
         #loginScreen {
             position: absolute; inset: 0; background: var(--fundo);
-            display: flex; flex-direction: column; justify-content: center; padding: 20px;
-            z-index: 9999;
+            display: flex; flex-direction: column; justify-content: center; padding: 20px; z-index: 9999;
         }
         .logo { text-align: center; margin-bottom: 30px; }
         .logo h1 { font-size: 38px; font-weight: 900; background: linear-gradient(90deg, #165DFF, #7B2CFF); -webkit-background-clip: text; color: transparent; }
@@ -34,18 +33,18 @@
             border-radius: 10px; color: white; font-size: 15px; outline: none;
         }
         input:focus { border-color: var(--primaria); }
-        button, .btn-deslize {
+        button {
             width: 100%; padding: 14px; border: none; border-radius: 10px;
             font-size: 15px; font-weight: 600; cursor: pointer;
             display: flex; align-items: center; justify-content: center; gap: 8px;
-            transition: all 0.2s ease;
+            transition: all 0.2s ease; color: white;
         }
         button:active { transform: scale(0.97); }
-        .btn-primary { background: var(--primaria); color: white; margin: 8px 0; }
-        .btn-success { background: var(--sucesso); color: white; margin: 8px 0; }
-        .btn-danger { background: var(--perigo); color: white; }
-        .btn-warning { background: var(--alerta); color: white; }
-        .btn-purple { background: #7B2CFF; color: white; }
+        .btn-primary { background: var(--primaria); margin: 8px 0; }
+        .btn-success { background: var(--sucesso); margin: 8px 0; }
+        .btn-danger { background: var(--perigo); }
+        .btn-warning { background: var(--alerta); }
+        .btn-purple { background: #7B2CFF; }
         .status-text { font-size: 14px; text-align: center; margin-top: 8px; min-height: 20px; }
         .erro { color: var(--perigo); font-weight: 600; }
         .ok { color: var(--sucesso); font-weight: 600; }
@@ -56,22 +55,21 @@
         .header {
             position: absolute; top: 0; left: 0; right: 0; padding: 15px 20px;
             background: linear-gradient(180deg, var(--fundo), transparent);
-            display: flex; justify-content: space-between; align-items: center;
-            z-index: 100;
+            display: flex; justify-content: space-between; align-items: center; z-index: 100;
         }
         .status-bolinha { display: flex; align-items: center; gap: 6px; font-weight: 600; font-size: 15px; }
         .online { color: var(--sucesso); }
         .offline { color: var(--perigo); }
 
-        /* === COMPONENTE BOTÃO DESLIZAR === */
+        /* BOTÃO DESLIZAR */
         .container-deslize {
             position: relative;
             width: 100%;
-            height: 56px;
+            height: 60px;
             background: #272E3B;
-            border-radius: 12px;
+            border-radius: 14px;
             overflow: hidden;
-            margin: 8px 0;
+            margin: 10px 0;
             border: 2px solid var(--borda);
             user-select: none;
             touch-action: none;
@@ -86,52 +84,47 @@
             font-weight: 700;
             font-size: 15px;
             letter-spacing: 0.5px;
-            transition: color 0.3s;
             pointer-events: none;
             z-index: 1;
         }
         .trilha-deslize i { margin-right: 8px; }
         .pino-deslize {
             position: absolute;
-            left: 2px;
-            top: 2px;
-            bottom: 2px;
-            width: 56px;
+            left: 3px;
+            top: 3px;
+            bottom: 3px;
+            width: 54px;
             background: var(--primaria);
-            border-radius: 10px;
+            border-radius: 11px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 22px;
+            font-size: 24px;
             color: white;
             cursor: grab;
             z-index: 2;
-            transition: left 0.1s ease;
             box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+            transition: background 0.3s;
         }
         .pino-deslize:active { cursor: grabbing; }
         .pino-deslize.concluido {
             background: var(--sucesso);
-            left: calc(100% - 58px);
             box-shadow: 0 0 20px rgba(0,180,42,0.5);
         }
         .container-deslize.concluido {
             border-color: var(--sucesso);
             background: #1a2e1d;
         }
-        .container-deslize.concluido .trilha-deslize {
-            color: var(--sucesso);
-        }
+        .container-deslize.concluido .trilha-deslize { color: var(--sucesso); }
         .progresso-deslize {
             position: absolute;
             left: 0; top: 0; bottom: 0;
-            background: linear-gradient(90deg, transparent, rgba(22,93,255,0.15));
+            background: linear-gradient(90deg, transparent, rgba(22,93,255,0.2));
             z-index: 0;
-            transition: width 0.1s ease;
-            border-radius: 10px;
+            border-radius: 12px;
         }
 
-        /* === CARDS E MODAIS === */
+        /* CARDS */
         .card-corrida {
             position: absolute; bottom: 250px; left: 50%; transform: translateX(-50%);
             width: 92%; max-width: 400px; background: var(--card);
@@ -146,35 +139,19 @@
 
         .barra-inferior {
             position: absolute; bottom: 0; left: 0; right: 0; padding: 15px 20px 25px;
-            background: var(--card); border-top: 1px solid var(--borda);
-            z-index: 300;
+            background: var(--card); border-top: 1px solid var(--borda); z-index: 300;
+            max-height: 60vh; overflow-y: auto;
         }
         .etapa {
-            text-align: center; padding: 12px; border-radius: 10px; font-weight: 700; font-size: 14px; margin-bottom: 12px;
-            border: 2px solid transparent;
+            text-align: center; padding: 12px; border-radius: 10px; font-weight: 700; 
+            font-size: 14px; margin-bottom: 10px; border: 2px solid transparent;
         }
         .etapa1 { background: #FFF7E8; color: #BC6C00; border-color: #FFD591; }
         .etapa2 { background: #E8F3FF; color: #0050B3; border-color: #91D2FF; }
         .etapa3 { background: #E8FFEA; color: #007828; border-color: #97F0AE; }
 
-        .alerta-cancelamento {
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            background: var(--perigo); color: white; padding: 25px; border-radius: 16px;
-            z-index: 99999; text-align: center; width: 85%; max-width: 320px;
-            box-shadow: 0 0 30px rgba(245, 63, 63, 0.5); display: none;
-            animation: tremer 0.5s ease infinite alternate;
-        }
-        .modal-carteira{
-            position:fixed; top:50%; left:50%; transform:translate(-50%,-50%);
-            width:90%; max-width:380px; background:#1e293b;
-            border:1px solid #334155; border-radius:16px; padding:20px;
-            color:white; display:none; z-index:99999; box-shadow:0 0 30px rgba(0,0,0,0.5);
-        }
-        .modal-carteira h2{ margin-bottom:15px; }
-        .modal-carteira p{ margin-bottom:12px; }
-        
         .card-chegada {
-            position: absolute; left: 50%; bottom: 230px; transform: translateX(-50%);
+            position: absolute; left: 50%; bottom: 260px; transform: translateX(-50%);
             width: 90%; max-width: 350px; background: var(--card);
             border: 2px solid var(--sucesso); border-radius: 16px;
             padding: 20px; text-align: center; z-index: 300; display: none;
@@ -184,18 +161,30 @@
             width: 80px; height: 80px; object-fit: cover;
             border-radius: 50%; border: 3px solid var(--sucesso); margin-bottom: 10px;
         }
-        .card-chegada h3 { margin-bottom: 5px; }
-        .card-chegada p { font-size: 13px; color: #86909C; margin-bottom: 15px; }
+        .card-chegada h3 { margin-bottom: 5px; font-size: 18px; }
+        .card-chegada p { font-size: 13px; color: #86909C; margin-bottom: 12px; }
 
+        .alerta-cancelamento {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            background: var(--perigo); color: white; padding: 25px; border-radius: 16px;
+            z-index: 99999; text-align: center; width: 85%; max-width: 320px;
+            box-shadow: 0 0 30px rgba(245,63,63,0.5); display: none;
+        }
+        .alerta-cancelamento h2 { margin-bottom: 10px; font-size: 22px; }
+        .alerta-cancelamento button { margin-top: 15px; padding: 10px 20px; border-radius: 8px; font-weight: 600; }
+
+        /* AVALIAÇÃO */
         .avaliacao-modal {
             position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
             background: var(--card); border-radius: 16px; padding: 25px; border: 2px solid var(--primaria);
             z-index: 99999; text-align: center; width: 85%; max-width: 350px;
             box-shadow: 0 0 30px #165DFF50; display: none;
         }
-        .estrelas { font-size: 40px; color: #666; cursor: pointer; margin: 15px 0; }
-        .estrela.ativa { color: #FFD700; text-shadow: 0 0 10px #FFD70080; }
-        .estrela { transition: 0.2s; display: inline-block; }
+        .avaliacao-modal h2 { margin-bottom: 5px; }
+        .estrelas { font-size: 45px; margin: 15px 0; }
+        .estrela { color: #666; cursor: pointer; transition: 0.2s; display: inline-block; padding: 0 5px; }
+        .estrela.ativa { color: #FFD700; text-shadow: 0 0 10px #FFD70080; transform: scale(1.1); }
+        .avaliacao-modal textarea { margin-bottom: 10px; }
 
         .erro-tela {
             position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
@@ -204,44 +193,50 @@
             box-shadow: 0 4px 12px rgba(0,0,0,0.3); font-weight: 600;
         }
         .online-animado { color: var(--sucesso); animation: pulsarOnline 1.5s infinite; }
-        @keyframes pulsarOnline { 0% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.08); opacity: 0.8; } 100% { transform: scale(1); opacity: 1; } }
-
+        @keyframes pulsarOnline { 
+            0% { transform: scale(1); opacity: 1; } 
+            50% { transform: scale(1.08); opacity: 0.8; } 
+            100% { transform: scale(1); opacity: 1; } 
+        }
         .oculto { display: none !important; }
-        @keyframes tremer { from { transform: translate(-50%, -50%) scale(1); } to { transform: translate(-50%, -50%) scale(1.03); } }
-        .alerta-cancelamento h2 { margin-bottom: 10px; font-size: 22px; }
     </style>
 </head>
     
 <body>
-    <div id="painelCarteiraMotorista" class="modal-carteira">
+    <!-- MODAL CARTEIRA -->
+    <div id="painelCarteiraMotorista" style="position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); width:90%; max-width:380px; background:#1e293b; border:1px solid #334155; border-radius:16px; padding:20px; color:white; display:none; z-index:99999;">
         <h2>💵 Carteira do Motorista</h2>
         <p>Saldo disponível: <strong id="saldoMotorista">R$ 0,00</strong></p>
-        <button class="btn-warning">🏦 Solicitar Saque</button>
-        <button class="btn-primary">📜 Histórico</button>
-        <button class="btn-danger" onclick="fecharCarteiraMotorista()">❌ Fechar</button>
+        <button class="btn-warning" style="margin:5px 0;">🏦 Solicitar Saque</button>
+        <button class="btn-primary" style="margin:5px 0;">📜 Histórico</button>
+        <button class="btn-danger" onclick="document.getElementById('painelCarteiraMotorista').style.display='none'" style="margin:5px 0;">❌ Fechar</button>
     </div>
 
+    <!-- CARD CHEGADA PASSAGEIRO -->
     <div id="cardPassageiroChegada" class="card-chegada">
         <img id="fotoChegada" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80'%3E%3Ccircle cx='40' cy='40' r='40' fill='%23363E4D'/%3E%3Ctext x='40' y='50' text-anchor='middle' fill='white' font-size='35'%3E👤%3C/text%3E%3C/svg%3E" alt="Passageiro">
         <h3 id="nomeChegada">Passageiro</h3>
-        <p>Confira a identidade do passageiro antes do embarque.</p>
-        <div id="containerEmbarque"></div>
+        <p>Confira a identidade antes do embarque</p>
+        <div id="containerBtnEmbarque"></div>
         <button id="btnLigarChegada" class="btn-purple" onclick="ligarCliente()" style="margin-top:8px;">
             <i class="fas fa-phone-alt"></i> LIGAR / WHATSAPP
         </button>
     </div>
 
+    <!-- ALERTA ERRO -->
     <div id="avisoErro" class="erro-tela"></div>
 
+    <!-- ALERTA CANCELAMENTO -->
     <div id="alertaCancel" class="alerta-cancelamento">
         <h2><i class="fas fa-times-circle"></i> CORRIDA CANCELADA!</h2>
         <p>O passageiro cancelou a corrida ou desconectou.</p>
-        <button onclick="fecharAlertaCancel()" style="background:white; color:var(--perigo); margin-top:15px; padding:10px 20px; border-radius:8px; font-weight:600;">OK, ENTENDI</button>
+        <button onclick="document.getElementById('alertaCancel').style.display='none'" style="background:white; color:var(--perigo);">OK, ENTENDI</button>
     </div>
 
+    <!-- MODAL AVALIAÇÃO -->
     <div id="modalAvaliacao" class="avaliacao-modal">
         <h2>🏁 CORRIDA FINALIZADA!</h2>
-        <p style="margin:8px 0 20px; color:#86909C;">Avalie sua experiência com o passageiro:</p>
+        <p style="color:#86909C; margin:10px 0;">Avalie sua experiência:</p>
         <div id="estrelasAvaliacao" class="estrelas">
             <span class="estrela" data-valor="1">★</span>
             <span class="estrela" data-valor="2">★</span>
@@ -249,10 +244,11 @@
             <span class="estrela" data-valor="4">★</span>
             <span class="estrela" data-valor="5">★</span>
         </div>
-        <textarea id="comentarioAvaliacao" placeholder="Deixe um comentário (opcional)..." style="width:100%; background:#272E3B; border:1px solid var(--borda); border-radius:8px; padding:10px; color:white; min-height:80px; resize:none;"></textarea>
-        <button class="btn-success" onclick="enviarAvaliacao()" style="margin-top:15px;">✅ ENVIAR AVALIAÇÃO</button>
+        <textarea id="comentarioAvaliacao" placeholder="Comentário (opcional)..." style="width:100%; background:#272E3B; border:1px solid var(--borda); border-radius:8px; padding:10px; color:white; min-height:60px; resize:none;"></textarea>
+        <button class="btn-success" onclick="enviarAvaliacao()">✅ ENVIAR AVALIAÇÃO</button>
     </div>
 
+    <!-- LOGIN -->
     <div id="loginScreen">
         <div class="logo">
             <h1>ROTA BRASIL 🇧🇷</h1>
@@ -271,10 +267,12 @@
         </div>
     </div>
 
+    <!-- MAPA -->
     <div id="mapa">
         <iframe id="mapaFrame" src="https://www.google.com/maps/embed/v1/view?key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8&center=-23.5645,-46.6523&zoom=16&maptype=roadmap"></iframe>
     </div>
 
+    <!-- HEADER -->
     <div class="header" id="header" style="display:none;">
         <div style="font-weight:800; font-size:18px;">ROTA BRASIL 🇧🇷</div>
         <div id="statusMotorista" class="status-bolinha offline">
@@ -282,6 +280,7 @@
         </div>
     </div>
 
+    <!-- CARD NOVA CORRIDA -->
     <div id="cardCorrida" class="card-corrida">
         <h3 style="text-align:center; margin-bottom:15px; color:var(--alerta);"><i class="fas fa-bell"></i> NOVA CORRIDA</h3>
         <div class="linha"><span>Passageiro</span> <span id="cPassageiro">-</span></div>
@@ -295,50 +294,41 @@
         </div>
     </div>
 
+    <!-- BARRA INFERIOR -->
     <div class="barra-inferior" id="barra" style="display:none;">
-        <!-- Botões fixos offline -->
+        <!-- Botões offline -->
         <div id="botoesFixos">
             <button id="btnOnline" class="btn-success" onclick="ficarOnline()"><i class="fas fa-power-off"></i> FICAR ONLINE</button>
             <button id="btnOffline" class="btn-danger" onclick="ficarOffline()" style="display:none;"><i class="fas fa-power-off"></i> FICAR OFFLINE</button>
-            <button class="btn-warning" onclick="abrirCarteiraMotorista()" style="margin-top:8px;">💵 Carteira</button>
-            <button class="btn-danger" style="margin-top:8px; background:transparent; border:1px solid var(--perigo); color:var(--perigo);" onclick="sair()">
+            <button class="btn-warning" onclick="abrirCarteira()" style="margin-top:8px;">💵 Carteira</button>
+            <button style="margin-top:8px; background:transparent; border:1px solid var(--perigo); color:var(--perigo);" onclick="sair()">
                 <i class="fas fa-door-open"></i> SAIR
             </button>
         </div>
 
-        <!-- Área de ações da corrida -->
+        <!-- Área corrida ativa -->
         <div id="areaAcoes" style="display:none;">
             <div id="etapaTexto" class="etapa etapa1">📦 Corrida Aceita! Deslize para ir ao passageiro</div>
-            <div id="containerIrPassageiro"></div>
-            <div id="containerIniciarViagem" style="display:none;"></div>
-            <div id="containerFinalizar" style="display:none;"></div>
+            <div id="containerAcoesCorrida"></div>
             <button id="btnCancelarCorrida" class="btn-danger" onclick="cancelarCorridaMotorista()" style="margin-top:10px; display:none;">
                 <i class="fas fa-times"></i> ❌ CANCELAR CORRIDA
             </button>
         </div>
     </div>
 
-    <audio id="somAlerta" preload="auto">
-        <source src="https://larissacamila.github.io/comandos/chamarRota.mp3" type="audio/mpeg">
-    </audio>
-    <audio id="somAlto" preload="auto">
-        <source src="https://rotabrasil-v1cf.onrender.com/static/sounds/chamada.mp3" type="audio/mpeg">
-    </audio>
-    <audio id="somSucesso" preload="auto">
-        <source src="https://rotabrasil-v1cf.onrender.com/static/sounds/sucesso.mp3" type="audio/mpeg">
-    </audio>
-    <audio id="somDinheiro" preload="auto">
-        <source src="https://rotabrasil-v1cf.onrender.com/static/sounds/dinheiro.mp3" type="audio/mpeg">
-    </audio>
+    <!-- ÁUDIOS -->
+    <audio id="somAlerta" preload="auto" src="https://larissacamila.github.io/comandos/chamarRota.mp3"></audio>
+    <audio id="somAlto" preload="auto" src="https://rotabrasil-v1cf.onrender.com/static/sounds/chamada.mp3"></audio>
+    <audio id="somSucesso" preload="auto" src="https://rotabrasil-v1cf.onrender.com/static/sounds/sucesso.mp3"></audio>
+    <audio id="somDinheiro" preload="auto" src="https://rotabrasil-v1cf.onrender.com/static/sounds/dinheiro.mp3"></audio>
 
     <script>
         // ==============================================
-        // 🎯 COMPONENTE BOTÃO DESLIZAR (NATIVO)
+        // 🔧 FUNÇÃO CRIAR BOTÃO DESLIZAR
         // ==============================================
         function criarBotaoDeslizar(texto, icone, cor, callback) {
             const container = document.createElement('div');
             container.className = 'container-deslize';
-            container.style.width = '100%';
             
             const progresso = document.createElement('div');
             progresso.className = 'progresso-deslize';
@@ -357,73 +347,60 @@
             container.appendChild(pino);
             
             let arrastando = false;
-            let inicioX = 0;
-            let pinoLeft = 2;
-            const larguraMaxima = () => container.offsetWidth - pino.offsetWidth - 4;
             let concluido = false;
+            const larguraMax = () => container.offsetWidth - pino.offsetWidth - 6;
             
-            function resetarPino() {
-                pinoLeft = 2;
-                pino.style.left = '2px';
+            function resetar() {
+                pino.style.transition = 'left 0.3s ease';
+                pino.style.left = '3px';
+                progresso.style.transition = 'width 0.3s ease';
+                progresso.style.width = '0px';
                 pino.classList.remove('concluido');
                 container.classList.remove('concluido');
-                progresso.style.width = '0px';
+                pino.innerHTML = '→';
                 concluido = false;
-            }
-            
-            function atualizarPosicao(clientX) {
-                if (concluido) return;
-                const rect = container.getBoundingClientRect();
-                let novoLeft = clientX - rect.left - (pino.offsetWidth / 2);
-                novoLeft = Math.max(2, Math.min(novoLeft, larguraMaxima()));
-                pinoLeft = novoLeft;
-                pino.style.left = novoLeft + 'px';
-                progresso.style.width = (novoLeft + pino.offsetWidth/2) + 'px';
-                
-                if (novoLeft >= larguraMaxima() - 5) {
-                    concluido = true;
-                    pino.classList.add('concluido');
-                    container.classList.add('concluido');
-                    pino.style.left = larguraMaxima() + 'px';
-                    progresso.style.width = '100%';
-                    pino.innerHTML = '✓';
-                    if (callback) callback();
-                    setTimeout(resetarPino, 1500);
-                }
+                setTimeout(() => {
+                    pino.style.transition = 'left 0.1s ease';
+                    progresso.style.transition = 'width 0.1s ease';
+                }, 300);
             }
             
             pino.addEventListener('pointerdown', (e) => {
                 if (concluido) return;
                 arrastando = true;
-                inicioX = e.clientX;
                 pino.setPointerCapture(e.pointerId);
                 e.preventDefault();
             });
             
             pino.addEventListener('pointermove', (e) => {
                 if (!arrastando || concluido) return;
-                atualizarPosicao(e.clientX);
-                e.preventDefault();
-            });
-            
-            pino.addEventListener('pointerup', (e) => {
-                if (!arrastando) return;
-                arrastando = false;
-                if (!concluido) {
-                    pino.style.transition = 'left 0.3s ease';
-                    pino.style.left = '2px';
-                    progresso.style.transition = 'width 0.3s ease';
-                    progresso.style.width = '0px';
-                    pinoLeft = 2;
-                    setTimeout(() => {
-                        pino.style.transition = 'left 0.1s ease';
-                        progresso.style.transition = 'width 0.1s ease';
-                    }, 300);
+                const rect = container.getBoundingClientRect();
+                let x = e.clientX - rect.left - (pino.offsetWidth / 2);
+                x = Math.max(3, Math.min(x, larguraMax()));
+                pino.style.left = x + 'px';
+                progresso.style.width = (x + pino.offsetWidth/2) + 'px';
+                
+                if (x >= larguraMax() - 10) {
+                    concluido = true;
+                    arrastando = false;
+                    pino.classList.add('concluido');
+                    container.classList.add('concluido');
+                    pino.style.left = larguraMax() + 'px';
+                    progresso.style.width = '100%';
+                    pino.innerHTML = '✓';
+                    if (callback) callback();
+                    setTimeout(resetar, 1500);
                 }
                 e.preventDefault();
             });
             
-            container.resetar = resetarPino;
+            pino.addEventListener('pointerup', () => {
+                if (!arrastando) return;
+                arrastando = false;
+                if (!concluido) resetar();
+            });
+            
+            container.resetar = resetar;
             return container;
         }
 
@@ -431,31 +408,17 @@
         // ⚙️ CONFIGURAÇÕES
         // ==============================================
         const API_URL = "http://192.168.15.132:5000";
-        const socket = io(API_URL, { 
-            transports: ['websocket', 'polling'], 
-            reconnection: true, 
-            timeout: 10000,
-            forceNew: true
-        });
+        const socket = io(API_URL, { transports: ['websocket', 'polling'], reconnection: true, timeout: 10000, forceNew: true });
 
         let usuario = null;
         let token = null;
         let corrida = null;
-        let estado = {
-            aceito: false,
-            pegouPassageiro: false,
-            viagemIniciada: false
-        };
+        let estado = { aceito: false, pegouPassageiro: false, viagemIniciada: false };
         let posicaoAtual = { lat: -23.5645, lng: -46.6523 };
         let envioLocalizacaoInterval = null;
         let notaAvaliacao = 0;
         let timerCorrida = null;
         let segundosCorrida = 15;
-        
-        // Referências aos botões deslizantes
-        let btnDeslizeIrPassageiro = null;
-        let btnDeslizeEmbarque = null;
-        let btnDeslizeFinalizar = null;
 
         const somAlerta = document.getElementById('somAlerta');
         const somAlto = document.getElementById('somAlto');
@@ -465,9 +428,7 @@
         function falar(texto) {
             if (!window.speechSynthesis) return;
             const voz = new SpeechSynthesisUtterance(texto);
-            voz.lang = 'pt-BR';
-            voz.rate = 1.1;
-            voz.volume = 1;
+            voz.lang = 'pt-BR'; voz.rate = 1.1; voz.volume = 1;
             window.speechSynthesis.speak(voz);
         }
 
@@ -475,7 +436,7 @@
             const el = document.getElementById('avisoErro');
             el.textContent = "❌ " + texto;
             el.style.display = 'block';
-            setTimeout(() => { el.style.display = 'none'; }, 4000);
+            setTimeout(() => el.style.display = 'none', 4000);
         }
 
         // ==============================================
@@ -492,13 +453,11 @@
                     if (estado.aceito && corrida) {
                         socket.emit('localizacao_motorista', {
                             corrida_id: corrida.corrida_id || corrida.id,
-                            lat: posicaoAtual.lat,
-                            lng: posicaoAtual.lng,
-                            motorista_id: usuario.id
+                            lat: posicaoAtual.lat, lng: posicaoAtual.lng, motorista_id: usuario.id
                         });
                     }
                 },
-                (erro) => { console.warn("Erro GPS:", erro); },
+                () => {},
                 { enableHighAccuracy: true, maximumAge: 10000, timeout: 8000 }
             );
         }
@@ -508,7 +467,7 @@
         // ==============================================
         function statusLogin(texto, tipo) {
             const el = document.getElementById('statusLogin');
-            el.textContent = texto; 
+            el.textContent = texto;
             el.className = `status-text ${tipo}`;
         }
 
@@ -522,36 +481,32 @@
                 placa: document.getElementById('placa').value.trim().toUpperCase(),
                 tipo: "motorista"
             };
-            if(Object.values(dados).some(v => !v)) return statusLogin("❌ Preencha todos os campos!", "erro");
-            if(dados.senha.length < 6) return statusLogin("❌ Senha mínimo 6 dígitos!", "erro");
+            if (Object.values(dados).some(v => !v)) return statusLogin("❌ Preencha todos os campos!", "erro");
+            if (dados.senha.length < 6) return statusLogin("❌ Senha mínimo 6 dígitos!", "erro");
             statusLogin("⏳ Cadastrando...", "");
             try {
                 const res = await fetch(`${API_URL}/register`, {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify(dados)
+                    method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(dados)
                 });
                 const retorno = await res.json();
-                if(!res.ok) throw new Error(retorno.erro || "Falha desconhecida");
+                if (!res.ok) throw new Error(retorno.erro || "Falha");
                 statusLogin("✅ Conta criada! Entrando...", "ok");
                 setTimeout(() => entrar(dados.email, dados.senha), 1000);
-            } catch(e) { statusLogin(`❌ ${e.message}`, "erro"); }
+            } catch (e) { statusLogin(`❌ ${e.message}`, "erro"); }
         }
 
         async function entrar(emailTxt = null, senhaTxt = null) {
             const email = emailTxt || document.getElementById('email').value.trim().toLowerCase();
             const senha = senhaTxt || document.getElementById('senha').value.trim();
-            if(!email || !senha) return statusLogin("❌ Digite e-mail e senha!", "erro");
+            if (!email || !senha) return statusLogin("❌ Digite e-mail e senha!", "erro");
             statusLogin("⏳ Entrando...", "");
             try {
                 const res = await fetch(`${API_URL}/login`, {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({email, senha})
+                    method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, senha })
                 });
                 const retorno = await res.json();
-                if(!res.ok) throw new Error(retorno.erro || "Falha no login");
-                if(retorno.user.tipo !== "motorista") throw new Error("Essa conta não é de motorista");
+                if (!res.ok) throw new Error(retorno.erro || "Falha no login");
+                if (retorno.user.tipo !== "motorista") throw new Error("Conta não é de motorista");
                 token = retorno.token;
                 usuario = retorno.user;
                 localStorage.setItem("token_motorista", token);
@@ -559,7 +514,7 @@
                 telaPrincipal();
                 iniciarGPS();
                 falar("Bem vindo " + usuario.nome + "!");
-            } catch(e) { statusLogin(`❌ ${e.message}`, "erro"); }
+            } catch (e) { statusLogin(`❌ ${e.message}`, "erro"); }
         }
 
         function telaPrincipal() {
@@ -571,79 +526,53 @@
         }
 
         function sair() {
-            localStorage.clear(); 
-            limparTudo(); 
+            localStorage.clear();
+            limparTudo();
             window.location.reload();
         }
-
-        window.onload = () => {
-            const t = localStorage.getItem("token_motorista");
-            const d = localStorage.getItem("dados_motorista");
-            if(t && d) {
-                try {
-                    usuario = JSON.parse(d);
-                    token = t;
-                    telaPrincipal();
-                    iniciarGPS();
-                } catch { localStorage.clear(); }
-            }
-            document.querySelectorAll('.estrela').forEach(estrela => {
-                estrela.addEventListener('click', () => {
-                    notaAvaliacao = parseInt(estrela.dataset.valor);
-                    document.querySelectorAll('.estrela').forEach((e, i) => {
-                        e.classList.toggle('ativa', i < notaAvaliacao);
-                    });
-                });
-            });
-        };
 
         // ==============================================
         // 🟢 ONLINE / OFFLINE
         // ==============================================
         async function ficarOnline() {
-            if(!usuario || !token) return mostrarErro("Faça login novamente!");
+            if (!usuario || !token) return mostrarErro("Faça login!");
             try {
-                await fetch(`${API_URL}/ficar_online/${usuario.id}`, { 
-                    method:'POST', 
-                    headers: {'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json'} 
+                await fetch(`${API_URL}/ficar_online/${usuario.id}`, {
+                    method: 'POST', headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' }
                 });
                 document.getElementById('btnOnline').style.display = 'none';
                 document.getElementById('btnOffline').style.display = 'block';
                 document.getElementById('statusMotorista').className = 'status-bolinha online online-animado';
                 document.getElementById('statusMotorista').innerHTML = '<i class="fas fa-circle"></i> <span>Online</span>';
-                socket.emit('motorista_online', {id: usuario.id, nome: usuario.nome});
+                socket.emit('motorista_online', { id: usuario.id, nome: usuario.nome });
                 falar("Você está online!");
-            } catch(e) { mostrarErro("Erro de conexão"); }
+            } catch (e) { mostrarErro("Erro de conexão"); }
         }
 
         async function ficarOffline() {
             try {
-                await fetch(`${API_URL}/ficar_offline/${usuario.id}`, { 
-                    method:'POST', 
-                    headers: {'Authorization': `Bearer ${token}`} 
+                await fetch(`${API_URL}/ficar_offline/${usuario.id}`, {
+                    method: 'POST', headers: { 'Authorization': `Bearer ${token}` }
                 });
                 document.getElementById('btnOnline').style.display = 'block';
                 document.getElementById('btnOffline').style.display = 'none';
                 document.getElementById('statusMotorista').className = 'status-bolinha offline';
                 document.getElementById('statusMotorista').innerHTML = '<i class="fas fa-circle"></i> <span>Offline</span>';
-                socket.emit('motorista_offline', {id: usuario.id});
-                if(envioLocalizacaoInterval) clearInterval(envioLocalizacaoInterval);
-            } catch(e) {}
+                socket.emit('motorista_offline', { id: usuario.id });
+                if (envioLocalizacaoInterval) clearInterval(envioLocalizacaoInterval);
+            } catch (e) {}
         }
 
         // ==============================================
         // 🚨 RECEBER CORRIDA
         // ==============================================
         socket.on('nova_corrida', (dados) => {
-            console.log("📥 NOVA CORRIDA:", dados);
-            if(estado.aceito) return;
+            if (estado.aceito) return;
             corrida = dados;
-            estado.aceito = false;
-            estado.pegouPassageiro = false;
-            estado.viagemIniciada = false;
+            estado = { aceito: false, pegouPassageiro: false, viagemIniciada: false };
             
             somAlerta.play().catch(() => {});
-            falar("Nova corrida! Valor R$ " + parseFloat(dados.valor).toFixed(2).replace('.', ','));
+            falar("Nova corrida! R$ " + parseFloat(dados.valor).toFixed(2).replace('.', ','));
             
             document.getElementById('cPassageiro').textContent = dados.passageiro_nome || "Cliente";
             document.getElementById('cTelefone').textContent = dados.passageiro_telefone || "Não informado";
@@ -651,40 +580,38 @@
             document.getElementById('cDestino').textContent = dados.destino;
             document.getElementById('cValor').textContent = `R$ ${parseFloat(dados.valor || 0).toFixed(2)}`;
             document.getElementById('cardCorrida').style.display = 'block';
-            
-            // Esconde botões fixos
             document.getElementById('botoesFixos').style.display = 'none';
             
             clearInterval(timerCorrida);
-            iniciarTemporizadorCorrida();
-            iniciarSomChamada();
+            iniciarTemporizador();
+            iniciarSom();
         });
 
-        function iniciarTemporizadorCorrida() {
+        function iniciarTemporizador() {
             segundosCorrida = 15;
-            atualizarTextoBotao();
+            atualizarBtnRecusar();
             timerCorrida = setInterval(() => {
                 segundosCorrida--;
-                atualizarTextoBotao();
+                atualizarBtnRecusar();
                 if (segundosCorrida <= 0) {
                     clearInterval(timerCorrida);
-                    pararSomChamada();
+                    pararSom();
                     recusarCorrida();
                 }
             }, 1000);
         }
 
-        function atualizarTextoBotao() {
+        function atualizarBtnRecusar() {
             document.getElementById('btnRecusarCorrida').textContent = `❌ RECUSAR (${segundosCorrida}s)`;
         }
 
-        function iniciarSomChamada() {
+        function iniciarSom() {
             somAlerta.currentTime = 0;
             somAlerta.loop = true;
             somAlerta.play().catch(() => {});
         }
 
-        function pararSomChamada() {
+        function pararSom() {
             somAlerta.pause();
             somAlerta.currentTime = 0;
             somAlerta.loop = false;
@@ -695,135 +622,100 @@
         // ==============================================
         async function aceitarCorrida() {
             clearInterval(timerCorrida);
-            pararSomChamada();
-            if(!corrida) return mostrarErro("Nenhuma corrida!");
-            if(!token || !usuario) return mostrarErro("Faça login!");
+            pararSom();
+            if (!corrida || !token || !usuario) return mostrarErro("Erro ao aceitar");
             
             const corridaId = corrida.corrida_id || corrida.id;
-            if(!corridaId) return mostrarErro("ID inválido!");
-            
             try {
                 const res = await fetch(`${API_URL}/aceitar_corrida/${corridaId}`, {
                     method: 'POST',
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json'
-                    },
-                    body: JSON.stringify({ 
-                        motorista_id: String(usuario.id),
-                        nome_motorista: usuario.nome,
-                        status: "aceito"
-                    })
+                    headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                    body: JSON.stringify({ motorista_id: String(usuario.id), nome_motorista: usuario.nome, status: "aceito" })
                 });
                 
-                let retorno;
-                try { retorno = await res.json(); } catch(e) { retorno = {}; }
-                
-                if(res.ok || res.status === 200 || res.status === 201) {
+                if (res.ok || res.status === 200 || res.status === 201) {
                     estado.aceito = true;
                     document.getElementById('cardCorrida').style.display = 'none';
-                    
-                    // Mostra área de ações
                     document.getElementById('areaAcoes').style.display = 'block';
                     document.getElementById('btnCancelarCorrida').style.display = 'flex';
                     
-                    // ETAPA 1: Mostra botão IR ATÉ PASSAGEIRO
-                    atualizarEtapa(1);
-                    criarBotaoIrPassageiro();
+                    // ETAPA 1: Botão IR ATÉ PASSAGEIRO
+                    etapaIrAtePassageiro();
                     
                     socket.emit('corrida_aceita', { corrida_id: corridaId, motorista: usuario, status: "aceito" });
                     socket.emit("entrar_na_sala", { corrida_id: corridaId });
                     
                     envioLocalizacaoInterval = setInterval(() => {
                         socket.emit('localizacao_motorista', {
-                            corrida_id: corridaId,
-                            lat: posicaoAtual.lat,
-                            lng: posicaoAtual.lng,
-                            motorista_id: usuario.id,
-                            status: estado
+                            corrida_id: corridaId, lat: posicaoAtual.lat, lng: posicaoAtual.lng,
+                            motorista_id: usuario.id, status: estado
                         });
                     }, 1500);
                     
                     somSucesso.play().catch(() => {});
                     falar("Corrida aceita! Deslize para ir ao passageiro");
-                } else {
-                    throw new Error(retorno.erro || `Erro ${res.status}`);
                 }
-            } catch(e) { mostrarErro(e.message); }
+            } catch (e) { mostrarErro(e.message); }
         }
 
-        function criarBotaoIrPassageiro() {
-            const container = document.getElementById('containerIrPassageiro');
+        function etapaIrAtePassageiro() {
+            document.getElementById('etapaTexto').className = 'etapa etapa1';
+            document.getElementById('etapaTexto').innerHTML = '📦 PASSO 1: Deslize para ir ao passageiro';
+            
+            const container = document.getElementById('containerAcoesCorrida');
             container.innerHTML = '';
-            btnDeslizeIrPassageiro = criarBotaoDeslizar(
-                'IR ATÉ O PASSAGEIRO', 
-                'fas fa-location-arrow', 
-                '#165DFF',
-                irAoPassageiro
-            );
-            container.appendChild(btnDeslizeIrPassageiro);
-            container.style.display = 'block';
-            document.getElementById('containerIniciarViagem').style.display = 'none';
-            document.getElementById('containerFinalizar').style.display = 'none';
+            const btn = criarBotaoDeslizar('IR ATÉ O PASSAGEIRO', 'fas fa-location-arrow', '#165DFF', irAtePassageiro);
+            container.appendChild(btn);
         }
 
         function recusarCorrida() {
             document.getElementById('cardCorrida').style.display = 'none';
             corrida = null;
             clearInterval(timerCorrida);
-            pararSomChamada();
+            pararSom();
             document.getElementById('botoesFixos').style.display = 'block';
+            document.getElementById('areaAcoes').style.display = 'none';
             falar("Corrida recusada");
         }
 
         // ==============================================
         // 📍 IR ATÉ PASSAGEIRO
         // ==============================================
-        function irAoPassageiro() {
-            if(!estado.aceito) return mostrarErro("Aceite a corrida primeiro!");
+        function irAtePassageiro() {
+            if (!estado.aceito) return mostrarErro("Aceite a corrida primeiro!");
             
             estado.pegouPassageiro = true;
             
             const destino = (corrida.origem_lat && corrida.origem_lng) 
-                ? `${corrida.origem_lat},${corrida.origem_lng}` 
-                : corrida.origem;
+                ? `${corrida.origem_lat},${corrida.origem_lng}` : corrida.origem;
             
             document.getElementById('mapaFrame').src = 
                 `https://www.google.com/maps/embed/v1/directions?key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8&origin=${posicaoAtual.lat},${posicaoAtual.lng}&destination=${destino}&mode=driving`;
-            
             window.open(`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(destino)}&travelmode=driving`, '_blank');
             
-            // Esconde botão IR e mostra card de chegada
-            document.getElementById('containerIrPassageiro').style.display = 'none';
-            document.getElementById('containerIniciarViagem').style.display = 'none';
-            document.getElementById('containerFinalizar').style.display = 'none';
+            // Esconde ações da barra e mostra card de chegada
+            document.getElementById('containerAcoesCorrida').innerHTML = '';
+            document.getElementById('etapaTexto').style.display = 'none';
             
-            // Mostra card do passageiro com botão de embarque
-            mostrarCardChegada();
+            // Mostra card do passageiro
+            mostrarCardPassageiro();
             
             falar("Você chegou ao passageiro!");
         }
 
-        function mostrarCardChegada() {
+        function mostrarCardPassageiro() {
             if (!corrida) return;
             
             document.getElementById('fotoChegada').src = corrida.foto_passageiro || 
                 "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80'%3E%3Ccircle cx='40' cy='40' r='40' fill='%23363E4D'/%3E%3Ctext x='40' y='50' text-anchor='middle' fill='white' font-size='35'%3E👤%3C/text%3E%3C/svg%3E";
-            
             document.getElementById('nomeChegada').textContent = corrida.passageiro_nome || 'Passageiro';
             document.getElementById('cardPassageiroChegada').style.display = 'block';
             
-            // Cria botão deslizante de embarque
-            const container = document.getElementById('containerEmbarque');
+            // Cria botão deslizante PASSAGEIRO EMBARCOU
+            const container = document.getElementById('containerBtnEmbarque');
             container.innerHTML = '';
-            btnDeslizeEmbarque = criarBotaoDeslizar(
-                'PASSAGEIRO EMBARCOU',
-                'fas fa-user-check',
-                '#00B42A',
-                iniciarViagem
-            );
-            container.appendChild(btnDeslizeEmbarque);
+            const btn = criarBotaoDeslizar('PASSAGEIRO EMBARCOU', 'fas fa-user-check', '#00B42A', iniciarViagem);
+            container.appendChild(btn);
             
             document.getElementById('btnLigarChegada').style.display = 'flex';
         }
@@ -832,50 +724,43 @@
         // 🟢 INICIAR VIAGEM
         // ==============================================
         function iniciarViagem() {
-            if(!estado.aceito || !estado.pegouPassageiro) {
-                return mostrarErro("Busque o passageiro primeiro!");
-            }
+            if (!estado.pegouPassageiro) return mostrarErro("Busque o passageiro primeiro!");
             
-            document.getElementById('cardPassageiroChegada').style.display = 'none';
             estado.viagemIniciada = true;
+            document.getElementById('cardPassageiroChegada').style.display = 'none';
             
             const destino = (corrida.destino_lat && corrida.destino_lng) 
-                ? `${corrida.destino_lat},${corrida.destino_lng}` 
-                : corrida.destino;
+                ? `${corrida.destino_lat},${corrida.destino_lng}` : corrida.destino;
             
             document.getElementById('mapaFrame').src = 
                 `https://www.google.com/maps/embed/v1/directions?key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8&origin=${posicaoAtual.lat},${posicaoAtual.lng}&destination=${destino}&mode=driving`;
-            
             window.open(`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(destino)}&travelmode=driving`, '_blank');
             
-            // ETAPA 3: Mostra botão FINALIZAR
-            atualizarEtapa(3);
-            document.getElementById('containerIrPassageiro').style.display = 'none';
-            document.getElementById('containerIniciarViagem').style.display = 'none';
+            // ETAPA 3: Botão FINALIZAR
+            etapaFinalizar();
             
-            // Cria botão deslizante FINALIZAR
-            const container = document.getElementById('containerFinalizar');
-            container.innerHTML = '';
-            btnDeslizeFinalizar = criarBotaoDeslizar(
-                'FINALIZAR CORRIDA',
-                'fas fa-check-double',
-                '#00B42A',
-                finalizarAgora
-            );
-            container.appendChild(btnDeslizeFinalizar);
-            container.style.display = 'block';
-            
-            socket.emit('viagem_iniciada', {corrida_id: corrida.corrida_id || corrida.id});
+            socket.emit('viagem_iniciada', { corrida_id: corrida.corrida_id || corrida.id });
             falar("Viagem iniciada! Siga até o destino.");
+        }
+
+        function etapaFinalizar() {
+            document.getElementById('etapaTexto').style.display = 'block';
+            document.getElementById('etapaTexto').className = 'etapa etapa3';
+            document.getElementById('etapaTexto').innerHTML = '🚗 PASSO 3: VIAGEM EM ANDAMENTO! Deslize para finalizar';
+            
+            const container = document.getElementById('containerAcoesCorrida');
+            container.innerHTML = '';
+            const btn = criarBotaoDeslizar('FINALIZAR CORRIDA', 'fas fa-check-double', '#00B42A', finalizarCorrida);
+            container.appendChild(btn);
         }
 
         // ==============================================
         // 📞 LIGAR
         // ==============================================
         function ligarCliente() {
-            if(!corrida || !corrida.passageiro_telefone) return mostrarErro("Sem telefone");
-            const tel = corrida.passageiro_telefone.replace(/\D/g,'');
-            if(confirm("📞 OK = LIGAR | CANCELAR = WHATSAPP")) {
+            if (!corrida || !corrida.passageiro_telefone) return mostrarErro("Sem telefone");
+            const tel = corrida.passageiro_telefone.replace(/\D/g, '');
+            if (confirm("📞 OK = LIGAR | CANCELAR = WHATSAPP")) {
                 window.location.href = `tel:${tel}`;
             } else {
                 window.open(`https://wa.me/${tel}?text=Olá, sou seu motorista da Rota Brasil!`, '_blank');
@@ -883,61 +768,46 @@
         }
 
         // ==============================================
-        // 🏁 FINALIZAR
+        // 🏁 FINALIZAR CORRIDA
         // ==============================================
-        async function finalizarAgora() {
-            if(!corrida) return mostrarErro("Nenhuma corrida ativa.");
-            if(!estado.viagemIniciada) return mostrarErro("Inicie a viagem primeiro!");
+        async function finalizarCorrida() {
+            if (!corrida || !estado.viagemIniciada) return mostrarErro("Inicie a viagem primeiro!");
             
             const valorFinal = parseFloat(corrida.valor || 0);
             const corridaId = corrida.corrida_id || corrida.id;
             
             try {
-                const resposta = await fetch(`${API_URL}/finalizar_corrida/${corridaId}`, {
+                const res = await fetch(`${API_URL}/finalizar_corrida/${corridaId}`, {
                     method: 'POST',
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json'
-                    },
+                    headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json', 'Accept': 'application/json' },
                     body: JSON.stringify({
-                        status: "finalizada",
-                        valor_final: valorFinal,
+                        status: "finalizada", valor_final: valorFinal,
                         distancia_total: parseFloat(corrida.distancia || 0),
-                        motorista_id: String(usuario.id),
-                        finalizado_em: new Date().toISOString()
+                        motorista_id: String(usuario.id), finalizado_em: new Date().toISOString()
                     })
                 });
                 
-                if(resposta.ok || resposta.status === 200 || resposta.status === 201) {
+                if (res.ok || res.status === 200 || res.status === 201) {
                     somDinheiro.play().catch(() => {});
                     falar("Corrida finalizada! R$ " + valorFinal.toFixed(2).replace('.', ','));
                     
-                    socket.emit('viagem_finalizada', {
-                        corrida_id: corridaId,
-                        valor: valorFinal,
-                        motorista_nome: usuario.nome
-                    });
+                    socket.emit('viagem_finalizada', { corrida_id: corridaId, valor: valorFinal, motorista_nome: usuario.nome });
                     
-                    if(envioLocalizacaoInterval) clearInterval(envioLocalizacaoInterval);
+                    if (envioLocalizacaoInterval) clearInterval(envioLocalizacaoInterval);
                     
-                    document.getElementById('modalAvaliacao').style.display = 'block';
+                    // Mostra modal de avaliação
                     document.getElementById('areaAcoes').style.display = 'none';
-                } else {
-                    let retorno = {};
-                    try { retorno = await resposta.json(); } catch(e) {}
-                    throw new Error(retorno.erro || `Erro ${resposta.status}`);
+                    document.getElementById('btnCancelarCorrida').style.display = 'none';
+                    document.getElementById('modalAvaliacao').style.display = 'block';
                 }
-            } catch (erro) {
-                mostrarErro("Falha ao finalizar: " + erro.message);
-            }
+            } catch (e) { mostrarErro("Erro ao finalizar: " + e.message); }
         }
 
         // ==============================================
         // ⭐ AVALIAÇÃO
         // ==============================================
         async function enviarAvaliacao() {
-            if(notaAvaliacao === 0) { alert("Dê pelo menos 1 estrela!"); return; }
+            if (notaAvaliacao === 0) { alert("⚠️ Dê pelo menos 1 estrela!"); return; }
             
             const comentario = document.getElementById('comentarioAvaliacao').value.trim();
             const corridaId = corrida?.corrida_id || corrida?.id;
@@ -945,70 +815,48 @@
             try {
                 await fetch(`${API_URL}/avaliar`, {
                     method: 'POST',
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json'
-                    },
+                    headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        corrida_id: corridaId,
-                        passageiro_id: String(corrida?.passageiro_id),
-                        motorista_id: String(usuario.id),
-                        nota: notaAvaliacao,
-                        comentario: comentario
+                        corrida_id: corridaId, passageiro_id: String(corrida?.passageiro_id),
+                        motorista_id: String(usuario.id), nota: notaAvaliacao, comentario: comentario
                     })
                 });
                 
-                falar("Avaliação enviada! Obrigado");
+                falar("Avaliação enviada! Obrigado!");
                 document.getElementById('modalAvaliacao').style.display = 'none';
                 limparTudo();
-            } catch(e) { mostrarErro("Erro ao enviar avaliação"); }
+            } catch (e) { mostrarErro("Erro ao avaliar"); }
         }
 
         // ==============================================
         // 🔴 CANCELAMENTO
         // ==============================================
         socket.on("corrida_cancelada", (dados) => {
-            const corridaId = corrida?.corrida_id || corrida?.id;
-            if(corridaId && dados?.corrida_id == corridaId) {
+            if (corrida && (dados?.corrida_id == (corrida.corrida_id || corrida.id))) {
                 somAlto.play().catch(() => {});
-                falar("Passageiro cancelou a corrida!");
-                if(envioLocalizacaoInterval) clearInterval(envioLocalizacaoInterval);
+                falar("Passageiro cancelou!");
+                if (envioLocalizacaoInterval) clearInterval(envioLocalizacaoInterval);
                 limparTudo();
                 document.getElementById('alertaCancel').style.display = 'block';
             }
         });
 
         socket.on("cliente_desconectado", (dados) => {
-            const corridaId = corrida?.corrida_id || corrida?.id;
-            if(corridaId && dados?.corrida_id == corridaId) {
+            if (corrida && (dados?.corrida_id == (corrida.corrida_id || corrida.id))) {
                 somAlto.play().catch(() => {});
                 falar("Passageiro desconectado!");
-                if(envioLocalizacaoInterval) clearInterval(envioLocalizacaoInterval);
+                if (envioLocalizacaoInterval) clearInterval(envioLocalizacaoInterval);
                 limparTudo();
                 document.getElementById('alertaCancel').style.display = 'block';
             }
         });
 
         // ==============================================
-        // 🧹 LIMPEZA
+        // 🧹 LIMPEZA TOTAL
         // ==============================================
-        function atualizarEtapa(num) {
-            const el = document.getElementById('etapaTexto');
-            el.className = `etapa etapa${num}`;
-            if(num === 1) el.innerHTML = "📦 PASSO 1: Deslize para ir ao passageiro";
-            if(num === 2) el.innerHTML = "👋 PASSO 2: Passageiro encontrado! Confirme o embarque";
-            if(num === 3) el.innerHTML = "🚗 PASSO 3: VIAGEM EM ANDAMENTO! Deslize para finalizar";
-        }
-
-        function fecharAlertaCancel() {
-            document.getElementById('alertaCancel').style.display = 'none';
-        }
-
         function limparTudo() {
             corrida = null;
-            estado.aceito = false;
-            estado.pegouPassageiro = false;
-            estado.viagemIniciada = false;
+            estado = { aceito: false, pegouPassageiro: false, viagemIniciada: false };
             notaAvaliacao = 0;
             
             document.getElementById('cardCorrida').style.display = 'none';
@@ -1017,14 +865,10 @@
             document.getElementById('alertaCancel').style.display = 'none';
             document.getElementById('cardPassageiroChegada').style.display = 'none';
             document.getElementById('btnCancelarCorrida').style.display = 'none';
+            document.getElementById('containerAcoesCorrida').innerHTML = '';
+            document.getElementById('containerBtnEmbarque').innerHTML = '';
+            document.getElementById('etapaTexto').style.display = 'block';
             
-            // Limpa containers de botões deslizantes
-            document.getElementById('containerIrPassageiro').innerHTML = '';
-            document.getElementById('containerIniciarViagem').innerHTML = '';
-            document.getElementById('containerFinalizar').innerHTML = '';
-            document.getElementById('containerEmbarque').innerHTML = '';
-            
-            // Reexibe botões fixos
             document.getElementById('botoesFixos').style.display = 'block';
             
             document.getElementById('mapaFrame').src = 
@@ -1032,74 +876,82 @@
             
             document.querySelectorAll('.estrela').forEach(e => e.classList.remove('ativa'));
             document.getElementById('comentarioAvaliacao').value = '';
-            
             document.querySelectorAll('audio').forEach(a => { a.pause(); a.currentTime = 0; });
             
             clearInterval(timerCorrida);
-            pararSomChamada();
-            
-            console.log("🧹 Limpo! Pronto para nova corrida.");
-        }
-
-        function fecharCarteiraMotorista() {
-            document.getElementById("painelCarteiraMotorista").style.display = "none";
-        }
-
-        async function abrirCarteiraMotorista() {
-            document.getElementById("painelCarteiraMotorista").style.display = "block";
-            try {
-                const resposta = await fetch(`${API_URL}/carteira/saldo`, { 
-                    headers: { Authorization: `Bearer ${token}` } 
-                });
-                const dados = await resposta.json();
-                document.getElementById("saldoMotorista").textContent = `R$ ${dados.saldo.toFixed(2)}`;
-            } catch(e) {}
+            pararSom();
         }
 
         async function cancelarCorridaMotorista() {
             if (!corrida) return;
-            if (!confirm("Deseja realmente cancelar a corrida?")) return;
+            if (!confirm("Cancelar esta corrida?")) return;
             
             const corridaId = corrida.corrida_id || corrida.id;
             try {
                 await fetch(`${API_URL}/cancelar_corrida_motorista/${corridaId}`, {
                     method: 'POST',
-                    headers: { 
-                        Authorization: `Bearer ${token}`, 
-                        'Content-Type': 'application/json' 
-                    }
+                    headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }
                 });
                 socket.emit('corrida_cancelada_motorista', { corrida_id: corridaId });
                 limparTudo();
                 falar("Corrida cancelada.");
-            } catch(e) { mostrarErro("Erro ao cancelar."); }
+            } catch (e) { mostrarErro("Erro ao cancelar."); }
+        }
+
+        async function abrirCarteira() {
+            document.getElementById('painelCarteiraMotorista').style.display = 'block';
+            try {
+                const res = await fetch(`${API_URL}/carteira/saldo`, { headers: { Authorization: `Bearer ${token}` } });
+                const dados = await res.json();
+                document.getElementById('saldoMotorista').textContent = `R$ ${(dados.saldo || 0).toFixed(2)}`;
+            } catch (e) {}
         }
 
         // ==============================================
         // 🔌 SOCKET
         // ==============================================
         socket.on('connect', () => {
-            console.log("✅ Conectado! ID:", socket.id);
-            if(usuario?.id && document.getElementById('statusMotorista').classList.contains('online')) {
-                socket.emit('motorista_online', {id: usuario.id, nome: usuario.nome});
+            console.log("✅ Conectado:", socket.id);
+            if (usuario?.id && document.getElementById('statusMotorista').classList.contains('online')) {
+                socket.emit('motorista_online', { id: usuario.id, nome: usuario.nome });
             }
         });
 
-        socket.on('disconnect', () => {
-            mostrarErro("Conexão perdida! Reconectando...");
-        });
-
-        socket.on('connect_error', () => {
-            mostrarErro("Servidor indisponível");
-        });
+        socket.on('disconnect', () => mostrarErro("Conexão perdida!"));
+        socket.on('connect_error', () => mostrarErro("Servidor indisponível"));
 
         window.addEventListener('beforeunload', (e) => {
-            if(estado.aceito) {
+            if (estado.aceito) {
                 e.preventDefault();
                 e.returnValue = '⚠️ Você está em uma corrida!';
-                return e.returnValue;
             }
         });
+
+        // ==============================================
+        // 🚀 INICIALIZAÇÃO
+        // ==============================================
+        window.onload = () => {
+            const t = localStorage.getItem("token_motorista");
+            const d = localStorage.getItem("dados_motorista");
+            if (t && d) {
+                try {
+                    usuario = JSON.parse(d);
+                    token = t;
+                    telaPrincipal();
+                    iniciarGPS();
+                } catch { localStorage.clear(); }
+            }
+            
+            // Configurar estrelas da avaliação
+            document.querySelectorAll('.estrela').forEach(estrela => {
+                estrela.addEventListener('click', function() {
+                    notaAvaliacao = parseInt(this.dataset.valor);
+                    document.querySelectorAll('.estrela').forEach((e, i) => {
+                        e.classList.toggle('ativa', i < notaAvaliacao);
+                    });
+                });
+            });
+        };
     </script>
 </body>
 </html>
