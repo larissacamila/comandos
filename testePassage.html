@@ -9,7 +9,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
     
     <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
-    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=places"></script>
 
     <style>
         :root {
@@ -137,7 +136,7 @@
         .status-chegou { color: var(--cor-primaria); }
         .status-texto { font-size: 18px; font-weight: bold; margin-bottom: 6px; }
         .status-subtexto { font-size: 13px; color: var(--cor-texto-secundario); }
-        .linha-info { font-size: 14px; margin-bottom: 6px; }
+        .linha-info { font-size: 14px; margin-bottom: 6px; text-align: left; }
         .placa-badge { background: #000; color: #FFF; padding: 2px 8px; border-radius: 4px; font-weight: bold; }
 
         /* FOTO DO MOTORISTA */
@@ -157,14 +156,35 @@
             animation: pulse 1.5s infinite;
         }
 
+        /* MAPA COM IFRAME */
         .card-mapa-container { 
             margin-top: 20px; 
             border-radius: 12px; 
             overflow: hidden; 
             border: 2px solid var(--cor-primaria);
             position: relative;
+            background: #000;
         }
-        #mapa { width: 100%; height: 350px; }
+        #mapaIframe { width: 100%; height: 350px; border: none; }
+
+        /* Indicador no mapa */
+        .indicador-mapa {
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(30, 41, 59, 0.95);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            z-index: 10;
+            border: 1px solid var(--cor-primaria);
+            display: none;
+            color: white;
+            white-space: nowrap;
+        }
+        .indicador-mapa.visivel { display: block; }
 
         .historico-avaliacoes { margin-top: 25px; }
         .historico-avaliacoes h3 { font-size: 15px; margin-bottom: 12px; color: var(--cor-texto-secundario); }
@@ -185,15 +205,10 @@
         .btn-secundario { background-color: var(--cor-card-claro); color: white; margin-top: 8px; }
         .btn-desconectar { width: auto; padding: 6px 12px; font-size: 12px; background-color: var(--cor-perigo); color: white; }
         .btn-blocked { background-color: var(--cor-card-claro) !important; color: var(--cor-texto-secundario) !important; cursor: not-allowed; }
-        .btn-carteira { background:#16a34a; color:white; border:none; padding:12px 18px; border-radius:10px; cursor:pointer; }
+        .btn-carteira { background:#16a34a; color:white; border:none; padding:12px 18px; border-radius:10px; cursor:pointer; font-weight:bold; }
 
         @keyframes pulse { 0% { opacity: 0.5; } 50% { opacity: 1; } 100% { opacity: 0.5; } }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        @keyframes carroMovendo { 
-            0% { transform: translateY(0); } 
-            50% { transform: translateY(-3px); } 
-            100% { transform: translateY(0); } 
-        }
 
         .modal-carteira {
             position:fixed; top:50%; left:50%; transform:translate(-50%,-50%);
@@ -213,23 +228,6 @@
             border-radius: 50%;
             animation: spin 0.8s linear infinite;
         }
-
-        /* Indicador no mapa */
-        .indicador-mapa {
-            position: absolute;
-            top: 10px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: var(--cor-card);
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-            z-index: 10;
-            border: 1px solid var(--cor-primaria);
-            display: none;
-        }
-        .indicador-mapa.visivel { display: block; }
     </style>
 </head>
 <body>
@@ -244,24 +242,19 @@
                 <div class="grupo-input" id="grupoFoto" style="display: none;">
                     <label for="foto_perfil"><i class="fas fa-camera"></i> URL da Foto de Perfil</label>
                     <input type="url" id="foto_perfil" placeholder="https://cdn-icons-png.flaticon.com/512/149/149071.png">
-                    <small style="color: var(--cor-texto-secundario); font-size: 11px;">O motorista usará essa foto para te identificar.</small>
                 </div>
-
                 <div class="grupo-input" id="grupoNome" style="display: none;">
                     <label for="nome"><i class="fas fa-user"></i> Nome Completo</label>
                     <input type="text" id="nome" placeholder="Ex: Junior Silva">
                 </div>
-
                 <div class="grupo-input">
                     <label for="email"><i class="fas fa-envelope"></i> E-mail</label>
                     <input type="email" id="email" placeholder="seuemail@provedor.com">
                 </div>
-
                 <div class="grupo-input">
                     <label for="senha"><i class="fas fa-lock"></i> Senha</label>
                     <input type="password" id="senha" placeholder="••••••••">
                 </div>
-
                 <div class="grupo-input" id="grupoTelefone" style="display: none;">
                     <label for="telefone"><i class="fas fa-phone"></i> Telefone / WhatsApp</label>
                     <input type="tel" id="telefone" placeholder="(11) 99999-9999">
@@ -289,9 +282,8 @@
         </header>
 
         <div id="mediaNota" class="card-media-nota">
-            <span>Sua Nota atual:</span>
-            <span class="nota-num">5.0</span>
-            <span class="estrelas"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></span>
+            <span>Sua Nota:</span>
+            <span class="nota-num">5.0 ⭐</span>
             <button class="btn-carteira" onclick="abrirCarteira()">💰 Carteira</button>
         </div>
 
@@ -300,26 +292,28 @@
             
             <div class="grupo-busca">
                 <label><i class="fas fa-map-marker-alt" style="color: var(--cor-perigo);"></i> Local de Origem</label>
-                <input type="text" id="origem" placeholder="Digite o endereço de partida..." oninput="buscarEndereco(this.value, 'origem')">
-                <div id="sugestoes_origem" class="caixa-sugestoes"></div>
+                <input type="text" id="origem" placeholder="Digite o endereço de partida...">
             </div>
 
             <div class="grupo-busca">
                 <label><i class="fas fa-flag-checkered" style="color: var(--cor-sucesso);"></i> Destino Final</label>
-                <input type="text" id="destino" placeholder="Para onde você quer ir?..." oninput="buscarEndereco(this.value, 'destino')">
-                <div id="sugestoes_destino" class="caixa-sugestoes"></div>
+                <input type="text" id="destino" placeholder="Para onde você quer ir?...">
             </div>
 
-            <button id="btnLocalizacao" class="btn-primario" onclick="gerenciarBotaoLocalizacao()">
-                <span id="txtBtnLocalizacao"><i class="fas fa-map-marker-alt"></i> 📍 Usar Localização Atual</span>
+            <button id="btnLocalizacao" class="btn-primario" onclick="usarLocalizacaoAtual()">
+                <span><i class="fas fa-map-marker-alt"></i> 📍 Usar Minha Localização</span>
+            </button>
+            
+            <button id="btnCalcular" class="btn-sucesso" onclick="calcularValor()" style="margin-top:8px;">
+                <i class="fas fa-calculator"></i> Calcular Valor
             </button>
         </div>
 
         <div id="cardValor" class="card-preco" style="display: none;">
-            <h4>Resumo da Viagem Estimada</h4>
+            <h4>Resumo da Viagem</h4>
             <div class="detalhes-preco">
-                <p>Distância: <strong id="txtDistancia">Calculando...</strong></p>
-                <p>Tempo Estimado: <strong id="txtTempo">Calculando...</strong></p>
+                <p>Distância: <strong id="txtDistancia">--</strong></p>
+                <p>Tempo Estimado: <strong id="txtTempo">--</strong></p>
                 <p class="preco-final">Valor: <span id="txtValor">R$ 0,00</span></p>
             </div>
             <button id="btnChamar" class="btn-sucesso-grande" onclick="chamarCorrida()">
@@ -327,12 +321,12 @@
             </button>
         </div>
 
-        <!-- MAPA COM INDICADOR -->
+        <!-- MAPA COM IFRAME (SEM API KEY) -->
         <div id="cardMapa" class="card-mapa-container" style="display: none;">
             <div class="indicador-mapa" id="indicadorMapa">
                 🚗 Motorista a <span id="distanciaMapa">--</span> km • 🕒 <span id="tempoMapa">--</span> min
             </div>
-            <div id="mapa" style="width: 100%; height: 350px;"></div>
+            <iframe id="mapaIframe" src="" style="width:100%; height:350px; border:none;"></iframe>
         </div>
 
         <div id="cardStatus" class="card-status-corrida" style="display: none;">
@@ -340,8 +334,10 @@
         </div>
 
         <div class="historico-avaliacoes">
-            <h3><i class="fas fa-comments"></i> Comentários dos Motoristas</h3>
-            <div id="listaAvaliacoes"></div>
+            <h3><i class="fas fa-comments"></i> Avaliações Recebidas</h3>
+            <div id="listaAvaliacoes">
+                <p style="text-align:center; font-size:13px; color:var(--cor-texto-secundario);">Carregando...</p>
+            </div>
         </div>
     </div>
 
@@ -349,19 +345,17 @@
     <div id="modalAvaliacaoPassageiro" class="janela-modal" style="display: none;">
         <div class="conteudo-modal">
             <h3 id="tituloAvaliacao">Avalie seu Motorista</h3>
-            <p>Como foi sua experiência nessa viagem?</p>
-            <div class="estrelas-selecao">
-                <span class="estrela" onclick="selecionarEstrela(1)">★</span>
-                <span class="estrela" onclick="selecionarEstrela(2)">★</span>
-                <span class="estrela" onclick="selecionarEstrela(3)">★</span>
-                <span class="estrela" onclick="selecionarEstrela(4)">★</span>
-                <span class="estrela" onclick="selecionarEstrela(5)">★</span>
+            <p>Como foi sua experiência?</p>
+            <div class="estrelas-selecao" id="estrelasContainer">
+                <span class="estrela" data-nota="1">★</span>
+                <span class="estrela" data-nota="2">★</span>
+                <span class="estrela" data-nota="3">★</span>
+                <span class="estrela" data-nota="4">★</span>
+                <span class="estrela" data-nota="5">★</span>
             </div>
-            <textarea id="comentarioAvaliacao" placeholder="Deixe um comentário sobre a viagem (opcional)..." rows="3"></textarea>
-            <div class="botoes-modal">
-                <button class="btn-sucesso" onclick="enviarAvaliacaoMotorista()">Enviar Avaliação</button>
-                <button class="btn-secundario" onclick="fecharAvaliacao()">Agora Não</button>
-            </div>
+            <textarea id="comentarioAvaliacao" placeholder="Comentário (opcional)..." rows="3"></textarea>
+            <button class="btn-sucesso" onclick="enviarAvaliacaoMotorista()">✅ Enviar Avaliação</button>
+            <button class="btn-secundario" onclick="fecharAvaliacao()">Agora Não</button>
         </div>
     </div>
 
@@ -369,37 +363,28 @@
     <div id="painelCarteira" class="modal-carteira">
         <h2>💰 Minha Carteira</h2>
         <p>Saldo disponível: <strong id="saldoCarteira">R$ 0,00</strong></p>
-        <p>Saldo bloqueado: <strong id="saldoBloqueado">R$ 0,00</strong></p>
-        <button class="btn-primary" onclick="adicionarSaldo()">Cartão 💳 Pix</button>
-        <button class="btn-primary">📜 Histórico</button>
+        <button class="btn-primary" onclick="adicionarSaldo()">💳 Adicionar Saldo</button>
         <button class="btn-danger" onclick="fecharCarteira()">❌ Fechar</button>
     </div>
 
     <script>
+        // ============================================================
+        // ⚙️ CONFIGURAÇÕES
+        // ============================================================
         const API = "http://192.168.15.132:5000";
+        const GOOGLE_MAPS_KEY = "AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8"; // Chave do Google Maps
+        
         const socket = io(API, {
             transports: ['websocket', 'polling'],
-            upgrade: true,
             reconnection: true,
-            reconnectionDelay: 1000,
-            reconnectionDelayMax: 5000,
-            reconnectionAttempts: Infinity,
             timeout: 20000
         });
 
         let token = null;
         let passageiro = null;
         let corridaAtual = null;
-        let mapa = null;
-        let markerPassageiro = null;
-        let markerMotorista = null;
-        let markerCarro = null; // 🚗 Marcador do carrinho
-        let rotaLinha = null;
-        let autocompleteService = new google.maps.places.AutocompleteService();
-        let geocoder = new google.maps.Geocoder();
         let distancia = 0;
         let valorFinal = 0;
-        let estadoLocalizacao = 0;
         let notaAvaliacao = 0;
         let corridaIdAvaliacao = null;
         let motoristaIdAvaliacao = null;
@@ -407,364 +392,91 @@
         let lonOrigem = null;
         let latDestino = null;
         let lonDestino = null;
-        let calculandoValor = false;
+        let latMotorista = null;
+        let lonMotorista = null;
 
         // ============================================================
-        // SOCKET EVENTS
+        // 🔊 SOM E VOZ
         // ============================================================
-
-        socket.on("connect", () => { console.log("✅ Passageiro Conectado!"); });
-
-        socket.on("corrida_aceita", (dadosCorrida) => {
-            console.log("🚗 Motorista aceitou!", dadosCorrida);
-            corridaAtual = { ...corridaAtual, ...dadosCorrida };
-            const cid = corridaAtual.id || corridaAtual.corrida_id;
-            if (cid) { socket.emit("entrar_na_sala", { corrida_id: cid }); }
-            tocarSom('sucesso');
-            falar(`Motorista ${dadosCorrida.motorista_nome || 'parceiro'} aceitou sua corrida!`);
-            mostrarStatusCorridaAceita(dadosCorrida);
-            inicializarMapaRastreamento();
-        });
-
-        socket.on("localizacao_motorista", (dados) => {
-            if(!corridaAtual || dados.corrida_id !== (corridaAtual.id || corridaAtual.corrida_id)) return;
-            
-            const posMotorista = new google.maps.LatLng(dados.lat, dados.lng);
-            
-            // Atualiza marcador do carrinho
-            if(markerCarro && mapa) {
-                markerCarro.setPosition(posMotorista);
-                // Animação do carrinho "pulando"
-                markerCarro.setAnimation(google.maps.Animation.BOUNCE);
-                setTimeout(() => markerCarro.setAnimation(null), 700);
-            }
-            
-            // Atualiza marcador do motorista (ícone de pessoa)
-            if(markerMotorista && mapa) {
-                markerMotorista.setPosition(posMotorista);
-            }
-            
-            // Traça rota
-            if(markerPassageiro) {
-                tracorRota(markerPassageiro.getPosition(), posMotorista);
-            }
-            
-            // Calcula distância
-            if(markerPassageiro && markerPassageiro.getPosition()) {
-                const distanciaKm = calcularDistancia(
-                    markerPassageiro.getPosition().lat(), 
-                    markerPassageiro.getPosition().lng(),
-                    dados.lat, dados.lng
-                ).toFixed(1);
-                const tempoMin = Math.round(distanciaKm * 2.5);
-                
-                // Atualiza indicador no mapa
-                document.getElementById('distanciaMapa').textContent = distanciaKm;
-                document.getElementById('tempoMapa').textContent = tempoMin;
-                document.getElementById('indicadorMapa').classList.add('visivel');
-                
-                // Atualiza status
-                const statusEl = document.getElementById('conteudoStatus');
-                if(statusEl) {
-                    const distanciaEl = statusEl.querySelector('.distancia-atual');
-                    const tempoEl = statusEl.querySelector('.tempo-atual');
-                    if(distanciaEl) distanciaEl.textContent = `${distanciaKm} km de você`;
-                    if(tempoEl) tempoEl.textContent = `Chega em ${tempoMin} min 🕒`;
-                    
-                    if(parseFloat(distanciaKm) < 0.5) {
-                        const statusTexto = statusEl.querySelector('.status-texto');
-                        if(statusTexto) {
-                            statusTexto.innerHTML = `<i class="fas fa-check-circle status-chegou"></i> MOTORISTA CHEGOU! 🛑✅`;
-                        }
-                        // Muda borda da foto para rosa
-                        const foto = statusEl.querySelector('.foto-motorista-card');
-                        if(foto) foto.classList.add('chegou');
-                        
-                        falar("Seu motorista chegou! Embarque por favor.");
-                        tocarSom('alerta');
-                    }
-                }
-                
-                // Centraliza mapa nos dois
-                if(mapa && markerPassageiro.getPosition()) {
-                    const bounds = new google.maps.LatLngBounds();
-                    bounds.extend(markerPassageiro.getPosition());
-                    bounds.extend(posMotorista);
-                    mapa.fitBounds(bounds, 50);
-                }
-            }
-        });
-
-        socket.on("corrida_cancelada", (dados) => {
-            if(!corridaAtual || dados.corrida_id !== (corridaAtual.id || corridaAtual.corrida_id)) return;
-            tocarSom('alerta');
-            falar("A corrida foi cancelada pelo motorista.");
-            alert("❌ Motorista cancelou a corrida\nBuscando outro...");
-            resetarInterfaceAposCancelamento();
-        });
-
-        socket.on("viagem_finalizada", (dados) => {
-            const idCorridaVerificar = corridaAtual?.id || corridaAtual?.corrida_id;
-            if (!corridaAtual || dados.corrida_id !== idCorridaVerificar) return;
-            tocarSom('sucesso');
-            falar("Chegamos ao destino! Obrigado por viajar.");
-            alert(`🏁 VIAGEM FINALIZADA ✅\nValor: R$ ${parseFloat(dados.valor || 0).toFixed(2)}`);
-            const idDoMotorista = dados.motorista_id || corridaAtual.motorista_id;
-            const nomeDoMotorista = dados.motorista_nome || corridaAtual.motorista_nome;
-            abrirAvaliacao(idCorridaVerificar, idDoMotorista, nomeDoMotorista);
-        });
-
-        // ============================================================
-        // FUNÇÕES AUXILIARES
-        // ============================================================
-
         function falar(texto) {
             if (!window.speechSynthesis) return;
+            window.speechSynthesis.cancel();
             const msg = new SpeechSynthesisUtterance(texto);
-            msg.lang = "pt-BR"; msg.rate = 1.15;
-            speechSynthesis.speak(msg);
+            msg.lang = "pt-BR"; msg.rate = 1.1;
+            window.speechSynthesis.speak(msg);
         }
 
-        function tocarSom(tipo='normal') {
-            let url = 'https://assets.mixkit.co/sfx/preview/mixkit-software-interface-notification-2576.mp3?v=2';
-            if(tipo === 'sucesso') url = 'https://assets.mixkit.co/sfx/preview/mixkit-correct-answer-tone-2870.mp3?v=2';
-            if(tipo === 'alerta') url = 'https://assets.mixkit.co/sfx/preview/mixkit-alarm-digital-clock-beep-989.mp3?v=2';
-            new Audio(url).play().catch(()=>{});
+        function tocarSom(tipo) {
+            const sons = {
+                sucesso: 'https://assets.mixkit.co/sfx/preview/mixkit-correct-answer-tone-2870.mp3',
+                alerta: 'https://assets.mixkit.co/sfx/preview/mixkit-alarm-digital-clock-beep-989.mp3',
+                chamada: 'https://larissacamila.github.io/comandos/chamarRota.mp3'
+            };
+            const url = sons[tipo] || sons.chamada;
+            new Audio(url).play().catch(() => {});
         }
 
-        function gerenciarBotaoLocalizacao() {
-            if (estadoLocalizacao === 0) {
-                usarLocalizacaoAtual();
-            } else if (estadoLocalizacao === 1) {
-                const destino = document.getElementById('destino').value;
-                if(!destino || destino.length < 5) {
-                    alert("⚠️ Digite um Destino antes de chamar!");
-                    return;
-                }
-                chamarCorrida();
-            }
-        }
-
+        // ============================================================
+        // 📍 GEOLOCALIZAÇÃO
+        // ============================================================
         function usarLocalizacaoAtual() {
-            if(!navigator.geolocation) { alert("GPS não suportado"); return; }
-            falar("Buscando sua localização...");
-            navigator.geolocation.getCurrentPosition(pos => {
-                latOrigem = pos.coords.latitude;
-                lonOrigem = pos.coords.longitude;
-                document.getElementById('origem').value = `${latOrigem},${lonOrigem}`;
-                estadoLocalizacao = 1;
-                document.getElementById('btnLocalizacao').className = "btn-success";
-                document.getElementById('txtBtnLocalizacao').innerHTML = `<i class="fas fa-check"></i> 🚗 Entrar Buscando Motorista`;
-                calcularValor();
-            }, err => { alert("⚠️ Ative o GPS nas configurações!"); }, {enableHighAccuracy: true});
-        }
-
-        // ============================================================
-        // 🔥 GEOCODIFICAÇÃO COM FALLBACK
-        // ============================================================
-
-        function geocodeGoogle(address) {
-            return new Promise((resolve, reject) => {
-                console.log("📍 Google Geocoding:", address);
-                geocoder.geocode({ 
-                    address: address,
-                    region: 'BR'
-                }, (results, status) => {
-                    if (status === 'OK' && results && results.length > 0) {
-                        const location = results[0].geometry.location;
-                        resolve({
-                            lat: location.lat(),
-                            lng: location.lng(),
-                            formatted_address: results[0].formatted_address
-                        });
-                    } else {
-                        reject(new Error(`Google falhou: ${status}`));
-                    }
-                });
-            });
-        }
-
-        function geocodeNominatim(address) {
-            return new Promise((resolve, reject) => {
-                console.log("📍 Nominatim Geocoding:", address);
-                const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(address)}&format=json&limit=1&countrycodes=br`;
-                
-                fetch(url, {
-                    headers: { 'User-Agent': 'RotaBrasil-App/1.0' }
-                })
-                .then(res => res.json())
-                .then(data => {
-                    if (data && data.length > 0) {
-                        resolve({
-                            lat: parseFloat(data[0].lat),
-                            lng: parseFloat(data[0].lon),
-                            formatted_address: data[0].display_name
-                        });
-                    } else {
-                        reject(new Error('Nominatim não encontrou'));
-                    }
-                })
-                .catch(err => reject(err));
-            });
-        }
-
-        function geocodeOSRM(address) {
-            return new Promise((resolve, reject) => {
-                console.log("📍 OSRM Geocoding:", address);
-                const searchTerm = address.includes(',') ? address.split(',')[0].trim() : address;
-                const url = `https://photon.komoot.io/api/?q=${encodeURIComponent(searchTerm)}&limit=1&lang=pt`;
-                
-                fetch(url)
-                .then(res => res.json())
-                .then(data => {
-                    if (data && data.features && data.features.length > 0) {
-                        const coords = data.features[0].geometry.coordinates;
-                        resolve({
-                            lat: coords[1],
-                            lng: coords[0],
-                            formatted_address: data.features[0].properties.name || address
-                        });
-                    } else {
-                        reject(new Error('OSRM não encontrou'));
-                    }
-                })
-                .catch(err => reject(err));
-            });
-        }
-
-        async function geocodeAddress(address) {
-            console.log("🔍 Geocodificando:", address);
-            
-            const coordsMatch = address.match(/(-?\d+\.\d+)\s*[,;]\s*(-?\d+\.\d+)/);
-            if (coordsMatch) {
-                const lat = parseFloat(coordsMatch[1]);
-                const lng = parseFloat(coordsMatch[2]);
-                if (lat >= -90 && lat <= 90 && lng >= -180 && lng <= 180) {
-                    return { lat, lng, formatted_address: address };
-                }
-            }
-            
-            try { return await geocodeGoogle(address); } catch (e) {}
-            try { return await geocodeNominatim(address); } catch (e) {}
-            try { return await geocodeOSRM(address); } catch (e) {}
-            try { return await geocodeGoogle(address + ', Brasil'); } catch (e) {}
-            
-            throw new Error(`❌ Não foi possível encontrar: "${address}"`);
-        }
-
-        // ============================================================
-        // FUNÇÃO DE BUSCA DE ENDEREÇOS
-        // ============================================================
-
-        function buscarEndereco(texto, tipo) {
-            const divSug = document.getElementById(`sugestoes_${tipo}`);
-            divSug.style.display = 'none';
-            
-            if(!texto || texto.length < 3) { return; }
-            
-            autocompleteService.getPlacePredictions({ 
-                input: texto, 
-                language: 'pt-BR', 
-                componentRestrictions: {country: 'br'}
-            }, (res, status) => {
-                if(status === 'OK' && res && res.length > 0) {
-                    divSug.innerHTML = '';
-                    res.slice(0, 5).forEach(place => {
-                        const item = document.createElement('div');
-                        item.className = 'suggestion-item';
-                        item.innerHTML = `<i class="fas fa-map-marker-alt"></i> ${place.description}`;
-                        item.onclick = async () => {
-                            document.getElementById(tipo).value = place.description;
-                            divSug.style.display = 'none';
-                            
-                            try {
-                                const coordenadas = await geocodeAddress(place.description);
-                                if (tipo === 'origem') {
-                                    latOrigem = coordenadas.lat;
-                                    lonOrigem = coordenadas.lng;
-                                } else {
-                                    latDestino = coordenadas.lat;
-                                    lonDestino = coordenadas.lng;
-                                }
-                                if (coordenadas.formatted_address) {
-                                    document.getElementById(tipo).value = coordenadas.formatted_address;
-                                }
-                                const origem = document.getElementById('origem').value.trim();
-                                const destino = document.getElementById('destino').value.trim();
-                                if (origem && destino && origem.length > 3 && destino.length > 3) {
-                                    await calcularValor();
-                                }
-                            } catch (error) {
-                                alert(`❌ Não foi possível encontrar: "${place.description}"`);
-                            }
-                        };
-                        divSug.appendChild(item);
-                    });
-                    divSug.style.display = 'block';
-                }
-            });
-            
-            clearTimeout(window.geocodeTimeout);
-            window.geocodeTimeout = setTimeout(async () => {
-                try {
-                    const coordenadas = await geocodeAddress(texto);
-                    if (tipo === 'origem') {
-                        latOrigem = coordenadas.lat;
-                        lonOrigem = coordenadas.lng;
-                    } else {
-                        latDestino = coordenadas.lat;
-                        lonDestino = coordenadas.lng;
-                    }
-                    if (coordenadas.formatted_address) {
-                        document.getElementById(tipo).value = coordenadas.formatted_address;
-                    }
-                    const origem = document.getElementById('origem').value.trim();
-                    const destino = document.getElementById('destino').value.trim();
-                    if (origem && destino && origem.length > 3 && destino.length > 3) {
-                        await calcularValor();
-                    }
-                } catch (error) {}
-            }, 1000);
-        }
-
-        // ============================================================
-        // 🔥 FUNÇÃO DE CÁLCULO
-        // ============================================================
-
-        async function calcularValor() {
-            const o = document.getElementById('origem').value.trim();
-            const d = document.getElementById('destino').value.trim();
-            
-            if(!o || !d || o.length < 3 || d.length < 3) {
-                alert("⚠️ Digite endereços válidos!");
+            if (!navigator.geolocation) {
+                alert("❌ GPS não suportado neste dispositivo");
                 return;
             }
             
-            if (!latOrigem || !lonOrigem) {
-                try {
-                    const coords = await geocodeAddress(o);
-                    latOrigem = coords.lat;
-                    lonOrigem = coords.lng;
-                } catch (error) { alert(`❌ Origem não encontrada`); return; }
+            document.getElementById('origem').value = "📍 Obtendo localização...";
+            document.getElementById('origem').style.color = '#94A3B8';
+            
+            navigator.geolocation.getCurrentPosition(
+                (pos) => {
+                    latOrigem = pos.coords.latitude;
+                    lonOrigem = pos.coords.longitude;
+                    document.getElementById('origem').value = `${latOrigem.toFixed(6)}, ${lonOrigem.toFixed(6)}`;
+                    document.getElementById('origem').style.color = '';
+                    falar("Localização obtida! Agora digite o destino.");
+                },
+                (err) => {
+                    alert("❌ Não foi possível obter sua localização. Digite o endereço manualmente.");
+                    document.getElementById('origem').value = "";
+                    document.getElementById('origem').style.color = '';
+                },
+                { enableHighAccuracy: true, timeout: 10000 }
+            );
+        }
+
+        // ============================================================
+        // 🧮 CALCULAR VALOR (VIA BACKEND)
+        // ============================================================
+        async function calcularValor() {
+            const origem = document.getElementById('origem').value.trim();
+            const destino = document.getElementById('destino').value.trim();
+            
+            if (!origem || !destino || origem.length < 3 || destino.length < 3) {
+                alert("⚠️ Digite origem e destino válidos!");
+                return;
             }
-            
-            if (!latDestino || !lonDestino) {
-                try {
-                    const coords = await geocodeAddress(d);
-                    latDestino = coords.lat;
-                    lonDestino = coords.lng;
-                } catch (error) { alert(`❌ Destino não encontrado`); return; }
+
+            // Geocodificar origem se necessário
+            if (!latOrigem || !lonOrigem || origem.includes('.')) {
+                await geocodificar(origem, 'origem');
             }
-            
-            if (calculandoValor) return;
-            calculandoValor = true;
-            
+            if (!latDestino || !lonDestino || destino.includes('.')) {
+                await geocodificar(destino, 'destino');
+            }
+
+            if (!latOrigem || !lonOrigem || !latDestino || !lonDestino) {
+                alert("❌ Não foi possível encontrar as coordenadas. Tente endereços mais específicos.");
+                return;
+            }
+
+            // Mostra loading
+            document.getElementById('cardValor').style.display = 'block';
+            document.getElementById('txtDistancia').innerHTML = '<span class="loading-indicator"></span> Calculando...';
+            document.getElementById('txtTempo').innerHTML = '<span class="loading-indicator"></span> Calculando...';
+            document.getElementById('txtValor').textContent = 'R$ --';
+
             try {
-                document.getElementById('cardValor').style.display = 'block';
-                document.getElementById('txtDistancia').innerHTML = `<span class="loading-indicator"></span> Calculando...`;
-                document.getElementById('txtTempo').innerHTML = `<span class="loading-indicator"></span> Calculando...`;
-                document.getElementById('txtValor').innerText = `R$ 0,00`;
-                
                 const response = await fetch(`${API}/calcular_corrida`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
@@ -775,33 +487,446 @@
                         lon_destino: lonDestino
                     })
                 });
-                
+
+                if (!response.ok) throw new Error("Erro no servidor");
+
                 const dados = await response.json();
+                
                 if (dados.erro) throw new Error(dados.erro);
-                
-                document.getElementById('txtDistancia').innerText = `${dados.distancia} km`;
-                document.getElementById('txtTempo').innerText = `${dados.tempo} min`;
-                document.getElementById('txtValor').innerText = `R$ ${dados.valor.toFixed(2)}`;
-                
-                valorFinal = dados.valor;
-                distancia = dados.distancia;
-                
+
+                distancia = dados.distancia || 0;
+                valorFinal = dados.valor || 0;
+                const tempo = dados.tempo || Math.round(distancia * 3);
+
+                document.getElementById('txtDistancia').textContent = `${distancia.toFixed(1)} km`;
+                document.getElementById('txtTempo').textContent = `${tempo} min`;
+                document.getElementById('txtValor').textContent = `R$ ${valorFinal.toFixed(2)}`;
+                document.getElementById('cardValor').style.display = 'block';
+
             } catch (error) {
-                document.getElementById('txtDistancia').innerText = "Erro";
-                document.getElementById('txtTempo').innerText = "Erro";
-                document.getElementById('txtValor').innerText = `R$ 0,00`;
-            } finally {
-                calculandoValor = false;
+                console.error("Erro ao calcular:", error);
+                
+                // Fallback: cálculo local
+                const dist = calcularDistanciaLocal(latOrigem, lonOrigem, latDestino, lonDestino);
+                distancia = dist;
+                valorFinal = dist * 3.5 + 5; // R$ 3,50 por km + R$ 5 bandeirada
+                const tempo = Math.round(dist * 3);
+
+                document.getElementById('txtDistancia').textContent = `${distancia.toFixed(1)} km`;
+                document.getElementById('txtTempo').textContent = `${tempo} min (estimado)`;
+                document.getElementById('txtValor').textContent = `R$ ${valorFinal.toFixed(2)}`;
+                document.getElementById('cardValor').style.display = 'block';
+            }
+        }
+
+        function calcularDistanciaLocal(lat1, lon1, lat2, lon2) {
+            const R = 6371;
+            const dLat = (lat2 - lat1) * Math.PI / 180;
+            const dLon = (lon2 - lon1) * Math.PI / 180;
+            const a = Math.sin(dLat/2) ** 2 + Math.cos(lat1 * Math.PI/180) * Math.cos(lat2 * Math.PI/180) * Math.sin(dLon/2) ** 2;
+            return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+        }
+
+        // ============================================================
+        // 🔍 GEOCODIFICAÇÃO (NOMINATIM - GRÁTIS)
+        // ============================================================
+        async function geocodificar(endereco, tipo) {
+            try {
+                const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(endereco)}&format=json&limit=1&countrycodes=br`;
+                const response = await fetch(url, {
+                    headers: { 'User-Agent': 'RotaBrasil-App/1.0' }
+                });
+                const data = await response.json();
+                
+                if (data && data.length > 0) {
+                    if (tipo === 'origem') {
+                        latOrigem = parseFloat(data[0].lat);
+                        lonOrigem = parseFloat(data[0].lon);
+                    } else {
+                        latDestino = parseFloat(data[0].lat);
+                        lonDestino = parseFloat(data[0].lon);
+                    }
+                    console.log(`✅ ${tipo}:`, data[0].display_name);
+                    return true;
+                }
+            } catch (e) {
+                console.error(`Erro geocodificando ${tipo}:`, e);
+            }
+            return false;
+        }
+
+        // ============================================================
+        // 🚀 CHAMAR CORRIDA
+        // ============================================================
+        async function chamarCorrida() {
+            if (!latOrigem || !lonOrigem || !latDestino || !lonDestino) {
+                alert("⚠️ Calcule o valor primeiro!");
+                return;
+            }
+
+            if (valorFinal <= 0) {
+                alert("⚠️ Valor inválido! Recalcule.");
+                return;
+            }
+
+            const origem = document.getElementById('origem').value.trim();
+            const destino = document.getElementById('destino').value.trim();
+            
+            const btn = document.getElementById('btnChamar');
+            btn.disabled = true;
+            btn.classList.add('btn-blocked');
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> ⏳ Buscando motorista...';
+            
+            falar("Procurando motoristas próximos...");
+            tocarSom('chamada');
+
+            try {
+                const res = await fetch(`${API}/nova_corrida`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        origem: origem,
+                        destino: destino,
+                        valor: valorFinal,
+                        distancia: `${distancia.toFixed(1)} km`,
+                        lat_origem: latOrigem,
+                        lon_origem: lonOrigem,
+                        lat_destino: latDestino,
+                        lon_destino: lonDestino,
+                        foto_perfil: passageiro?.foto_perfil || ""
+                    })
+                });
+
+                const data = await res.json();
+                
+                if (!res.ok) throw new Error(data.erro || "Erro ao solicitar");
+                
+                corridaAtual = { 
+                    id: data.corrida_id, 
+                    origem, destino, 
+                    valor: valorFinal 
+                };
+                
+                if (corridaAtual.id) {
+                    socket.emit("entrar_na_sala", { corrida_id: corridaAtual.id });
+                }
+                
+                mostrarStatusBuscando();
+                
+            } catch (err) {
+                alert("❌ " + (err.message || "Erro ao solicitar corrida"));
+                btn.disabled = false;
+                btn.classList.remove('btn-blocked');
+                btn.innerHTML = '<i class="fas fa-rocket"></i> 🚀 CHAMAR ROTA BRASIL';
+            }
+        }
+
+        function mostrarStatusBuscando() {
+            document.getElementById('cardValor').style.display = 'none';
+            document.getElementById('cardStatus').style.display = 'block';
+            document.getElementById('conteudoStatus').innerHTML = `
+                <div class="status-container">
+                    <i class="fas fa-car-side status-icon status-buscando"></i>
+                    <div class="status-texto">Procurando Motoristas...</div>
+                    <div class="status-subtexto">Buscando o veículo mais próximo 🚗💨</div>
+                    <br>
+                    <button class="btn-danger" onclick="cancelarCorrida()">❌ Cancelar</button>
+                </div>`;
+        }
+
+        // ============================================================
+        // 📡 SOCKET: CORRIDA ACEITA
+        // ============================================================
+        socket.on("corrida_aceita", (dados) => {
+            console.log("🚗 Motorista aceitou!", dados);
+            
+            corridaAtual = { ...corridaAtual, ...dados };
+            
+            if (corridaAtual.id || corridaAtual.corrida_id) {
+                socket.emit("entrar_na_sala", { 
+                    corrida_id: corridaAtual.id || corridaAtual.corrida_id 
+                });
+            }
+            
+            tocarSom('sucesso');
+            falar(`${dados.motorista_nome || 'Motorista'} aceitou sua corrida!`);
+            
+            mostrarStatusCorridaAceita(dados);
+            inicializarMapa();
+        });
+
+        function mostrarStatusCorridaAceita(dados) {
+            document.getElementById('cardStatus').style.display = 'block';
+            document.getElementById('cardMapa').style.display = 'block';
+            
+            const fotoMotorista = dados.motorista_foto || 
+                'https://cdn-icons-png.flaticon.com/512/3135/3135715.png';
+            
+            document.getElementById('conteudoStatus').innerHTML = `
+                <div class="status-container">
+                    <div class="status-texto">
+                        <i class="fas fa-user-check status-aceito"></i> Motorista a Caminho!
+                    </div>
+                    <img src="${fotoMotorista}" 
+                         alt="Motorista" 
+                         class="foto-motorista-card"
+                         onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'">
+                    <div style="background:var(--cor-card-claro); padding:15px; border-radius:8px; width:100%; margin:10px 0; text-align:left;">
+                        <p class="linha-info"><strong>🚗 Nome:</strong> ${dados.motorista_nome || 'Confirmado'}</p>
+                        <p class="linha-info"><strong>🚘 Carro:</strong> ${dados.carro || 'Não informado'}</p>
+                        <p class="linha-info"><strong>🪪 Placa:</strong> <span class="placa-badge">${dados.placa || '---'}</span></p>
+                        <p class="linha-info"><strong>📏 Distância:</strong> <span class="distancia-atual">Aguardando...</span></p>
+                        <p class="linha-info"><strong>🕒 Chegada:</strong> <span class="tempo-atual">Calculando...</span></p>
+                    </div>
+                    <button class="btn-danger" onclick="cancelarCorrida()">❌ Cancelar</button>
+                </div>`;
+        }
+
+        // ============================================================
+        // 📡 SOCKET: LOCALIZAÇÃO DO MOTORISTA
+        // ============================================================
+        socket.on("localizacao_motorista", (dados) => {
+            if (!corridaAtual) return;
+            
+            const cid = corridaAtual.id || corridaAtual.corrida_id;
+            if (dados.corrida_id != cid) return;
+            
+            latMotorista = dados.lat;
+            lonMotorista = dados.lng;
+            
+            // Atualiza mapa via iframe
+            atualizarMapaIframe();
+            
+            // Calcula distância
+            if (latOrigem && lonOrigem) {
+                const distKm = calcularDistanciaLocal(latOrigem, lonOrigem, dados.lat, dados.lng);
+                const tempoMin = Math.round(distKm * 2.5);
+                
+                document.getElementById('distanciaMapa').textContent = distKm.toFixed(1);
+                document.getElementById('tempoMapa').textContent = tempoMin;
+                document.getElementById('indicadorMapa').classList.add('visivel');
+                
+                // Atualiza status
+                const statusEl = document.getElementById('conteudoStatus');
+                if (statusEl) {
+                    const dEl = statusEl.querySelector('.distancia-atual');
+                    const tEl = statusEl.querySelector('.tempo-atual');
+                    if (dEl) dEl.textContent = `${distKm.toFixed(1)} km de você`;
+                    if (tEl) tEl.textContent = `Chega em ~${tempoMin} min 🕒`;
+                    
+                    // Motorista chegou
+                    if (distKm < 0.3) {
+                        const stEl = statusEl.querySelector('.status-texto');
+                        if (stEl) stEl.innerHTML = '<i class="fas fa-check-circle status-chegou"></i> MOTORISTA CHEGOU! 🛑✅';
+                        const foto = statusEl.querySelector('.foto-motorista-card');
+                        if (foto) foto.classList.add('chegou');
+                        falar("Seu motorista chegou! Pode embarcar.");
+                        tocarSom('alerta');
+                    }
+                }
+            }
+        });
+
+        // ============================================================
+        // 🗺️ MAPA VIA IFRAME (SEM PRECISAR DE API KEY)
+        // ============================================================
+        function inicializarMapa() {
+            document.getElementById('cardMapa').style.display = 'block';
+            document.getElementById('indicadorMapa').classList.add('visivel');
+            atualizarMapaIframe();
+        }
+
+        function atualizarMapaIframe() {
+            const iframe = document.getElementById('mapaIframe');
+            
+            if (latOrigem && lonOrigem && latMotorista && lonMotorista) {
+                // Mapa com rota entre passageiro e motorista
+                iframe.src = `https://www.google.com/maps/embed/v1/directions?key=${GOOGLE_MAPS_KEY}&origin=${latOrigem},${lonOrigem}&destination=${latMotorista},${lonMotorista}&mode=driving&zoom=15`;
+            } else if (latOrigem && lonOrigem) {
+                // Mapa centralizado no passageiro
+                iframe.src = `https://www.google.com/maps/embed/v1/view?key=${GOOGLE_MAPS_KEY}&center=${latOrigem},${lonOrigem}&zoom=16&maptype=roadmap`;
+            } else {
+                // Fallback
+                iframe.src = `https://www.google.com/maps/embed/v1/view?key=${GOOGLE_MAPS_KEY}&center=-23.5505,-46.6333&zoom=14`;
+            }
+            
+            // Trata erro do iframe
+            iframe.onerror = () => {
+                iframe.src = `https://www.openstreetmap.org/export/embed.html?bbox=${lonOrigem-0.01}%2C${latOrigem-0.01}%2C${lonOrigem+0.01}%2C${latOrigem+0.01}&layer=mapnik`;
+            };
+        }
+
+        // ============================================================
+        // ❌ CANCELAR CORRIDA
+        // ============================================================
+        async function cancelarCorrida() {
+            if (!corridaAtual) return resetarInterface();
+            
+            const cid = corridaAtual.id || corridaAtual.corrida_id;
+            
+            try {
+                await fetch(`${API}/cancelar_corrida/${cid}`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}`
+                    }
+                });
+                socket.emit("cancelar_corrida", { corrida_id: cid });
+            } catch (e) {}
+            
+            resetarInterface();
+        }
+
+        function resetarInterface() {
+            corridaAtual = null;
+            latMotorista = null;
+            lonMotorista = null;
+            
+            document.getElementById('cardStatus').style.display = 'none';
+            document.getElementById('cardMapa').style.display = 'none';
+            document.getElementById('indicadorMapa').classList.remove('visivel');
+            document.getElementById('mapaIframe').src = '';
+            
+            const btn = document.getElementById('btnChamar');
+            if (btn) {
+                btn.disabled = false;
+                btn.classList.remove('btn-blocked');
+                btn.innerHTML = '<i class="fas fa-rocket"></i> 🚀 CHAMAR ROTA BRASIL';
             }
         }
 
         // ============================================================
-        // FUNÇÕES DE AUTENTICAÇÃO
+        // 🏁 CORRIDA FINALIZADA
         // ============================================================
+        socket.on("viagem_finalizada", (dados) => {
+            const cid = corridaAtual?.id || corridaAtual?.corrida_id;
+            if (!corridaAtual || dados.corrida_id != cid) return;
+            
+            tocarSom('sucesso');
+            falar("Chegamos! Corrida finalizada.");
+            
+            corridaIdAvaliacao = cid;
+            motoristaIdAvaliacao = dados.motorista_id || corridaAtual.motorista_id;
+            
+            document.getElementById('tituloAvaliacao').textContent = 
+                `Avalie ${dados.motorista_nome || 'o motorista'}`;
+            document.getElementById('modalAvaliacaoPassageiro').style.display = 'flex';
+            
+            resetarInterface();
+        });
+
+        socket.on("corrida_cancelada", (dados) => {
+            if (corridaAtual && dados.corrida_id == (corridaAtual.id || corridaAtual.corrida_id)) {
+                tocarSom('alerta');
+                falar("Motorista cancelou a corrida");
+                alert("❌ O motorista cancelou a corrida.");
+                resetarInterface();
+            }
+        });
+
+        // ============================================================
+        // ⭐ AVALIAÇÃO
+        // ============================================================
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('#estrelasContainer .estrela').forEach(estrela => {
+                estrela.addEventListener('click', function() {
+                    notaAvaliacao = parseInt(this.dataset.nota);
+                    document.querySelectorAll('#estrelasContainer .estrela').forEach((e, i) => {
+                        e.classList.toggle('ativa', i < notaAvaliacao);
+                    });
+                });
+            });
+        });
+
+        async function enviarAvaliacaoMotorista() {
+            if (notaAvaliacao === 0) {
+                alert("⚠️ Selecione uma nota!");
+                return;
+            }
+
+            try {
+                await fetch(`${API}/avaliar`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        corrida_id: corridaIdAvaliacao,
+                        motorista_id: motoristaIdAvaliacao,
+                        nota: notaAvaliacao,
+                        comentario: document.getElementById('comentarioAvaliacao').value
+                    })
+                });
+                alert("✅ Avaliação enviada! Obrigado!");
+            } catch (e) {
+                console.error("Erro ao avaliar:", e);
+            }
+            
+            fecharAvaliacao();
+        }
+
+        function fecharAvaliacao() {
+            document.getElementById('modalAvaliacaoPassageiro').style.display = 'none';
+            notaAvaliacao = 0;
+            document.querySelectorAll('#estrelasContainer .estrela').forEach(e => e.classList.remove('ativa'));
+            document.getElementById('comentarioAvaliacao').value = '';
+        }
+
+        // ============================================================
+        // 🔐 AUTENTICAÇÃO
+        // ============================================================
+        async function login() {
+            const email = document.getElementById("email").value.trim();
+            const senha = document.getElementById("senha").value.trim();
+            
+            if (!email || !senha) {
+                alert("⚠️ Preencha e-mail e senha!");
+                return;
+            }
+
+            try {
+                const res = await fetch(`${API}/login`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ email, senha })
+                });
+                
+                const data = await res.json();
+                
+                if (res.ok && data.token) {
+                    if (data.user.tipo !== "passageiro") {
+                        alert("⚠️ Esta conta não é de passageiro!");
+                        return;
+                    }
+                    
+                    token = data.token;
+                    passageiro = data.user;
+                    
+                    localStorage.setItem("token_passageiro", token);
+                    localStorage.setItem("user_passageiro", JSON.stringify(passageiro));
+                    
+                    document.getElementById("loginCard").style.display = "none";
+                    document.getElementById("dashboard").style.display = "block";
+                    
+                    falar(`Olá ${passageiro.nome}, bem-vindo ao Rota Brasil!`);
+                    carregarAvaliacoes();
+                } else {
+                    alert("❌ " + (data.erro || "E-mail ou senha inválidos"));
+                }
+            } catch (e) {
+                alert("❌ Erro de conexão. Verifique sua internet.");
+            }
+        }
 
         async function registerPassageiro() {
             try {
-                document.getElementById("loginStatus").innerHTML = "⏳ Cadastrando...";
+                document.getElementById("loginStatus").textContent = "⏳ Cadastrando...";
+                
                 const res = await fetch(`${API}/register`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
@@ -814,40 +939,20 @@
                         tipo: "passageiro"
                     })
                 });
+                
                 const data = await res.json();
-                if(res.ok) {
-                    document.getElementById("loginStatus").innerHTML = "✅ Conta criada! Entrando...";
-                    login();
+                
+                if (res.ok) {
+                    document.getElementById("loginStatus").textContent = "✅ Conta criada! Faça login.";
+                    alternarTelaAutenticacao(false);
                 } else {
                     alert("❌ " + (data.erro || "Erro no cadastro"));
-                    document.getElementById("loginStatus").innerHTML = "";
+                    document.getElementById("loginStatus").textContent = "";
                 }
-            } catch(e) { alert("Erro de conexão com o servidor"); }
-        }
-
-        async function login() {
-            const email = document.getElementById("email").value.trim();
-            const senha = document.getElementById("senha").value.trim();
-            if (!email || !senha) { alert("⚠️ Preencha e-mail e senha!"); return; }
-            try {
-                const res = await fetch(`${API}/login`, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ email, senha })
-                });
-                const data = await res.json();
-                if(res.ok && data.token) {
-                    if(data.user.tipo !== "passageiro") { alert("⚠️ Use uma conta de passageiro!"); return; }
-                    token = data.token; 
-                    passageiro = data.user;
-                    localStorage.setItem("token_passageiro", token);
-                    localStorage.setItem("user_passageiro", JSON.stringify(passageiro));
-                    document.getElementById("loginCard").style.display = "none";
-                    document.getElementById("dashboard").style.display = "block";
-                    falar(`Olá ${passageiro.nome}, seja bem-vindo ao Rota Brasil.`);
-                    carregarAvaliacoes();
-                } else { alert("❌ " + (data.erro || "Dados inválidos")); }
-            } catch(e) { alert("Erro de conexão"); }
+            } catch (e) {
+                alert("❌ Erro de conexão");
+                document.getElementById("loginStatus").textContent = "";
+            }
         }
 
         function alternarTelaAutenticacao(isCadastro) {
@@ -858,315 +963,74 @@
             const gNome = document.getElementById("grupoNome");
             const gTel = document.getElementById("grupoTelefone");
 
-            if(isCadastro) {
-                titulo.innerText = "Criar Conta na Rota Brasil"; 
-                btn.innerText = "Finalizar Cadastro";
-                btn.setAttribute("onclick", "registerPassageiro()");
-                textoAlt.innerHTML = `Já tem conta? <a href="#" onclick="alternarTelaAutenticacao(false)">Logar</a>`;
-                gFoto.style.display="block"; gNome.style.display="block"; gTel.style.display="block";
+            if (isCadastro) {
+                titulo.textContent = "Criar Conta na Rota Brasil";
+                btn.textContent = "Finalizar Cadastro";
+                btn.onclick = registerPassageiro;
+                textoAlt.innerHTML = 'Já tem conta? <a href="#" onclick="alternarTelaAutenticacao(false)">Entrar</a>';
+                gFoto.style.display = "block";
+                gNome.style.display = "block";
+                gTel.style.display = "block";
             } else {
-                titulo.innerText = "🇧🇷 Rota Brasil - Passageiro"; 
-                btn.innerText = "Entrar no Aplicativo";
-                btn.setAttribute("onclick", "login()");
-                textoAlt.innerHTML = `Não tem uma conta? <a href="#" onclick="alternarTelaAutenticacao(true)">Cadastre-se aqui</a>`;
-                gFoto.style.display="none"; gNome.style.display="none"; gTel.style.display="none";
+                titulo.textContent = "🇧🇷 Rota Brasil - Passageiro";
+                btn.textContent = "Entrar no Aplicativo";
+                btn.onclick = login;
+                textoAlt.innerHTML = 'Não tem conta? <a href="#" onclick="alternarTelaAutenticacao(true)">Cadastre-se</a>';
+                gFoto.style.display = "none";
+                gNome.style.display = "none";
+                gTel.style.display = "none";
             }
         }
 
-        function logoutPassageiro() { localStorage.clear(); window.location.reload(); }
-
-        // ============================================================
-        // FUNÇÕES DA CORRIDA
-        // ============================================================
-
-        async function chamarCorrida() {
-            const origem = document.getElementById('origem').value.trim();
-            const destino = document.getElementById('destino').value.trim();
-            if(!origem || !destino || origem.length < 3 || destino.length < 3) { 
-                alert("⚠️ Digite endereços válidos!"); return; 
-            }
-            
-            if (!latOrigem || !lonOrigem || !latDestino || !lonDestino) {
-                try {
-                    const geoOrigem = await geocodeAddress(origem);
-                    const geoDestino = await geocodeAddress(destino);
-                    latOrigem = geoOrigem.lat; lonOrigem = geoOrigem.lng;
-                    latDestino = geoDestino.lat; lonDestino = geoDestino.lng;
-                } catch (error) { alert("⚠️ Endereços não encontrados"); return; }
-            }
-
-            const btn = document.getElementById('btnChamar');
-            btn.disabled = true; btn.classList.add('btn-blocked');
-            btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> ⏳ BUSCANDO MOTORISTA...`;
-            falar("Procurando motoristas próximos...");
-            
-            try {
-                const res = await fetch(`${API}/nova_corrida`, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
-                    body: JSON.stringify({
-                        origem: origem, destino: destino, valor: valorFinal,
-                        distancia: distancia ? `${distancia.toFixed(1)} km` : "Calculando...",
-                        foto_perfil: passageiro?.foto_perfil || ""
-                    })
-                });
-                const data = await res.json();
-                if(!res.ok) throw data;
-                corridaAtual = { id: data.corrida_id, origem: origem, destino: destino, valor: valorFinal };
-                if (corridaAtual.id) { socket.emit("entrar_na_sala", { corrida_id: corridaAtual.id }); }
-                mostrarStatusBuscando();
-            } catch(err) {
-                alert("❌ Erro: " + (err.erro || "Tente novamente"));
-                btn.disabled = false; btn.classList.remove('btn-blocked');
-                btn.innerHTML = `<i class="fas fa-rocket"></i> 🚀 CHAMAR ROTA BRASIL`;
-            }
-        }
-
-        function mostrarStatusBuscando() {
-            document.getElementById('cardValor').style.display = 'none';
-            document.getElementById('cardStatus').style.display = 'block';
-            document.getElementById('conteudoStatus').innerHTML = `
-                <div class="status-container">
-                    <i class="fas fa-car-side status-icon status-buscando"></i>
-                    <div class="status-texto">Procurando Motoristas...</div>
-                    <div class="status-subtexto">Buscando o veículo mais próximo 🚗💨</div><br>
-                    <button class="btn-danger" onclick="cancelarCorrida()">❌ Cancelar Viagem</button>
-                </div>`;
-        }
-
-        function mostrarStatusCorridaAceita(dados) {
-            document.getElementById('cardStatus').style.display = 'block';
-            document.getElementById('cardMapa').style.display = 'block';
-            
-            // Foto do motorista (fallback se não tiver)
-            const fotoMotorista = dados.motorista_foto || 
-                'https://cdn-icons-png.flaticon.com/512/3135/3135715.png';
-            
-            document.getElementById('conteudoStatus').innerHTML = `
-                <div class="status-container">
-                    <div class="status-texto"><i class="fas fa-user-check status-aceito"></i> Motorista a Caminho!</div>
-                    <img src="${fotoMotorista}" alt="Motorista" class="foto-motorista-card" 
-                         onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'">
-                    <div style="text-align: left; background: var(--cor-card-claro); padding:15px; border-radius:8px; width:100%; margin: 10px 0;">
-                        <p class="linha-info"><strong>🚗 Motorista:</strong> ${dados.motorista_nome || 'Confirmado'}</p>
-                        <p class="linha-info"><strong>🚘 Carro:</strong> ${dados.carro || 'Padrão'}</p>
-                        <p class="linha-info"><strong>🪪 Placa:</strong> <span class="placa-badge">${dados.placa || '---'}</span></p>
-                        <p class="linha-info"><strong>📏 Distância:</strong> <span class="distancia-atual">Calculando...</span></p>
-                        <p class="linha-info"><strong>🕒 Tempo:</strong> <span class="tempo-atual">Calculando...</span></p>
-                    </div>
-                    <button class="btn-danger" onclick="cancelarCorrida()">❌ Cancelar Viagem</button>
-                </div>`;
-        }
-
-        async function cancelarCorrida() {
-            if(!corridaAtual) { resetarInterfaceAposCancelamento(); return; }
-            const id = corridaAtual.id || corridaAtual.corrida_id;
-            try {
-                await fetch(`${API}/cancelar_corrida/${id}`, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` }
-                });
-                socket.emit("cancelar_corrida", { corrida_id: id });
-            } catch(e) {}
-            resetarInterfaceAposCancelamento();
-        }
-
-        function resetarInterfaceAposCancelamento() {
-            corridaAtual = null;
-            document.getElementById('cardStatus').style.display = 'none';
-            document.getElementById('cardMapa').style.display = 'none';
-            document.getElementById('indicadorMapa').classList.remove('visivel');
-            
-            if(markerCarro) { markerCarro.setMap(null); markerCarro = null; }
-            if(markerMotorista) { markerMotorista.setMap(null); markerMotorista = null; }
-            if(rotaLinha) { rotaLinha.setMap(null); rotaLinha = null; }
-            mapa = null;
-            
-            const btn = document.getElementById('btnChamar');
-            if(btn) { btn.disabled = false; btn.classList.remove('btn-blocked'); btn.innerHTML = `<i class="fas fa-rocket"></i> 🚀 CHAMAR ROTA BRASIL`; }
+        function logoutPassageiro() {
+            localStorage.clear();
+            window.location.reload();
         }
 
         // ============================================================
-        // 🗺️ FUNÇÕES DO MAPA COM CARRINHO
+        // 📊 AVALIAÇÕES E CARTEIRA
         // ============================================================
-
-        function inicializarMapaRastreamento() {
-            if (!mapa) {
-                mapa = new google.maps.Map(document.getElementById('mapa'), {
-                    center: { lat: latOrigem || -23.5505, lng: lonOrigem || -46.6333 }, 
-                    zoom: 15, 
-                    mapTypeControl: false, 
-                    streetViewControl: false,
-                    styles: [
-                        { elementType: "geometry", stylers: [{ color: "#1d2c4d" }] },
-                        { elementType: "labels.text.fill", stylers: [{ color: "#8ec3b9" }] },
-                        { elementType: "labels.text.stroke", stylers: [{ color: "#1a3646" }] },
-                        { featureType: "road", elementType: "geometry", stylers: [{ color: "#304a5e" }] },
-                        { featureType: "road", elementType: "geometry.stroke", stylers: [{ color: "#212a37" }] },
-                        { featureType: "water", elementType: "geometry", stylers: [{ color: "#0e1626" }] }
-                    ]
-                });
-            }
-            
-            // Marcador do passageiro
-            if(!markerPassageiro) {
-                markerPassageiro = new google.maps.Marker({ 
-                    map: mapa, 
-                    title: "Você está aqui",
-                    icon: { 
-                        url: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='10' fill='%233B82F6' stroke='white' stroke-width='2'/%3E%3Ccircle cx='12' cy='12' r='4' fill='white'/%3E%3C/svg%3E",
-                        scaledSize: new google.maps.Size(40, 40),
-                        anchor: new google.maps.Point(20, 20)
-                    }
-                });
-                if(latOrigem && lonOrigem) {
-                    const pos = new google.maps.LatLng(latOrigem, lonOrigem);
-                    markerPassageiro.setPosition(pos);
-                } else if(navigator.geolocation) {
-                    navigator.geolocation.getCurrentPosition(p => {
-                        const pos = new google.maps.LatLng(p.coords.latitude, p.coords.longitude);
-                        markerPassageiro.setPosition(pos); 
-                        mapa.setCenter(pos);
-                    });
-                }
-            }
-            
-            // 🚗 MARCADOR DO CARRINHO (ANIMADO)
-            if(!markerCarro) {
-                markerCarro = new google.maps.Marker({ 
-                    map: mapa, 
-                    title: "Motorista",
-                    icon: { 
-                        url: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='50' height='50' viewBox='0 0 24 24'%3E%3Crect x='3' y='8' width='18' height='10' rx='3' fill='%2322C55E' stroke='white' stroke-width='1.5'/%3E%3Ccircle cx='7' cy='19' r='2.5' fill='%23333' stroke='white' stroke-width='1'/%3E%3Ccircle cx='17' cy='19' r='2.5' fill='%23333' stroke='white' stroke-width='1'/%3E%3Crect x='9' y='5' width='6' height='5' rx='2' fill='%2316a34a'/%3E%3Crect x='10' y='3' width='4' height='3' rx='1' fill='%23bbf7d0'/%3E%3C/svg%3E",
-                        scaledSize: new google.maps.Size(50, 50),
-                        anchor: new google.maps.Point(25, 25)
-                    },
-                    animation: google.maps.Animation.DROP
-                });
-            }
-            
-            // Marcador do motorista (ícone de pessoa)
-            if(!markerMotorista) {
-                markerMotorista = new google.maps.Marker({ 
-                    map: mapa, 
-                    title: "Motorista",
-                    icon: { 
-                        url: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='30' height='30' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='8' r='4' fill='%23FF007F' stroke='white' stroke-width='1.5'/%3E%3Cpath d='M4 22 Q4 16 12 16 Q20 16 20 22' fill='%23FF007F' stroke='white' stroke-width='1.5'/%3E%3C/svg%3E",
-                        scaledSize: new google.maps.Size(30, 30),
-                        anchor: new google.maps.Point(15, 30)
-                    }
-                });
-            }
-            
-            document.getElementById('indicadorMapa').classList.add('visivel');
-        }
-
-        function tracorRota(pA, pB) {
-            if(!pA || !pB) return;
-            if(!rotaLinha) {
-                rotaLinha = new google.maps.Polyline({ 
-                    map: mapa, 
-                    strokeColor: "#FF007F", 
-                    strokeWeight: 4,
-                    strokeOpacity: 0.8,
-                    icons: [{
-                        icon: { path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW, scale: 4 },
-                        offset: '50%'
-                    }]
-                });
-            }
-            rotaLinha.setPath([pA, pB]);
-        }
-
-        function calcularDistancia(lat1, lon1, lat2, lon2) {
-            const R = 6371;
-            const dLat = (lat2 - lat1) * Math.PI / 180; 
-            const dLon = (lon2 - lon1) * Math.PI / 180;
-            const a = Math.sin(dLat/2)*Math.sin(dLat/2) + 
-                      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
-                      Math.sin(dLon/2)*Math.sin(dLon/2);
-            return R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)));
-        }
-
-        // ============================================================
-        // FUNÇÕES DE AVALIAÇÃO
-        // ============================================================
-
         async function carregarAvaliacoes() {
             if (!passageiro || !token) return;
+            
             try {
-                const res = await fetch(`${API}/avaliacoes?usuario_id=${passageiro.id}`, { 
-                    headers: { "Authorization": `Bearer ${token}` } 
+                const res = await fetch(`${API}/avaliacoes?usuario_id=${passageiro.id}`, {
+                    headers: { "Authorization": `Bearer ${token}` }
                 });
                 const dados = await res.json();
-                const divLista = document.getElementById("listaAvaliacoes");
+                const div = document.getElementById("listaAvaliacoes");
+                
                 if (res.ok && dados.avaliacoes && dados.avaliacoes.length > 0) {
-                    divLista.innerHTML = "";
-                    dados.avaliacoes.forEach(av => {
-                        divLista.innerHTML += `<div class="avaliacao-item"><div class="item-topo"><span>👤 ${av.nome_avaliador || 'Motorista'}</span><span>${'⭐'.repeat(av.nota)}</span></div><div style="font-size:13px; color:var(--cor-texto-secundario); margin-top:4px;">${av.comentario || 'Sem comentários.'}</div></div>`;
-                    });
+                    div.innerHTML = dados.avaliacoes.map(av => `
+                        <div class="avaliacao-item">
+                            <div class="item-topo">
+                                <span>👤 ${av.nome_avaliador || 'Motorista'}</span>
+                                <span>${'⭐'.repeat(av.nota)}</span>
+                            </div>
+                            <div style="font-size:13px; color:var(--cor-texto-secundario); margin-top:4px;">
+                                ${av.comentario || 'Sem comentários.'}
+                            </div>
+                        </div>
+                    `).join('');
                 } else {
-                    divLista.innerHTML = `<p style="text-align:center; font-size:13px; color:var(--cor-texto-secundario);">Nenhuma avaliação recente.</p>`;
+                    div.innerHTML = '<p style="text-align:center; font-size:13px; color:var(--cor-texto-secundario);">Nenhuma avaliação ainda.</p>';
                 }
-            } catch(e) {}
+            } catch (e) {
+                document.getElementById("listaAvaliacoes").innerHTML = '<p style="text-align:center;">Erro ao carregar.</p>';
+            }
         }
-
-        function abrirAvaliacao(cId, mId, nome) {
-            notaAvaliacao = 0; 
-            corridaIdAvaliacao = cId; 
-            motoristaIdAvaliacao = mId;
-            document.getElementById('comentarioAvaliacao').value = "";
-            document.getElementById('tituloAvaliacao').innerText = `Avalie ${nome || 'o motorista'}`;
-            document.querySelectorAll('.estrela').forEach(e => e.classList.remove('ativa'));
-            document.getElementById('modalAvaliacaoPassageiro').style.display = "flex";
-            limparTelaCorrida();
-        }
-
-        function selecionarEstrela(nota) {
-            notaAvaliacao = nota;
-            document.querySelectorAll('.estrela').forEach((e, i) => e.classList.toggle('ativa', i < nota));
-        }
-
-        function fecharAvaliacao() { 
-            document.getElementById('modalAvaliacaoPassageiro').style.display = "none"; 
-        }
-
-        async function enviarAvaliacaoMotorista() {
-            if(notaAvaliacao === 0) { alert("Escolha uma nota!"); return; }
-            if (!corridaIdAvaliacao || !motoristaIdAvaliacao || !token) { alert("Dados incompletos"); return; }
-            try {
-                await fetch(`${API}/avaliar`, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
-                    body: JSON.stringify({ 
-                        corrida_id: corridaIdAvaliacao, 
-                        motorista_id: motoristaIdAvaliacao, 
-                        nota: notaAvaliacao, 
-                        comentario: document.getElementById('comentarioAvaliacao').value 
-                    })
-                });
-                alert("✅ Obrigado pela avaliação!");
-            } catch(e) { alert("Erro ao enviar avaliação"); }
-            fecharAvaliacao();
-        }
-
-        function limparTelaCorrida() {
-            corridaAtual = null;
-            resetarInterfaceAposCancelamento();
-        }
-
-        // ============================================================
-        // FUNÇÕES DA CARTEIRA
-        // ============================================================
 
         async function abrirCarteira() {
             document.getElementById("painelCarteira").style.display = "block";
-            const resposta = await fetch(`${API}/carteira/saldo`, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
-            const dados = await resposta.json();
-            document.getElementById("saldoCarteira").textContent = `R$ ${dados.saldo.toFixed(2)}`;
-            document.getElementById("saldoBloqueado").textContent = `R$ ${dados.bloqueado.toFixed(2)}`;
+            try {
+                const res = await fetch(`${API}/carteira/saldo`, {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+                const dados = await res.json();
+                document.getElementById("saldoCarteira").textContent = `R$ ${(dados.saldo || 0).toFixed(2)}`;
+            } catch (e) {
+                document.getElementById("saldoCarteira").textContent = "R$ 0,00";
+            }
         }
 
         function fecharCarteira() {
@@ -1174,32 +1038,50 @@
         }
 
         async function adicionarSaldo() {
-            const valor = prompt("Digite o valor:");
-            if (!valor || isNaN(valor) || parseFloat(valor) <= 0) { alert("Valor inválido"); return; }
+            const valor = prompt("Digite o valor para adicionar (R$):");
+            if (!valor || isNaN(valor) || parseFloat(valor) <= 0) {
+                alert("Valor inválido!");
+                return;
+            }
             try {
-                const resposta = await fetch(`${API}/checkout/criar`, {
+                const res = await fetch(`${API}/checkout/criar`, {
                     method: "POST",
-                    headers: { "Authorization": `Bearer ${token}`, "Content-Type": "application/json" },
+                    headers: {
+                        "Authorization": `Bearer ${token}`,
+                        "Content-Type": "application/json"
+                    },
                     body: JSON.stringify({ valor: parseFloat(valor) })
                 });
-                const dados = await resposta.json();
-                if (dados.link) { window.location.href = dados.link; }
-            } catch (erro) { alert("Erro: " + erro.message); }
+                const dados = await res.json();
+                if (dados.link) {
+                    window.open(dados.link, '_blank');
+                } else {
+                    alert("Link de pagamento não gerado.");
+                }
+            } catch (e) {
+                alert("Erro ao gerar pagamento.");
+            }
         }
 
         // ============================================================
-        // INICIALIZAÇÃO
+        // 🚀 INICIALIZAÇÃO
         // ============================================================
+        socket.on("connect", () => console.log("✅ Conectado ao servidor!"));
+        socket.on("disconnect", () => console.log("❌ Desconectado"));
 
         window.onload = () => {
-            const tS = localStorage.getItem("token_passageiro");
-            const uS = localStorage.getItem("user_passageiro");
-            if(tS && uS) {
-                token = tS; 
-                passageiro = JSON.parse(uS);
-                document.getElementById("loginCard").style.display = "none";
-                document.getElementById("dashboard").style.display = "block";
-                carregarAvaliacoes();
+            const t = localStorage.getItem("token_passageiro");
+            const u = localStorage.getItem("user_passageiro");
+            if (t && u) {
+                try {
+                    token = t;
+                    passageiro = JSON.parse(u);
+                    document.getElementById("loginCard").style.display = "none";
+                    document.getElementById("dashboard").style.display = "block";
+                    carregarAvaliacoes();
+                } catch (e) {
+                    localStorage.clear();
+                }
             }
         };
     </script>
