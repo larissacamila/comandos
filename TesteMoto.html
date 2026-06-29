@@ -230,31 +230,10 @@
             border-radius: 8px; z-index: 999999; display: none;
             box-shadow: 0 4px 12px rgba(0,0,0,0.3); font-weight: 600;
         }
-
-        /* LOADING GPS */
-        .loading-gps {
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            background: rgba(0,0,0,0.8); color: white; padding: 20px 30px;
-            border-radius: 12px; z-index: 500; text-align: center; display: none;
-        }
-        .loading-gps .spinner {
-            width: 40px; height: 40px; border: 3px solid #333;
-            border-top-color: var(--sucesso); border-radius: 50%;
-            animation: girar 0.8s infinite linear;
-            margin: 0 auto 10px;
-        }
-        @keyframes girar { to { transform: rotate(360deg); } }
     </style>
 </head>
     
 <body>
-    <!-- LOADING GPS -->
-    <div id="loadingGPS" class="loading-gps">
-        <div class="spinner"></div>
-        <p style="font-weight:600;">📍 Obtendo localização...</p>
-        <p style="font-size:12px; color:#86909C;">Ative o GPS se solicitado</p>
-    </div>
-
     <!-- MODAL CARTEIRA -->
     <div id="painelCarteiraMotorista" style="position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); width:90%; max-width:380px; background:#1e293b; border:1px solid #334155; border-radius:16px; padding:20px; color:white; display:none; z-index:99999;">
         <h2>💵 Carteira do Motorista</h2>
@@ -365,10 +344,18 @@
     </div>
 
     <!-- ÁUDIOS -->
-    <audio id="somAlerta" preload="auto" src="https://larissacamila.github.io/comandos/chamarRota.mp3"></audio>
-    <audio id="somAlto" preload="auto" src="https://rotabrasil-v1cf.onrender.com/static/sounds/chamada.mp3"></audio>
-    <audio id="somSucesso" preload="auto" src="https://rotabrasil-v1cf.onrender.com/static/sounds/sucesso.mp3"></audio>
-    <audio id="somDinheiro" preload="auto" src="https://rotabrasil-v1cf.onrender.com/static/sounds/dinheiro.mp3"></audio>
+    <audio id="somAlerta" preload="auto" loop>
+        <source src="https://larissacamila.github.io/comandos/chamarRota.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="somAlto" preload="auto">
+        <source src="https://rotabrasil-v1cf.onrender.com/static/sounds/chamada.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="somSucesso" preload="auto">
+        <source src="https://rotabrasil-v1cf.onrender.com/static/sounds/sucesso.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="somDinheiro" preload="auto">
+        <source src="https://rotabrasil-v1cf.onrender.com/static/sounds/dinheiro.mp3" type="audio/mpeg">
+    </audio>
 
     <script>
         // ==============================================
@@ -473,7 +460,12 @@
         let notaAvaliacao = 0;
         let timerCorrida = null;
         let segundosCorrida = 15;
-        let gpsAtivo = false;
+        let somAlertaInterval = null;
+
+        const somAlerta = document.getElementById('somAlerta');
+        const somAlto = document.getElementById('somAlto');
+        const somSucesso = document.getElementById('somSucesso');
+        const somDinheiro = document.getElementById('somDinheiro');
 
         function falar(texto) {
             if (!window.speechSynthesis) return;
@@ -491,90 +483,70 @@
         }
 
         // ==============================================
-        // 📍 GPS - ABRE E EXECUTA AUTOMATICAMENTE
+        // 📍 GPS (COMO ESTAVA)
         // ==============================================
         function iniciarGPS() {
-            if (!navigator.geolocation) {
-                console.warn("Geolocalização não suportada");
-                return;
-            }
-            
-            // Mostra loading
-            document.getElementById('loadingGPS').style.display = 'block';
-            
-            // Primeiro obtém a posição atual rapidamente
-            navigator.geolocation.getCurrentPosition(
-                (pos) => {
-                    posicaoAtual.lat = pos.coords.latitude;
-                    posicaoAtual.lng = pos.coords.longitude;
-                    gpsAtivo = true;
-                    
-                    // Atualiza mapa imediatamente
-                    atualizarMapa();
-                    
-                    // Esconde loading
-                    document.getElementById('loadingGPS').style.display = 'none';
-                    
-                    console.log("📍 GPS inicial:", posicaoAtual.lat, posicaoAtual.lng);
-                },
-                (erro) => {
-                    console.warn("Erro ao obter posição inicial:", erro.message);
-                    document.getElementById('loadingGPS').style.display = 'none';
-                    
-                    // Tenta watchPosition como fallback
-                    iniciarWatchGPS();
-                },
-                { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
-            );
-            
-            // Watch para atualizações contínuas
-            iniciarWatchGPS();
-        }
-        
-        function iniciarWatchGPS() {
+            if (!navigator.geolocation) return;
             navigator.geolocation.watchPosition(
                 (pos) => {
                     posicaoAtual.lat = pos.coords.latitude;
                     posicaoAtual.lng = pos.coords.longitude;
-                    gpsAtivo = true;
-                    
-                    // Esconde loading se ainda estiver visível
-                    document.getElementById('loadingGPS').style.display = 'none';
-                    
-                    // Atualiza mapa
-                    atualizarMapa();
-                    
-                    // Envia localização se em corrida
+                    document.getElementById('mapaFrame').src = 
+                        `https://www.google.com/maps/embed/v1/view?key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8&center=${posicaoAtual.lat},${posicaoAtual.lng}&zoom=16&maptype=roadmap`;
                     if (estado.aceito && corrida) {
                         socket.emit('localizacao_motorista', {
                             corrida_id: corrida.corrida_id || corrida.id,
-                            lat: posicaoAtual.lat, 
-                            lng: posicaoAtual.lng, 
-                            motorista_id: usuario?.id
+                            lat: posicaoAtual.lat, lng: posicaoAtual.lng, motorista_id: usuario.id
                         });
                     }
                 },
-                (erro) => {
-                    console.warn("Erro GPS watch:", erro.message);
-                    document.getElementById('loadingGPS').style.display = 'none';
-                    
-                    if (erro.code === 1) {
-                        mostrarErro("⚠️ Permita acesso ao GPS nas configurações");
-                    }
-                },
-                { 
-                    enableHighAccuracy: true, 
-                    timeout: 15000, 
-                    maximumAge: 5000,
-                    distanceFilter: 10 // Atualiza a cada 10 metros
-                }
+                (erro) => { console.warn("Erro GPS:", erro); },
+                { enableHighAccuracy: true, maximumAge: 10000, timeout: 8000 }
             );
         }
+
+        // ==============================================
+        // 🔊 SOM TOCANDO MAIS VEZES (REPETIÇÃO)
+        // ==============================================
+        function iniciarSomAlertaRepetido() {
+            // Para qualquer som anterior
+            pararSomAlerta();
+            
+            // Configura o áudio para loop
+            somAlerta.loop = true;
+            somAlerta.currentTime = 0;
+            
+            // Tenta tocar
+            const tocar = () => {
+                somAlerta.play().catch(() => {
+                    // Se falhar, tenta novamente em 500ms
+                    setTimeout(tocar, 500);
+                });
+            };
+            tocar();
+            
+            // Backup: se o loop não funcionar, reinicia manualmente
+            somAlertaInterval = setInterval(() => {
+                if (somAlerta.paused || somAlerta.ended) {
+                    somAlerta.currentTime = 0;
+                    somAlerta.play().catch(() => {});
+                }
+            }, 1000);
+            
+            console.log("🔊 Som de alerta iniciado (repetindo)");
+        }
         
-        function atualizarMapa() {
-            if (!gpsAtivo) return;
-            document.getElementById('mapaFrame').src = 
-                `https://www.google.com/maps/embed/v1/view?key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8&center=${posicaoAtual.lat},${posicaoAtual.lng}&zoom=17&maptype=roadmap`;
+        function pararSomAlerta() {
+            somAlerta.pause();
+            somAlerta.currentTime = 0;
+            somAlerta.loop = false;
+            
+            if (somAlertaInterval) {
+                clearInterval(somAlertaInterval);
+                somAlertaInterval = null;
+            }
+            
+            console.log("🔇 Som de alerta parado");
         }
 
         // ==============================================
@@ -627,10 +599,7 @@
                 localStorage.setItem("token_motorista", token);
                 localStorage.setItem("dados_motorista", JSON.stringify(usuario));
                 telaPrincipal();
-                
-                // INICIA GPS AUTOMATICAMENTE
                 iniciarGPS();
-                
             } catch (e) { statusLogin(`❌ ${e.message}`, "erro"); }
         }
 
@@ -661,7 +630,6 @@
                 document.getElementById('btnOnline').style.display = 'none';
                 document.getElementById('btnOffline').style.display = 'block';
                 
-                // ATUALIZA STATUS COM ONDINHAS
                 const statusEl = document.getElementById('statusMotorista');
                 statusEl.className = 'status-bolinha online';
                 statusEl.innerHTML = '<i class="fas fa-circle"></i> <span>Online</span>';
@@ -679,7 +647,6 @@
                 document.getElementById('btnOnline').style.display = 'block';
                 document.getElementById('btnOffline').style.display = 'none';
                 
-                // ATUALIZA STATUS SEM ONDINHAS
                 const statusEl = document.getElementById('statusMotorista');
                 statusEl.className = 'status-bolinha offline';
                 statusEl.innerHTML = '<i class="fas fa-circle"></i> <span>Offline</span>';
@@ -697,7 +664,8 @@
             corrida = dados;
             estado = { aceito: false, pegouPassageiro: false, viagemIniciada: false };
             
-            document.getElementById('somAlerta').play().catch(() => {});
+            // 🔊 SOM TOCANDO MAIS VEZES
+            iniciarSomAlertaRepetido();
             
             document.getElementById('cPassageiro').textContent = dados.passageiro_nome || "Cliente";
             document.getElementById('cTelefone').textContent = dados.passageiro_telefone || "Não informado";
@@ -732,7 +700,7 @@
             document.getElementById('cardCorrida').style.display = 'none';
             corrida = null;
             clearInterval(timerCorrida);
-            document.getElementById('somAlerta').pause();
+            pararSomAlerta();
             document.getElementById('botoesFixos').style.display = 'block';
         }
 
@@ -741,7 +709,7 @@
         // ==============================================
         async function aceitarCorrida() {
             clearInterval(timerCorrida);
-            document.getElementById('somAlerta').pause();
+            pararSomAlerta();
             
             if (!corrida || !token || !usuario) return mostrarErro("Erro ao aceitar");
             
@@ -781,7 +749,7 @@
                         });
                     }, 1500);
                     
-                    document.getElementById('somSucesso').play().catch(() => {});
+                    somSucesso.play().catch(() => {});
                     falar("Corrida aceita! Deslize para ir ao passageiro.");
                 }
             } catch (e) { mostrarErro(e.message); }
@@ -876,7 +844,7 @@
                 });
                 
                 if (res.ok || res.status === 200 || res.status === 201) {
-                    document.getElementById('somDinheiro').play().catch(() => {});
+                    somDinheiro.play().catch(() => {});
                     falar("Corrida finalizada! R$ " + valorFinal.toFixed(2).replace('.', ','));
                     
                     socket.emit('viagem_finalizada', { 
@@ -944,7 +912,7 @@
         // ==============================================
         socket.on("corrida_cancelada", (dados) => {
             if (corrida && (dados?.corrida_id == (corrida.corrida_id || corrida.id))) {
-                document.getElementById('somAlto').play().catch(() => {});
+                somAlto.play().catch(() => {});
                 if (envioLocalizacaoInterval) clearInterval(envioLocalizacaoInterval);
                 limparTudo();
                 document.getElementById('alertaCancel').style.display = 'block';
@@ -954,7 +922,7 @@
 
         socket.on("cliente_desconectado", (dados) => {
             if (corrida && (dados?.corrida_id == (corrida.corrida_id || corrida.id))) {
-                document.getElementById('somAlto').play().catch(() => {});
+                somAlto.play().catch(() => {});
                 if (envioLocalizacaoInterval) clearInterval(envioLocalizacaoInterval);
                 limparTudo();
                 document.getElementById('alertaCancel').style.display = 'block';
@@ -984,7 +952,9 @@
             document.querySelectorAll('.estrela').forEach(e => e.classList.remove('ativa'));
             document.getElementById('comentarioAvaliacao').value = '';
             
+            // Para todos os sons
             document.querySelectorAll('audio').forEach(a => { a.pause(); a.currentTime = 0; });
+            pararSomAlerta();
             
             clearInterval(timerCorrida);
         }
@@ -1039,7 +1009,7 @@
                     usuario = JSON.parse(d);
                     token = t;
                     telaPrincipal();
-                    iniciarGPS(); // INICIA GPS AUTOMATICAMENTE
+                    iniciarGPS();
                 } catch { localStorage.clear(); }
             }
             
